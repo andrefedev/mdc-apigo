@@ -20,7 +20,6 @@ steps:
       'managed',
       '--region',
       'us-east1',
-      '--use-http2',
       '--port=8080',
       '--min-instances=1',
       '--max-instances=10',
@@ -46,7 +45,7 @@ images:
 
 substitutions:
   _ENV: "dev"
-  _NAME: "mdc-apigo-rest"
+  _NAME: "mdc-rest-api"
 
 options:
   logging: CLOUD_LOGGING_ONLY
