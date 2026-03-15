@@ -1,6 +1,7 @@
 package main
 
 import (
+	"apigo/internal/features/app"
 	"apigo/internal/modules/whatsapp/messages"
 	"context"
 	"errors"
@@ -68,6 +69,11 @@ func main() {
 	identityMiddleware := auth.NewMiddleware(authService)
 	router := httpx.NewAppRouter(
 		httpx.AppRouterDeps{
+			AppHandler: app.NewHandler(
+				app.HandlerDeps{
+					// empty
+				},
+			),
 			AuthHandler: auth.NewHandler(
 				auth.HandlerDeps{
 					Service: authService,

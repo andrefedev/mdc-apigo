@@ -8,6 +8,7 @@ import (
 )
 
 type AppRouterDeps struct {
+	AppHandler  http.Handler
 	AuthHandler http.Handler
 	UserHandler http.Handler
 
@@ -28,6 +29,7 @@ func NewAppRouter(deps AppRouterDeps) http.Handler {
 	r.Get("/readyz", deps.ReadyHandler.ServeHTTP)
 
 	r.Route("/v1", func(v1 chi.Router) {
+		v1.Mount("/app", deps.AppHandler)
 		v1.Mount("/auth", deps.AuthHandler)
 		v1.Mount("/users", deps.UserHandler)
 	})
