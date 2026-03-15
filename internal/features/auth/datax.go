@@ -1,0 +1,31 @@
+package auth
+
+import (
+	"apigo/internal/platforms/aerr/derrx"
+	"apigo/internal/platforms/validator/validationx"
+)
+
+// REQUEST
+
+type CodeRequest struct {
+	Phone string `json:"phone"`
+}
+
+func (r *CodeRequest) Normalize() {
+	r.Phone = validationx.ClearString(r.Phone)
+}
+
+func (r *CodeRequest) Validate() error {
+	const oper = "Auth.CodeRequest.Validate"
+
+	if !validationx.IsPhoneNumber(r.Phone) {
+		return derrx.Validation(
+			oper,
+			"auth.invalid_phone",
+			"El número de teléfono no es válido",
+			nil,
+		)
+	}
+
+	return nil
+}

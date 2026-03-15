@@ -1,0 +1,32 @@
+# OSX
+.DS_Store
+
+# Intellij
+.idea/
+.idea/apigo.iml
+
+# Dependency directories
+tmp
+node_modules/
+*/node_modules/
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Private
+id_github
+id_github.pub
+
+# Others private
+.env
+.env.*
