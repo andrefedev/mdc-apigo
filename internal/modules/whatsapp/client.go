@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -27,7 +26,7 @@ type Client struct {
 func NewClient(config Config) *Client {
 	cfg := config.WithDefaults()
 	dio := &http.Client{
-		Timeout:   cfg.DioTimeout,
+		Timeout:   cfg.HttpTimeout,
 		Transport: http.DefaultTransport.(*http.Transport).Clone(),
 	}
 
@@ -58,9 +57,6 @@ func (c *Client) Post(ctx context.Context, path string, body any) error {
 		return err
 	}
 
-	log.Printf("b: %v", string(b))
-	log.Printf("uri: %s", c.endpoint(path))
-
 	request, err := http.NewRequestWithContext(ctx, http.MethodPost, c.endpoint(path), bytes.NewReader(b))
 	if err != nil {
 		return err
@@ -86,19 +82,8 @@ func (c *Client) execute(req *http.Request) error {
 	}
 
 	if response.StatusCode >= http.StatusBadRequest {
-
-		// IMPRIMIR ERROR
-		return fmt.Errorf("error: %s", string(body))
-		//var envelope APIErrorEnvelope
-		//if decodeErr := decodeStrict(body, &envelope); decodeErr == nil && envelope.Error.Message != "" {
-		//	return &RequestError{StatusCode: response.StatusCode, Body: string(body), Err: envelope.Error}
-		//}
-		//return &RequestError{StatusCode: response.StatusCode, Body: string(body), Err: fmt.Errorf("unexpected error response")}
-		//
-
+		return decodeRequestError2(response.StatusCode, body)
 	}
-
-	fmt.Printf("error: %s", string(body))
 
 	return nil
 
@@ -120,8 +105,3 @@ func (c *Client) doRequest(req *http.Request) (*http.Response, error) {
 	req.Header.Set("Content-Type", "application/json")
 	return c.dio.Do(req.WithContext(ctx))
 }
-
-//
-//func (c *Client) messages() string {
-//	return fmt.Sprintf("%s/%s/%s/messages", c.ApiBaseUrl, c.ApiVersion, c.ApiPhone)
-//}

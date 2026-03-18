@@ -5,43 +5,21 @@ import (
 	"log/slog"
 	"net/http"
 
-	"apigo/internal/platforms/aerr/aerrx"
-	"apigo/internal/platforms/aerr/perrx"
 	"apigo/internal/platforms/apperr"
 )
 
-func ParseError(err error) (int, perrx.PublicError) {
+func ParseError(err error) (int, apperr.PublicError) {
 	if err == nil {
-		return http.StatusOK, perrx.PublicError{}
+		return http.StatusOK, apperr.PublicError{}
 	}
 
 	if _, ok := errors.AsType[*apperr.Error](err); ok {
 		status := statusFromAppErrKind(apperr.KindOf(err))
-		payload := apperr.ResponseOf(err)
-		return status, perrx.PublicError{Code: payload.Code, Body: payload.Body}
+		return status, apperr.ResponseOf(err)
 	}
 
-	kind := aerrx.KindOf(err)
-	return statusFromKind(kind), perrx.FromError(err)
-}
-
-// HELPERS
-
-func statusFromKind(kind aerrx.Kind) int {
-	switch kind {
-	case aerrx.KindNotFound:
-		return http.StatusNotFound
-	case aerrx.KindValidation:
-		return http.StatusBadRequest
-	case aerrx.KindUnauthorized:
-		return http.StatusUnauthorized
-	case aerrx.KindForbidden:
-		return http.StatusForbidden
-	case aerrx.KindConflict:
-		return http.StatusConflict
-	default:
-		return http.StatusInternalServerError
-	}
+	appErr := apperr.Internal("okhttpx.ParseError", err)
+	return http.StatusInternalServerError, apperr.ResponseOf(appErr)
 }
 
 func statusFromAppErrKind(kind apperr.Kind) int {
@@ -71,18 +49,6 @@ func slogInternalError(r *http.Request, err error) {
 			"op", myErr.Op,
 			"kind", myErr.Kind,
 			"code", myErr.Code,
-			"cause", myErr.Cause,
-			"pathURL", r.URL.Path,
-		)
-		return
-	}
-
-	if myErr, ok := errors.AsType[*aerrx.Error](err); ok && myErr != nil {
-		slog.ErrorContext(
-			ctx,
-			"internal error",
-			"oper", myErr.Oper,
-			"kind", myErr.Kind,
 			"cause", myErr.Cause,
 			"pathURL", r.URL.Path,
 		)

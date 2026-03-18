@@ -12,48 +12,38 @@ func ErrInvalidPhone(cause error) error {
 		cause = errInvalidPhone
 	}
 
-	return apperr.ValidationPublic(
-		"Auth.ErrInvalidPhone",
+	return apperr.Validation("Auth.ErrInvalidPhone", cause).WithPublic(
 		"auth.invalid_phone",
 		"El número de teléfono no es válido",
-		cause,
 	)
 }
 
 func ErrInvalidCode(cause error) error {
-	return apperr.ValidationPublic(
-		"Auth.ErrInvalidCode",
+	return apperr.Validation("Auth.ErrInvalidCode", cause).WithPublic(
 		"auth.invalid_code",
 		"El código ingresado no es válido",
-		cause,
 	)
 }
 
 func ErrCodeExpired(cause error) error {
-	return apperr.ConflictPublic(
-		"Auth.ErrCodeExpired",
+	return apperr.Conflict("Auth.ErrCodeExpired", cause).WithPublic(
 		"auth.code_expired",
 		"El código ya expiró",
-		cause,
 	)
 }
 
 // IDENTITY
 
 func ErrIdentityNotFound(cause error) error {
-	return apperr.NotFoundPublic(
-		"Auth.ErrIdentityNotFound",
+	return apperr.NotFound("Auth.ErrIdentityNotFound", cause).WithPublic(
 		"auth.identity_not_found",
 		"Identidad no encontrada",
-		cause,
 	)
 }
 
 func ErrAuthenticationRequired(cause error) error {
-	return apperr.UnauthorizedPublic(
-		"Auth.ErrAuthenticationRequired",
+	return apperr.Unauthorized("Auth.ErrAuthenticationRequired", cause).WithPublic(
 		"auth.authentication_required",
 		"Debes iniciar sesión para continuar",
-		cause,
 	)
 }

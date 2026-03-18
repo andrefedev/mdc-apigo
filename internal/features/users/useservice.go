@@ -1,7 +1,7 @@
 package users
 
 import (
-	"apigo/internal/platforms/aerr/aerrx"
+	"apigo/internal/platforms/apperr"
 	"context"
 )
 
@@ -25,11 +25,11 @@ func (s *Service) GetByRef(ctx context.Context, ref string) (*User, error) {
 
 	user, err := s.deps.UserRepository.Select(ctx, ref)
 	if err != nil {
-		if aerrx.IsKind(err, aerrx.KindNotFound) {
+		if apperr.IsKind(err, apperr.KindNotFound) {
 			return nil, ErrUserNotFound(err)
 		}
 
-		return nil, aerrx.Wrap(op, err)
+		return nil, apperr.Wrap(op, err)
 	}
 
 	return user, nil

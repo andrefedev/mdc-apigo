@@ -13,7 +13,7 @@ Este archivo describe el estado observado en el codigo de hoy. Debe tomarse como
 - Base de datos activa: PostgreSQL via `github.com/jackc/pgx/v5/pgxpool`
 - Runtime objetivo: Google Cloud Run
 - Build/deploy: [Dockerfile](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/Dockerfile) + [cloudbuild.yaml](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/cloudbuild.yaml)
-- Logging estructurado: `log/slog` via `internal/platforms/loggex`
+- Logging estructurado: `log/slog` via `internal/platforms/loggerx`
 - Integracion externa activa: WhatsApp Cloud API
 - Integraciones presentes pero no conectadas al bootstrap actual: Twilio, Google Maps, Storage, Pub/Sub
 
@@ -23,8 +23,8 @@ El entrypoint real es [cmd/server/main.go](/Users/andrefedev/Documents/Dev/muyde
 
 Secuencia observada:
 
-1. Carga configuracion con `confx.Load()`
-2. Inicializa logger global con `loggex.SetupLogger`
+1. Carga configuracion con `configx.Load()`
+2. Inicializa logger global con `loggerx.SetupLogger`
 3. Abre pool PostgreSQL con `postgres.Open`
 4. Construye `Pgdb`
 5. Construye repositorios `auth` y `users`
@@ -86,7 +86,7 @@ Expone:
 
 Flujo actual:
 
-1. Decodifica JSON con `httpx.DecodeJson`
+1. Decodifica JSON con `okhttpx.DecodeJson`
 2. Normaliza y valida telefono
 3. Genera OTP de 6 digitos
 4. Inserta OTP en `users_codes`
@@ -115,7 +115,7 @@ Flujo actual:
 
 ## Router HTTP
 
-El router principal vive en [internal/platforms/httpx/app.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/httpx/app.go).
+El router principal vive en [internal/platforms/okhttpx/app.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/okhttpx/app.go).
 
 Middlewares globales instalados:
 
@@ -155,22 +155,25 @@ Observaciones:
 
 - No hay JWT ni validacion criptografica.
 - El bearer token funciona como lookup directo sobre `users.idk`.
-- El middleware hoy registra el token en logs, lo cual es un riesgo de seguridad.
-- Si el token no existe en DB, la cadena actual termina exponiendo `404`, no `401`.
+- Un token inexistente hoy se traduce a `401`.
 
 ## Errores
 
 Convencion actual:
 
-- repository: retorna `aerrx`
-- service: envuelve con `aerrx.Wrap` o traduce a `derrx`
-- handler/http: usa `httpx.Fail`
+- repository: retorna `apperr` tecnico
+- service: envuelve con `apperr.Wrap` o agrega contrato publico con `WithPublic(...)`
+- handler/http: usa `okhttpx.Fail`
 
-Paquetes:
+Paquete activo:
 
-- [internal/platforms/aerr/aerrx/error.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/aerrx/error.go): error tecnico con `Kind`, `Oper`, `Cause`
-- [internal/platforms/aerr/derrx/error.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/derrx/error.go): error publico con `Code` y `Body`
-- [internal/platforms/aerr/perrx/error.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/perrx/error.go): payload publico HTTP
+- [internal/platforms/apperr/error.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/apperr/error.go): error canonico con `Op`, `Kind`, `Code`, `Message`, `Cause`
+
+Paquetes legacy presentes en el repo pero fuera del flujo activo:
+
+- [internal/platforms/aerr/aerrx/error.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/aerrx/error.go)
+- [internal/platforms/aerr/derrx/error.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/derrx/error.go)
+- [internal/platforms/aerr/perrx/error.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/perrx/error.go)
 
 Mapping HTTP actual:
 
@@ -183,7 +186,7 @@ Mapping HTTP actual:
 
 Nota:
 
-- `httpx.slogInternalError` usa `slog`.
+- `okhttpx.slogInternalError` usa `slog`.
 - Parte del codigo todavia mezcla `log.Printf` y `fmt.Printf` fuera de este esquema.
 
 ## Persistencia
@@ -219,7 +222,7 @@ Estado actual:
 
 ## Variables de entorno reales del bootstrap
 
-Requeridas hoy por `confx.Load()`:
+Requeridas hoy por `configx.Load()`:
 
 - `ENV`
 - `PORT`
@@ -235,7 +238,7 @@ Campos presentes en `Config` pero no cargados desde env:
 
 - `GoogleGeminiApiKey`
 
-Capacidades soportadas por codigo de WhatsApp pero no expuestas desde `confx.Load()`:
+Capacidades soportadas por codigo de WhatsApp pero no expuestas desde `configx.Load()`:
 
 - `WHATSAPP_BASE_URL`
 - `WHATSAPP_VERSION`
@@ -269,7 +272,7 @@ Estas son las discrepancias mas importantes detectadas en el estado actual:
 - Dejar el wiring en `cmd/server/main.go` o en un modulo de bootstrap explicito
 - Hacer que repository devuelva solo errores tecnicos
 - Traducir errores publicos en service o handler
-- Centralizar respuestas HTTP con `httpx.Json` y `httpx.Fail`
+- Centralizar respuestas HTTP con `okhttpx.Json` y `okhttpx.Fail`
 - No usar `pgdb.sql` como contrato canonico; si el proyecto sigue creciendo, migrar a migraciones versionadas
 - Eliminar logs de secretos o payloads completos antes de seguir ampliando auth/webhooks
 - Definir una convencion unica para campos de identidad y telefono antes de sumar mas features

@@ -2,7 +2,7 @@ package messages
 
 import (
 	"apigo/internal/modules/whatsapp"
-	"apigo/internal/platforms/aerr/aerrx"
+	"apigo/internal/platforms/apperr"
 	"context"
 )
 
@@ -21,7 +21,7 @@ func (s *Service) SendTemplate(ctx context.Context, req *SendTemplateMessage) er
 
 	body := NewTemplateMessageReq(req)
 	if err := s.client.Post(ctx, s.endpoint(), body); err != nil {
-		return aerrx.New(aerrx.KindInternal, op, err)
+		return apperr.Internal(op, err)
 	}
 
 	return nil

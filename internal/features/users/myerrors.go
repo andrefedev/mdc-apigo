@@ -1,23 +1,19 @@
 package users
 
 import (
-	"apigo/internal/platforms/aerr/derrx"
+	"apigo/internal/platforms/apperr"
 )
 
 func ErrUserNotFound(cause error) error {
-	return derrx.NotFound(
-		"Users.ErrUserNotFound",
+	return apperr.NotFound("Users.ErrUserNotFound", cause).WithPublic(
 		"users.user_not_found",
 		"Usuario no encontrado",
-		cause,
 	)
 }
 
 func ErrAuthenticationRequired(cause error) error {
-	return derrx.Unauthorized(
-		"Users.ErrAuthenticationRequired",
+	return apperr.Unauthorized("Users.ErrAuthenticationRequired", cause).WithPublic(
 		"users.authentication_required",
 		"Debes iniciar sesión para continuar",
-		cause,
 	)
 }

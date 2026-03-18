@@ -49,7 +49,7 @@ func (e *Error) Unwrap() error {
 	return e.Cause
 }
 
-func Public(op string, kind Kind, code, message string, cause error) error {
+func Public(op string, kind Kind, code, message string, cause error) *Error {
 	return &Error{
 		Op:      op,
 		Kind:    kind,
@@ -59,52 +59,39 @@ func Public(op string, kind Kind, code, message string, cause error) error {
 	}
 }
 
-func Internal(op string, cause error) error {
+func (e *Error) WithPublic(code, message string) *Error {
+	if e == nil {
+		return nil
+	}
+
+	cp := *e
+	cp.Code = code
+	cp.Message = message
+	return &cp
+}
+
+func Internal(op string, cause error) *Error {
 	return Public(op, KindInternal, "", "", cause)
 }
 
-func NotFound(op string, cause error) error {
+func NotFound(op string, cause error) *Error {
 	return Public(op, KindNotFound, "", "", cause)
 }
 
-func Validation(op string, cause error) error {
+func Validation(op string, cause error) *Error {
 	return Public(op, KindValidation, "", "", cause)
 }
 
-func Unauthorized(op string, cause error) error {
+func Unauthorized(op string, cause error) *Error {
 	return Public(op, KindUnauthorized, "", "", cause)
 }
 
-func Forbidden(op string, cause error) error {
+func Forbidden(op string, cause error) *Error {
 	return Public(op, KindForbidden, "", "", cause)
 }
 
-func Conflict(op string, cause error) error {
+func Conflict(op string, cause error) *Error {
 	return Public(op, KindConflict, "", "", cause)
-}
-
-func ValidationPublic(op, code, message string, cause error) error {
-	return Public(op, KindValidation, code, message, cause)
-}
-
-func UnauthorizedPublic(op, code, message string, cause error) error {
-	return Public(op, KindUnauthorized, code, message, cause)
-}
-
-func ForbiddenPublic(op, code, message string, cause error) error {
-	return Public(op, KindForbidden, code, message, cause)
-}
-
-func NotFoundPublic(op, code, message string, cause error) error {
-	return Public(op, KindNotFound, code, message, cause)
-}
-
-func ConflictPublic(op, code, message string, cause error) error {
-	return Public(op, KindConflict, code, message, cause)
-}
-
-func InternalPublic(op, code, message string, cause error) error {
-	return Public(op, KindInternal, code, message, cause)
 }
 
 func Wrap(op string, cause error) error {

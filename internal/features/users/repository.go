@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"apigo/internal/modules/postgres"
-	"apigo/internal/platforms/aerr/aerrx"
+	"apigo/internal/platforms/apperr"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -101,16 +101,16 @@ func (r Repository) Select(ctx context.Context, ref string) (*User, error) {
 
 	rows, err := r.db.Query(ctx, qry, ref)
 	if err != nil {
-		return nil, aerrx.New(aerrx.KindInternal, op, err)
+		return nil, apperr.Internal(op, err)
 	}
 	defer rows.Close()
 
 	raw, err := pgx.CollectExactlyOneRow[UserRaw](rows, pgx.RowToStructByNameLax[UserRaw])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, aerrx.New(aerrx.KindNotFound, op, err)
+			return nil, apperr.NotFound(op, err)
 		}
-		return nil, aerrx.New(aerrx.KindInternal, op, err)
+		return nil, apperr.Internal(op, err)
 	}
 
 	return raw.ToModel(), nil
@@ -127,16 +127,16 @@ func (r Repository) SelectByPhone(ctx context.Context, phone string) (*User, err
 
 	rows, err := r.db.Query(ctx, qry, phone)
 	if err != nil {
-		return nil, aerrx.New(aerrx.KindInternal, op, err)
+		return nil, apperr.Internal(op, err)
 	}
 	defer rows.Close()
 
 	raw, err := pgx.CollectExactlyOneRow[UserRaw](rows, pgx.RowToStructByNameLax[UserRaw])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, aerrx.New(aerrx.KindNotFound, op, err)
+			return nil, apperr.NotFound(op, err)
 		}
-		return nil, aerrx.New(aerrx.KindInternal, op, err)
+		return nil, apperr.Internal(op, err)
 	}
 
 	return raw.ToModel(), nil

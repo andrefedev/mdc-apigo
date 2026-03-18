@@ -19,11 +19,9 @@ func (r *CodeRequest) Validate() error {
 	const oper = "Auth.CodeRequest.Validate"
 
 	if !validationx.IsPhoneNumber(r.Phone) {
-		return apperr.ValidationPublic(
-			oper,
+		return apperr.Validation(oper, nil).WithPublic(
 			"auth.invalid_phone",
 			"El número de teléfono no es válido",
-			nil,
 		)
 	}
 

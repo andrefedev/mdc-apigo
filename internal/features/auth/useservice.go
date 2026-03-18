@@ -2,7 +2,7 @@ package auth
 
 import (
 	"apigo/internal/modules/whatsapp/messages"
-	"apigo/internal/platforms/aerr/aerrx"
+	"apigo/internal/platforms/apperr"
 	"apigo/internal/platforms/cryptox"
 	"context"
 )
@@ -29,7 +29,7 @@ func (s *Service) Code(ctx context.Context, phone string) (string, string, error
 	// OTP + challenge
 	code, err := cryptox.GenerateRandomNumberString(6)
 	if err != nil {
-		return "", "", aerrx.New(aerrx.KindInternal, oper, err)
+		return "", "", apperr.Internal(oper, err)
 	}
 
 	// guardar codigo en la base de datos
@@ -41,7 +41,7 @@ func (s *Service) Code(ctx context.Context, phone string) (string, string, error
 
 	res, err := s.deps.AuthRepository.CodeInsert(ctx, data)
 	if err != nil {
-		return "", "", aerrx.Wrap(oper, err)
+		return "", "", apperr.Wrap(oper, err)
 	}
 
 	// Send Code Verification...
@@ -78,7 +78,7 @@ func (s *Service) Code(ctx context.Context, phone string) (string, string, error
 		//if _, cleanupErr := s.deps.AuthRepository.CodeDelete(ctx, res); cleanupErr != nil {
 		//	slog.ErrorContext(ctx, "auth cleanup code after whatsapp failure", "code_ref", res, "err", cleanupErr)
 		//}
-		return "", "", aerrx.Wrap(oper, err)
+		return "", "", apperr.Wrap(oper, err)
 	}
 
 	// ELIMINAR EL CODIGO DE LA BASE DE DATOS ??
@@ -91,10 +91,10 @@ func (s *Service) IdentityByIdToken(ctx context.Context, idToken string) (*Ident
 
 	identity, err := s.deps.AuthRepository.IdentitySelectByIdToken(ctx, idToken)
 	if err != nil {
-		if aerrx.IsKind(err, aerrx.KindNotFound) {
-			return nil, ErrIdentityNotFound(err)
+		if apperr.IsKind(err, apperr.KindNotFound) {
+			return nil, ErrAuthenticationRequired(err)
 		}
-		return nil, aerrx.Wrap(op, err)
+		return nil, apperr.Wrap(op, err)
 	}
 
 	return identity, nil

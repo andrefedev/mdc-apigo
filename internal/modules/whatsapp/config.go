@@ -12,8 +12,7 @@ type Config struct {
 	ApiBaseUrl string
 	// ApiRequest   *http.Client
 	// DioClient    *http.Client
-	DioTimeout   time.Duration
-	DioUserAgent string
+	HttpTimeout time.Duration
 }
 
 // WithDefaults fills empty optional values.
@@ -24,11 +23,8 @@ func (c Config) WithDefaults() Config {
 	if c.ApiBaseUrl == "" {
 		c.ApiBaseUrl = DefaultBaseUrl
 	}
-	if c.DioTimeout == 0 {
-		c.DioTimeout = 15 * time.Second
-	}
-	if c.DioUserAgent == "" {
-		c.DioUserAgent = "apigo/run"
+	if c.HttpTimeout == 0 {
+		c.HttpTimeout = 15 * time.Second
 	}
 	return c
 }

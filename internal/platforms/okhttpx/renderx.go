@@ -39,11 +39,9 @@ func DecodeJson(r *http.Request, dst any, oper string) error {
 	}
 
 	if err := decoder.Decode(new(struct{})); err != io.EOF {
-		return apperr.ValidationPublic(
-			oper,
+		return apperr.Validation(oper, err).WithPublic(
 			"http.invalid_json",
 			"El cuerpo JSON debe contener un solo objeto",
-			err,
 		)
 	}
 
@@ -56,45 +54,35 @@ func mapDecodeError(op string, err error) error {
 	}
 
 	if errors.Is(err, io.EOF) {
-		return apperr.ValidationPublic(
-			op,
+		return apperr.Validation(op, err).WithPublic(
 			"http.empty_body",
 			"Debes enviar un cuerpo JSON",
-			err,
 		)
 	}
 
 	if _, ok := errors.AsType[*json.SyntaxError](err); ok {
-		return apperr.ValidationPublic(
-			op,
+		return apperr.Validation(op, err).WithPublic(
 			"http.invalid_json",
 			"El cuerpo JSON no es válido",
-			err,
 		)
 	}
 
 	if _, ok := errors.AsType[*json.UnmarshalTypeError](err); ok {
-		return apperr.ValidationPublic(
-			op,
+		return apperr.Validation(op, err).WithPublic(
 			"http.invalid_json",
 			"El cuerpo JSON contiene tipos inválidos",
-			err,
 		)
 	}
 
 	if strings.HasPrefix(err.Error(), "json: unknown field ") {
-		return apperr.ValidationPublic(
-			op,
+		return apperr.Validation(op, err).WithPublic(
 			"http.unknown_field",
 			"El cuerpo JSON contiene campos no permitidos",
-			err,
 		)
 	}
 
-	return apperr.ValidationPublic(
-		op,
+	return apperr.Validation(op, err).WithPublic(
 		"http.invalid_json",
 		"No se pudo interpretar el cuerpo JSON",
-		err,
 	)
 }
