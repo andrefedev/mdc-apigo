@@ -82,7 +82,7 @@ func (c *Client) execute(req *http.Request) error {
 	}
 
 	if response.StatusCode >= http.StatusBadRequest {
-		return decodeRequestError2(response.StatusCode, body)
+		return decodeRequestError(response.StatusCode, body)
 	}
 
 	return nil

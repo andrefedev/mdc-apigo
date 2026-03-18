@@ -1,0 +1,178 @@
+syntax = 'proto3';
+
+package muydelcampo;
+
+option go_package = 'muydelcampo/protogen/v1';
+
+import 'google/type/date.proto';
+import 'google/protobuf/timestamp.proto';
+
+// # AUTH # //
+
+message Code {
+  string ref = 1;
+  string phone = 2;
+  string channel = 3;
+  google.protobuf.Timestamp date_expired = 4;
+}
+
+message User {
+  string ref = 1;
+  string name = 2;
+  string phone = 3;
+  bool is_staff = 4;
+  bool is_super = 5;
+  bool is_active = 6;
+  optional google.protobuf.Timestamp last_login = 7;
+  google.protobuf.Timestamp date_joined = 8;
+}
+
+message UserAddr {
+  string ref = 1;
+  string pid = 2; // place ref
+  double lat = 3;
+  double lng = 4;
+  string name = 5;
+  string cmna = 6;
+  string route = 7;
+  string street = 8;
+  string neighb = 9;
+  string locality = 10;
+  string sublocal = 11;
+  string address1 = 12; // casa / apto complemento
+  string address2 = 13; // instrucciones de entrega
+  bool is_default = 14;
+  google.protobuf.Timestamp date_created = 15;
+  google.protobuf.Timestamp date_updated = 16;
+}
+
+// # CATALOG # //
+
+message Genre {
+  string ref = 1;
+  string name = 2;
+  optional string descr = 3;
+  optional string imurl = 4;
+  int32 display = 5;
+  bool is_public = 6;
+  google.protobuf.Timestamp date_created = 7;
+  int32 product_count = 8;
+}
+
+message Product {
+  string ref = 1;
+  optional string upc = 2;
+  int32 code = 3;
+  string name = 4;
+  Genre genre = 5;
+  optional string descr = 6;
+  optional string imurl = 7;
+  int32 display = 8;
+
+  int32 weight = 9;
+  string unitype = 10;
+  int32 quantity = 11;
+
+  bool is_active = 12;
+  bool is_public = 13;
+  int32 cost_price = 15;
+  int32 base_price = 16;
+  int32 num_in_stock = 18;
+  int32 num_in_alloc = 19;
+
+  google.protobuf.Timestamp date_created = 20;
+  google.protobuf.Timestamp date_updated = 21;
+}
+
+// # STORE # //
+
+message Point {
+  double lat = 1; // y
+  double lng = 2; // x
+}
+
+message Store {
+  string ref = 1;
+  string code = 2;
+  Point geom = 3;
+  bool is_active = 4;
+  bool is_public = 5;
+  google.protobuf.Timestamp date_joined = 6;
+}
+
+// ORDER
+
+message Order {
+  string ref = 1;
+  // cesta
+  // usuario
+  // owner creador
+  // dirección de envío
+  User user = 2;
+  UserAddr addr = 3;
+  DeliverySlot slot = 4;
+
+  int32 number = 5;
+  string status = 6; // es un enum
+  int32 base_price = 7;
+  int32 offer_price = 8;
+  int32 total_price = 9;
+  google.protobuf.Timestamp date_created = 10;
+  google.protobuf.Timestamp date_updated = 11;
+
+  string payment_status = 12; // es un enum...
+  string payment_method = 13; // es un enum...
+}
+
+message OrderNote {
+  string ref = 1;
+  string note = 2;
+  google.protobuf.Timestamp date_created = 3;
+}
+
+message OrderLine {
+  string ref = 1;
+  Product item = 2;
+  string status = 3;
+  int32 quantity = 4;
+  int32 cost_price = 5;
+  int32 base_price = 6;
+  int32 offer_price = 7;
+  int32 total_price = 8;
+}
+
+// DELIVERY
+
+message DeliverySlot {
+  string ref = 1;
+  string code = 2; // "07:00-10:00"
+  google.type.Date work_date = 3;
+  int32 capacity = 4;
+  int32 reserved = 5;
+  int32 remaining = 6;
+  int64 start_unix = 7; // segundos epoch
+  int64 until_unix = 8; // segundos epoch
+}
+
+// # GOOGLE MAPS # //
+
+message Place {
+  string ref = 1;
+  double lat = 2;
+  double lng = 3;
+  string name = 4;
+  string cmna = 5;
+  string route = 6;
+  string street = 7;
+  string neighb = 8;
+  string address = 9;
+  string locality = 10;
+  string sublocal = 11;
+}
+
+message Prediction {
+  string ref = 1;
+  string desc = 2;
+  string title = 3;
+  string subtitle = 4;
+}

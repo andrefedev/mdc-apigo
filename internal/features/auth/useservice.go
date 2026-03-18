@@ -39,17 +39,20 @@ func (s *Service) Code(ctx context.Context, phone string) (string, string, error
 		return "", "", ErrInvalidPhone(err)
 	}
 
-	res, err := s.deps.AuthRepository.CodeInsert(ctx, data)
+	ref, err := s.deps.AuthRepository.CodeInsert(ctx, data)
 	if err != nil {
 		return "", "", apperr.Wrap(oper, err)
 	}
 
 	// Send Code Verification...
-	templ := &messages.SendTemplateMessage{
+	templ := &messages.TemplateMessageRequest{
 		To:   data.Phone,
 		Type: messages.TypeTemplate,
 		Template: &messages.TemplContent{
 			Name: "verify_code",
+			Language: messages.TemplLang{
+				Code: "es_CO",
+			},
 			Components: []messages.TemplComp{
 				{
 					Type: "body",
@@ -82,8 +85,12 @@ func (s *Service) Code(ctx context.Context, phone string) (string, string, error
 	}
 
 	// ELIMINAR EL CODIGO DE LA BASE DE DATOS ??
+	return ref, code, nil
+}
 
-	return res, code, nil
+func (s *Service) CodeVerify(ctx context.Context, code string) (bool, error) {
+	// pasado un ref y un code debemos poder validar..
+	return false, nil
 }
 
 func (s *Service) IdentityByIdToken(ctx context.Context, idToken string) (*Identity, error) {

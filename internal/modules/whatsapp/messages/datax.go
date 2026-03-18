@@ -15,10 +15,6 @@ const (
 	InteractiveHeaderTypeVideo    = "video"
 	InteractiveHeaderTypeDocument = "document"
 
-	//TemplCategoryUtility        = "UTILITY"
-	//TemplCategoryMarketing      = "MARKETING"
-	//TemplCategoryAuthentication = "AUTHENTICATION"
-
 	TemplParameterTypeDoc   = "document"
 	TemplParameterTypeText  = "text"
 	TemplParameterTypeImage = "image"

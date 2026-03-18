@@ -1,16 +1,8 @@
 package messages
 
 // NewTemplateMessageReq maps template input into a Graph API payload.
-func NewTemplateMessageReq(input *SendTemplateMessage) TemplateMessageData {
+func newTemplateMessage(input *TemplateMessageRequest) TemplateMessage {
 	// parameters := make([]TemplateParameter, 0, len(input.BodyText))
-
-	//for _, item := range input.BodyText {
-	//	text := item
-	//	parameters = append(parameters, TemplateParameter{
-	//		Type: TemplateParameterTypeText,
-	//		Text: &text,
-	//	})
-	//}
 
 	//components := make([]TemplateComponent, 0, 1)
 	//if len(parameters) > 0 {
@@ -20,13 +12,10 @@ func NewTemplateMessageReq(input *SendTemplateMessage) TemplateMessageData {
 	//	})
 	//}
 
-	templ := input.Template
-	templ.Language.Code = "es_CO"
-
-	return TemplateMessageData{
-		To:               "57" + input.To,
+	return TemplateMessage{
+		To:               input.To,
 		Type:             TypeTemplate,
-		Template:         templ,
+		Template:         input.Template,
 		RecipientType:    RecipientTypeIndividual,
 		MessagingProduct: MessagingProductWhatsApp,
 		// Context:          input.Context,

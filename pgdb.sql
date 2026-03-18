@@ -202,7 +202,7 @@ WHERE days.work_date = CURRENT_DATE  AND addr.geom IS NOT NULL ORDER BY cluster_
 -- SELECT
 -- SUM(l.quantity) AS total_vendido
 -- FROM orders_lines l
--- JOIN orders o ON o.id = l.oid
+-- JOIN sales o ON o.id = l.oid
 -- WHERE l.pid = '68458d20-d0a1-42c0-83a9-f22e9e1e3bdc' AND o.status = 'acepted';
 
 SELECT

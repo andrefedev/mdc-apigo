@@ -5,7 +5,7 @@ import (
 	"errors"
 )
 
-var errInvalidPhone = errors.New("lookups validation failed")
+var errInvalidPhone = errors.New("phone validation failed")
 
 func ErrInvalidPhone(cause error) error {
 	if cause == nil {
