@@ -1,11 +1,11 @@
-package loggex
+package loggerx
 
 import (
 	"log/slog"
 	"os"
 )
 
-// SetupLogger configura el loggex global de la aplicación (slog).
+// SetupLogger configura el loggerx global de la aplicación (slog).
 // Si env == "dev", usa texto plano para facilitar la lectura local.
 // De lo contrario, usa JSON estructurado optimizado para Google Cloud Run.
 func SetupLogger(env string) {
@@ -46,7 +46,7 @@ func SetupLogger(env string) {
 		)
 	}
 
-	// Establecer el loggex configurado como el predeterminado global
+	// Establecer el loggerx configurado como el predeterminado global
 	l := slog.New(h)
 	slog.SetDefault(l)
 }

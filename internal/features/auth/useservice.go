@@ -3,7 +3,7 @@ package auth
 import (
 	"apigo/internal/modules/whatsapp/messages"
 	"apigo/internal/platforms/aerr/aerrx"
-	"apigo/internal/platforms/crypx"
+	"apigo/internal/platforms/cryptox"
 	"context"
 )
 
@@ -27,7 +27,7 @@ func (s *Service) Code(ctx context.Context, phone string) (string, string, error
 	oper := "Auth.Service.Code"
 
 	// OTP + challenge
-	code, err := crypx.GenerateRandomNumberString(6)
+	code, err := cryptox.GenerateRandomNumberString(6)
 	if err != nil {
 		return "", "", aerrx.New(aerrx.KindInternal, oper, err)
 	}
@@ -44,13 +44,12 @@ func (s *Service) Code(ctx context.Context, phone string) (string, string, error
 		return "", "", aerrx.Wrap(oper, err)
 	}
 
-	// Debo tener acceso a los structs, para crear templates...
-
+	// Send Code Verification...
 	templ := &messages.SendTemplateMessage{
 		To:   data.Phone,
 		Type: messages.TypeTemplate,
 		Template: &messages.TemplContent{
-			Name: "auth_code",
+			Name: "verify_code",
 			Components: []messages.TemplComp{
 				{
 					Type: "body",
@@ -62,8 +61,9 @@ func (s *Service) Code(ctx context.Context, phone string) (string, string, error
 					},
 				},
 				{
-					Type: "otp",
-					// SubType: new("url"),
+					Type:    "button",
+					SubType: new("url"),
+					Index:   new(0),
 					Parameters: []messages.TemplParam{
 						{
 							Type: "text",

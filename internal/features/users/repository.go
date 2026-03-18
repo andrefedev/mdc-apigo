@@ -121,8 +121,8 @@ func (r Repository) SelectByPhone(ctx context.Context, phone string) (*User, err
 
 	qry := `
 	SELECT
-	id, idk, name, lookups, is_staff, is_super, is_active, last_login, date_joined
-	FROM users WHERE lookups = $1
+	id, idk, name, phone, is_staff, is_super, is_active, last_login, date_joined
+	FROM users WHERE phone = $1
 	`
 
 	rows, err := r.db.Query(ctx, qry, phone)

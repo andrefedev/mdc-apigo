@@ -19,6 +19,8 @@ func NewHandler(deps HandlerDeps) http.Handler {
 	h := &Handler{deps: deps}
 
 	r.Post("/code", h.code)
+	r.Post("/verify", h.verify)
+	// r.Post("/revoke", h.revoke)
 
 	return r
 }

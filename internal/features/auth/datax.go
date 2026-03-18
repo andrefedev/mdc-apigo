@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"apigo/internal/platforms/aerr/derrx"
-	"apigo/internal/platforms/validator/validationx"
+	"apigo/internal/platforms/apperr"
+	"apigo/internal/platforms/validatex/validationx"
 )
 
 // REQUEST
@@ -19,7 +19,7 @@ func (r *CodeRequest) Validate() error {
 	const oper = "Auth.CodeRequest.Validate"
 
 	if !validationx.IsPhoneNumber(r.Phone) {
-		return derrx.Validation(
+		return apperr.ValidationPublic(
 			oper,
 			"auth.invalid_phone",
 			"El número de teléfono no es válido",

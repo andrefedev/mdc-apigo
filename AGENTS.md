@@ -1,81 +1,123 @@
 # AGENTS.md
 
-## Propósito
+## Proposito
 
-Este repositorio implementa un API HTTP en Go para `Muy del Campo`. El estado actual del código muestra una base modular con foco en autenticación, identidad y usuarios, montada sobre `chi`, `pgxpool` y utilidades internas para configuración, errores y transporte HTTP.
+Este repositorio implementa un API HTTP en Go para `Muy del Campo`. La base actual ya separa transporte, casos de uso, persistencia e integraciones, pero todavia conviven decisiones nuevas con codigo legacy, drift de documentacion y varias inconsistencias de contrato que generan deuda tecnica real.
 
-Este archivo sirve como contexto operativo para cualquier agente o desarrollador que continúe el trabajo en este repo. Describe el estado real del código, incluyendo mejoras recientes y las discrepancias de infraestructura que todavía siguen abiertas.
+Este archivo describe el estado observado en el codigo de hoy. Debe tomarse como referencia operativa para cualquier agente o desarrollador que siga trabajando en este repo.
 
-## Stack e infraestructura
+## Stack real
 
-- Lenguaje: Go `1.26` en [`go.mod`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/go.mod)
+- Lenguaje: Go `1.26` en [go.mod](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/go.mod)
 - Transporte activo: HTTP JSON sobre `net/http` + `github.com/go-chi/chi/v5`
-- Base de datos activa: PostgreSQL vía `github.com/jackc/pgx/v5/pgxpool`
+- Base de datos activa: PostgreSQL via `github.com/jackc/pgx/v5/pgxpool`
 - Runtime objetivo: Google Cloud Run
-- Build/deploy: [`Dockerfile`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/Dockerfile) + [`cloudbuild.yaml`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/cloudbuild.yaml)
-- Logging: `log/slog`, texto en `dev`, JSON fuera de `dev`
-- Integración externa en curso: WhatsApp Cloud API
-- Integraciones auxiliares presentes pero no conectadas al bootstrap actual: Twilio, Google Maps, Google Cloud Storage, Pub/Sub
+- Build/deploy: [Dockerfile](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/Dockerfile) + [cloudbuild.yaml](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/cloudbuild.yaml)
+- Logging estructurado: `log/slog` via `internal/platforms/loggex`
+- Integracion externa activa: WhatsApp Cloud API
+- Integraciones presentes pero no conectadas al bootstrap actual: Twilio, Google Maps, Storage, Pub/Sub
 
 ## Entry point y arranque
 
-El entrypoint es [`cmd/server/main.go`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/cmd/server/main.go).
+El entrypoint real es [cmd/server/main.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/cmd/server/main.go).
 
-Flujo esperado de arranque:
+Secuencia observada:
 
-1. Cargar configuración con `confx.Load()`
-2. Inicializar logger global con `loggex.SetupLogger`
-3. Abrir pool PostgreSQL con `postgres.Open`
-4. Construir repositorios
-5. Construir servicios
-6. Construir middlewares
-7. Construir router HTTP
-8. Levantar `http.Server`
-9. Hacer graceful shutdown con `SIGINT` y `SIGTERM`
+1. Carga configuracion con `confx.Load()`
+2. Inicializa logger global con `loggex.SetupLogger`
+3. Abre pool PostgreSQL con `postgres.Open`
+4. Construye `Pgdb`
+5. Construye repositorios `auth` y `users`
+6. Construye cliente WhatsApp y `messages.Service`
+7. Construye servicios `auth` y `users`
+8. Construye middleware de identidad
+9. Construye router HTTP
+10. Levanta `http.Server`
+11. Hace graceful shutdown con `SIGINT` y `SIGTERM`
 
-Observaciones importantes del estado actual:
+Notas relevantes:
 
-- `main` ya no usa `init()` global; la carga de config, logger, DB y wiring de dependencias ocurre de forma explícita.
-- `auth.Service` ya recibe `MessageService` desde `main`.
-- `auth.Code` hace cleanup best-effort del OTP si falla el envío por WhatsApp.
-- `go test ./...` no pudo ejecutarse en este entorno porque no existe binario `go` disponible en shell.
+- Ya no hay `init()` global para bootstrap.
+- El wiring se hace explicitamente desde `main`.
+- `auth.Service` depende de `messages.Service`.
+- El router tambien monta la feature `app`, no solo `auth` y `users`.
 
-## Arquitectura
+## Estructura del codigo
 
-La estructura sigue un patrón por feature y por plataforma:
-
-- `internal/features/*`: casos de uso y transporte por feature
-- `internal/modules/*`: integraciones o módulos de infraestructura de negocio
+- `cmd/server`: composicion y bootstrap
+- `internal/features/*`: handlers HTTP, servicios y repositorios por feature
+- `internal/modules/*`: infraestructura de negocio o integraciones externas
 - `internal/platforms/*`: capacidades transversales reutilizables
-- `cmd/server`: composición y bootstrap
 
-### Capas por feature
-
-El patrón dominante es:
+El patron dominante sigue siendo:
 
 `handler -> service -> repository -> postgres`
 
 Responsabilidad por capa:
 
-- `handler`: parsea request HTTP, valida input, invoca service, serializa respuesta o error
-- `service`: concentra lógica de aplicación y traducción de errores técnicos a errores públicos
-- `repository`: ejecuta SQL y devuelve errores tipificados con `aerrx`
-- `domain`: define modelos del feature
-- `data/datax`: DTOs internos, validación y mapeo
-- `myerrors`: errores públicos del feature
+- `handler`: parseo HTTP, validacion de entrada y serializacion de salida/error
+- `service`: reglas de aplicacion, orquestacion y traduccion de errores
+- `repository`: SQL y adaptacion a `aerrx`
+- `domain`: modelos del feature
+- `data/datax`: DTOs internos y validacion de request
+- `myerrors`: errores publicos del feature
 
-Features activas:
+## Features activas
 
-- `auth`: emisión de código OTP y resolución de identidad desde header `Authorization`
-- `users`: lectura de usuario autenticado
+### `app`
 
-## Transporte HTTP
+Vive en `internal/features/app` y hoy solo expone webhook HTTP:
 
-El router principal vive en [`internal/platforms/httpx/app.go`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/httpx/app.go).
+- `GET /v1/app/webhook`
+- `POST /v1/app/webhook`
 
-### Middlewares globales
+Estado actual:
 
-Se instalan estos middlewares de `chi`:
+- `GET` responde el `hub.challenge` si `hub.mode == "subscribe"`
+- `POST` lee y loggea headers/body y responde `EVENT_RECEIVED`
+- No usa todavia `internal/modules/whatsapp/webhooks`
+- No hay verificacion real de firma ni de token del webhook
+
+### `auth`
+
+Expone:
+
+- `POST /v1/auth/code`
+
+Flujo actual:
+
+1. Decodifica JSON con `httpx.DecodeJson`
+2. Normaliza y valida telefono
+3. Genera OTP de 6 digitos
+4. Inserta OTP en `users_codes`
+5. Envia template de WhatsApp
+6. Responde `201` con `{ "id": "<ref>" }`
+
+Importante:
+
+- La limpieza del OTP si falla WhatsApp esta comentada, no activa
+- El servicio retorna tambien el codigo OTP, aunque el handler no lo expone
+
+### `users`
+
+Expone:
+
+- `GET /v1/users/me`
+
+Flujo actual:
+
+1. `AttachIdentity` lee `Authorization`
+2. Extrae token con prefijo exacto `Bearer `
+3. Resuelve identidad con lookup directo en `users.idk`
+4. Guarda `*Identity` en `context.Context`
+5. `IsAuthenticated` exige identidad valida
+6. `me` carga el usuario desde `users`
+
+## Router HTTP
+
+El router principal vive en [internal/platforms/httpx/app.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/httpx/app.go).
+
+Middlewares globales instalados:
 
 - `middleware.Logger`
 - `middleware.RealIP`
@@ -84,46 +126,18 @@ Se instalan estos middlewares de `chi`:
 - `middleware.URLFormat`
 - `middleware.CleanPath`
 
-### Endpoints base
+Rutas base:
 
 - `GET /healthz`
 - `GET /readyz`
 
-`/readyz` usa `pool.Ping()` contra PostgreSQL.
+`/readyz` usa `pool.Ping()`.
 
-### Rutas versionadas actuales
+## Identidad y autorizacion
 
-Bajo `/v1`:
+La identidad esta encapsulada en `internal/features/auth`.
 
-- `/auth`
-- `/users`
-
-Rutas concretas observadas:
-
-- `POST /v1/auth/code`
-- `GET /v1/users/me`
-
-Notas:
-
-- `/v1/users/me` exige autenticación mediante `auth.Middleware`.
-- `users.me` responde con `200 OK`.
-- `auth.code` responde con `201 Created` y payload `{ "id": "<ref>" }`.
-
-## Identidad y autorización
-
-La identidad está encapsulada en `internal/features/auth`.
-
-### Flujo
-
-1. `AttachIdentity` lee el header `authorization`
-2. Extrae token con prefijo `Bearer `
-3. Resuelve identidad en DB con `ResolveIdentityByIdToken`
-4. Guarda `*Identity` en `context.Context`
-5. `IsAuthenticated` exige una identidad válida
-
-### Modelo de identidad
-
-`Identity` contiene:
+Modelo actual:
 
 - `UserRef`
 - `IdToken`
@@ -137,31 +151,28 @@ Helpers disponibles:
 - `CanAccessBackoffice()`
 - `CanManageUsers()`
 
-Actualmente no hay JWT ni validación criptográfica del token; el `Bearer token` funciona como lookup directo del campo `users.idk`.
+Observaciones:
+
+- No hay JWT ni validacion criptografica.
+- El bearer token funciona como lookup directo sobre `users.idk`.
+- El middleware hoy registra el token en logs, lo cual es un riesgo de seguridad.
+- Si el token no existe en DB, la cadena actual termina exponiendo `404`, no `401`.
 
 ## Errores
 
-El manejo de errores está bien separado y es una de las convenciones más importantes del repo.
-
-### Paquetes
-
-- [`aerrx`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/aerrx/error.go): error técnico, `Kind`, `Oper`, `Cause`
-- [`derrx`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/derrx/error.go): error público, `Code`, `Body`
-- [`perrx`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/perrx/error.go): serialización pública final para HTTP
-
-Documento de referencia existente:
-
-- [`docs/aerrx-derrx-perrx.md`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/docs/aerrx-derrx-perrx.md)
-
-### Regla práctica
+Convencion actual:
 
 - repository: retorna `aerrx`
-- service: puede envolver con `aerrx.Wrap` o traducir a `derrx`
+- service: envuelve con `aerrx.Wrap` o traduce a `derrx`
 - handler/http: usa `httpx.Fail`
 
-### Mapping HTTP
+Paquetes:
 
-`httpx.ParseError` mapea `aerrx.Kind` a status:
+- [internal/platforms/aerr/aerrx/error.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/aerrx/error.go): error tecnico con `Kind`, `Oper`, `Cause`
+- [internal/platforms/aerr/derrx/error.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/derrx/error.go): error publico con `Code` y `Body`
+- [internal/platforms/aerr/perrx/error.go](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/aerr/perrx/error.go): payload publico HTTP
+
+Mapping HTTP actual:
 
 - `not_found` -> `404`
 - `validation` -> `400`
@@ -170,159 +181,95 @@ Documento de referencia existente:
 - `conflict` -> `409`
 - default -> `500`
 
-Errores `5xx` se registran con `slog`.
+Nota:
 
-## Validación y normalización
+- `httpx.slogInternalError` usa `slog`.
+- Parte del codigo todavia mezcla `log.Printf` y `fmt.Printf` fuera de este esquema.
 
-Helpers actuales:
+## Persistencia
 
-- [`validationx`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/validator/validationx/validator.go)
-- [`normalizex`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/validator/normalizex/normalize.go)
+El acceso a DB esta en `internal/modules/postgres`.
 
-Puntos relevantes:
+Piezas relevantes:
 
-- `IsPhoneNumber` valida números móviles colombianos
-- `IsOneTimeCode` valida OTP de 6 dígitos
-- `ClearString` colapsa espacios
-- `NormalizeTitle` y `NormalizarStreet` normalizan texto
-- `httpx.DecodeJson` rechaza campos desconocidos y múltiples objetos JSON en el body
+- `postgres.Open`: parsea DSN, configura pool y hace `Ping`
+- `postgres.Pgdb`: wrapper sobre pool
+- `Pgdb.WithTx`: propaga transacciones por `context.Context`
 
-## Persistencia y acceso a datos
-
-El acceso a DB está en `internal/modules/postgres`.
-
-### Componentes
-
-- `postgres.Open`: crea `pgxpool.Pool`, configura límites y hace `Ping`
-- `postgres.Pgdb`: wrapper sobre pool con soporte para `Exec`, `Query`, `QueryRow`
-- `Pgdb.WithTx`: propaga transacciones usando `context.Context`
-
-### Tablas observadas en código
-
-Las features activas interactúan con:
+Tablas activamente usadas desde features actuales:
 
 - `users`
 - `users_codes`
 
-Consultas actuales:
+Advertencia importante:
 
-- `auth.Repository.CodeInsert`
-- `auth.Repository.CodeDelete`
-- `auth.Repository.CodeSelect`
-- `users.Repository.Select`
-- `users.Repository.SelectByPhone`
-- `auth.Repository.SelectIdentityByIdToken`
+- [pgdb.sql](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/pgdb.sql) no es una fuente canonica del esquema. Mezcla SQL operativo, experimentos, DDL manual y consultas auxiliares.
 
-Nota sobre esquema:
+## WhatsApp
 
-- [`pgdb.sql`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/pgdb.sql) contiene SQL mixto, migraciones manuales y consultas de apoyo; no debe asumirse como fuente canónica completa del esquema actual.
+La integracion activa vive en `internal/modules/whatsapp` y `internal/modules/whatsapp/messages`.
 
-## Integraciones externas
+Estado actual:
 
-### WhatsApp
+- `whatsapp.Config` soporta `ApiBaseUrl` y `ApiVersion`, pero el bootstrap no los carga desde env
+- El cliente usa defaults `https://graph.facebook.com` y `v25.0`
+- `messages.Service.SendTemplate` compone la ruta `<phone-id>/messages`
+- El cliente hoy loggea request body y URL
+- El cliente devuelve errores genericos con el body remoto sin tipado propio
 
-La integración activa en código apunta a Meta WhatsApp Cloud API dentro de `internal/modules/whatsapp`.
+## Variables de entorno reales del bootstrap
 
-Piezas disponibles:
-
-- `Client`
-- `MessageService.SendTemplate`
-
-Estado:
-
-- hay cliente HTTP y envío de template
-- el wiring ya se hace desde `main`
-- `MessageService.SendTemplate` usa `context.Context`
-- el cliente compone la URL con `baseURL + version + phoneID`
-- si el envío falla, `auth.Service.Code` intenta borrar el OTP recién creado
-
-### Twilio
-
-Existe soporte en [`internal/platforms/confx/conf.go`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/internal/platforms/confx/conf.go), pero no está conectado al arranque actual.
-
-### Google Maps, Storage y Pub/Sub
-
-También existen helpers en `confx/conf.go`, pero hoy no forman parte del bootstrap efectivo.
-
-## Variables de entorno
-
-### Requeridas por el bootstrap actual
+Requeridas hoy por `confx.Load()`:
 
 - `ENV`
 - `PORT`
 - `WHATSAPP_TOKEN`
 - `WHATSAPP_PHONE`
-- `WHATSAPP_BASE_URL`
-- `WHATSAPP_VERSION`
 - `PG_DATABASE_URL`
 
-Notas:
-
-- `PORT` se normaliza a formato `:8080` si llega como `8080`.
-- `WHATSAPP_BASE_URL` y `WHATSAPP_VERSION` tienen defaults en `confx.Load()`.
-
-### Declaradas en `Config` pero no completamente usadas
+Opcionales cargadas hoy:
 
 - `GOOGLE_MAPS_API_KEY`
-- `GoogleGeminiApiKey` existe en `Config`, pero no se carga desde env en `Load()`
 
-### Variables legacy o usadas por helpers no conectados
+Campos presentes en `Config` pero no cargados desde env:
 
-- `PGDB_URI`
-- `TWILIO_SID`
-- `TWILIO_TOKEN`
-- `TWILIO_ACCOUNT_SID`
-- `GOOGLE_APPLICATION_CREDENTIALS`
+- `GoogleGeminiApiKey`
 
-### Regla de seguridad
+Capacidades soportadas por codigo de WhatsApp pero no expuestas desde `confx.Load()`:
 
-No copiar secretos reales a documentación, commits ni respuestas. El repo contiene un `.env` local, pero este archivo no debe replicarse ni volcar sus valores en otros artefactos.
+- `WHATSAPP_BASE_URL`
+- `WHATSAPP_VERSION`
 
-## Deploy y operación
+## Build, deploy y verificacion
 
-### Docker
+- `Dockerfile` compila binario en multi-stage y corre en `scratch`
+- `cloudbuild.yaml` despliega a Cloud Run con secretos para `PG_DATABASE_URL`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE` y `GOOGLE_MAPS_API_KEY`
+- El binario `go` no esta en `PATH` del shell, pero si existe en `/Users/andrefedev/sdk/go1.26.0/bin/go`
+- `go test ./...` no pudo completarse aqui por falta de acceso de red a `proxy.golang.org`
+- No hay archivos `_test.go` en el repo hoy
 
-El binario se compila en multi-stage build y termina en imagen `scratch`.
+## Hallazgos y deuda tecnica vigente
 
-Observación:
+Estas son las discrepancias mas importantes detectadas en el estado actual:
 
-- [`Dockerfile`](/Users/andrefedev/Documents/Dev/muydelcampo/go/apigo/Dockerfile) usa una imagen `golang` alineada con `go.mod`.
-
-### Cloud Build / Cloud Run
-
-`cloudbuild.yaml` construye imagen, hace push y despliega a Cloud Run con:
-
-- `--use-http2`
-- `--min-instances=1`
-- `--max-instances=10`
-- `--session-affinity`
-- `--no-cpu-throttling`
-- `--set-cloudsql-instances`
-
-Observación importante:
-
-- `cloudbuild.yaml` ahora publica `PG_DATABASE_URL`, `WHATSAPP_TOKEN` y `WHATSAPP_PHONE`, y fija `WHATSAPP_BASE_URL`/`WHATSAPP_VERSION` como env vars.
-
-## Estado funcional actual
-
-Lo que sí está más cerca de funcionar conceptualmente:
-
-- health checks
-- conexión PostgreSQL
-- resolución de identidad por bearer token contra DB
-- lectura de `/v1/users/me`
-- generación de OTP en `auth`
-
-Lo que está incompleto o inconsistente:
-
-- alineación entre `.env` local y secretos reales configurados en Cloud Run
+- Drift entre documentacion y codigo: el `AGENTS.md` previo ya no describia fielmente rutas, config y verificacion real
+- Contrato de auth fragil: token bearer opaco, sin firma, sin expiracion y con semantica `404` cuando falla la identidad
+- Filtracion de datos sensibles en logs: bearer token, payloads de WhatsApp y cuerpos completos de webhook
+- Inconsistencia de naming de modelo/esquema: aparecen `phone`, `lookups`, `idk` y `ref` sin una convencion unificada
+- Repositorio `users` mezcla columnas `lookups` y `phone`, lo que indica drift de esquema o consultas obsoletas
+- Webhook en `app` esta acoplado al router final pero desacoplado del modulo `internal/modules/whatsapp/webhooks`, que hoy esta muerto
+- Exceso de codigo comentado y placeholders vacios, lo que hace dificil distinguir backlog real de residuos legacy
+- No existe suite de tests automatizados para handlers, servicios ni repositorios
+- `go.mod` carga dependencias pesadas no visibles en el bootstrap actual, lo que sugiere arrastre historico
 
 ## Convenciones para futuros cambios
 
-- Mantener el patrón `handler -> service -> repository`
-- No devolver mensajes públicos desde repository
-- Traducir errores de dominio en service usando `derrx`
+- Mantener el patron `handler -> service -> repository`
+- No crear clientes de infraestructura dentro de handlers
+- Dejar el wiring en `cmd/server/main.go` o en un modulo de bootstrap explicito
+- Hacer que repository devuelva solo errores tecnicos
+- Traducir errores publicos en service o handler
 - Centralizar respuestas HTTP con `httpx.Json` y `httpx.Fail`
-- Si se agrega autenticación real, evolucionar `auth` sin romper el contrato de contexto `WithIdentity/IdentityFromContext`
-- Mantener el wiring de integraciones en `main` y no crear clientes dentro de handlers o services
-- Si se formalizan migraciones, separar `pgdb.sql` en migraciones versionadas
+- No usar `pgdb.sql` como contrato canonico; si el proyecto sigue creciendo, migrar a migraciones versionadas
+- Eliminar logs de secretos o payloads completos antes de seguir ampliando auth/webhooks
+- Definir una convencion unica para campos de identidad y telefono antes de sumar mas features

@@ -1,8 +1,7 @@
 package auth
 
 import (
-	"apigo/internal/platforms/httpx"
-	"log"
+	"apigo/internal/platforms/okhttpx"
 	"net/http"
 	"strings"
 )
@@ -39,15 +38,11 @@ func (m *Middleware) AttachIdentity(next http.Handler) http.Handler {
 			return
 		}
 
-		log.Printf("idToken: %s", idToken)
-
 		identity, err := m.Service.IdentityByIdToken(ctx, idToken)
 		if err != nil {
-			httpx.Fail(w, r, err)
+			okhttpx.Fail(w, r, err)
 			return
 		}
-
-		log.Printf("pass test")
 
 		ctx = WithIdentity(ctx, identity)
 		next.ServeHTTP(w, r.WithContext(ctx))
@@ -59,7 +54,7 @@ func (m *Middleware) IsAuthenticated(next http.Handler) http.Handler {
 		ctx := r.Context()
 		identity, ok := IdentityFromContext(ctx)
 		if !ok || identity == nil || !identity.IsAuthenticated() {
-			httpx.Fail(w, r, ErrAuthenticationRequired(nil))
+			okhttpx.Fail(w, r, ErrAuthenticationRequired(nil))
 			return
 		}
 

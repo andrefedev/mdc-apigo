@@ -1,35 +1,38 @@
 package auth
 
 import (
-	"apigo/internal/platforms/httpx"
+	"apigo/internal/platforms/okhttpx"
+	"log"
 	"net/http"
 )
-
-type codeResponse struct {
-	ID string `json:"id"`
-}
 
 func (h *Handler) code(w http.ResponseWriter, r *http.Request) {
 	oper := "Auth.Handlex.Code"
 
 	ctx := r.Context()
 	var req CodeRequest
-	if err := httpx.DecodeJson(r, &req, oper); err != nil {
-		httpx.Fail(w, r, err)
+	if err := okhttpx.DecodeJson(r, &req, oper); err != nil {
+		okhttpx.Fail(w, r, err)
 		return
 	}
 
 	req.Normalize()
 	if err := req.Validate(); err != nil {
-		httpx.Fail(w, r, err)
+		okhttpx.Fail(w, r, err)
 		return
 	}
 
 	id, _, err := h.deps.Service.Code(ctx, req.Phone)
 	if err != nil {
-		httpx.Fail(w, r, err)
+		okhttpx.Fail(w, r, err)
 		return
 	}
 
-	httpx.Json(w, http.StatusCreated, codeResponse{ID: id})
+	okhttpx.Json(w, http.StatusCreated, map[string]string{"ref": id})
+}
+
+func (h *Handler) verify(w http.ResponseWriter, r *http.Request) {
+	// oper := "Auth.Handlex.Verify"
+
+	log.Printf("POST /auth/verify headers=%v", r.Header)
 }

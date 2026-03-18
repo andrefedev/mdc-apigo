@@ -21,10 +21,10 @@ func NewTemplateMessageReq(input *SendTemplateMessage) TemplateMessageData {
 	//}
 
 	templ := input.Template
-	templ.Language.Code = "es"
+	templ.Language.Code = "es_CO"
 
 	return TemplateMessageData{
-		To:               "+57" + input.To,
+		To:               "57" + input.To,
 		Type:             TypeTemplate,
 		Template:         templ,
 		RecipientType:    RecipientTypeIndividual,

@@ -1,7 +1,7 @@
 package users
 
 import (
-	"apigo/internal/platforms/validator/validationx"
+	"apigo/internal/platforms/validatex/validationx"
 	"errors"
 	"strings"
 	"time"

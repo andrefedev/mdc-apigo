@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"apigo/internal/platforms/aerr/derrx"
+	"apigo/internal/platforms/apperr"
 	"errors"
 )
 
@@ -12,7 +12,7 @@ func ErrInvalidPhone(cause error) error {
 		cause = errInvalidPhone
 	}
 
-	return derrx.Validation(
+	return apperr.ValidationPublic(
 		"Auth.ErrInvalidPhone",
 		"auth.invalid_phone",
 		"El número de teléfono no es válido",
@@ -21,7 +21,7 @@ func ErrInvalidPhone(cause error) error {
 }
 
 func ErrInvalidCode(cause error) error {
-	return derrx.Validation(
+	return apperr.ValidationPublic(
 		"Auth.ErrInvalidCode",
 		"auth.invalid_code",
 		"El código ingresado no es válido",
@@ -30,7 +30,7 @@ func ErrInvalidCode(cause error) error {
 }
 
 func ErrCodeExpired(cause error) error {
-	return derrx.Conflict(
+	return apperr.ConflictPublic(
 		"Auth.ErrCodeExpired",
 		"auth.code_expired",
 		"El código ya expiró",
@@ -41,7 +41,7 @@ func ErrCodeExpired(cause error) error {
 // IDENTITY
 
 func ErrIdentityNotFound(cause error) error {
-	return derrx.NotFound(
+	return apperr.NotFoundPublic(
 		"Auth.ErrIdentityNotFound",
 		"auth.identity_not_found",
 		"Identidad no encontrada",
@@ -50,7 +50,7 @@ func ErrIdentityNotFound(cause error) error {
 }
 
 func ErrAuthenticationRequired(cause error) error {
-	return derrx.Unauthorized(
+	return apperr.UnauthorizedPublic(
 		"Auth.ErrAuthenticationRequired",
 		"auth.authentication_required",
 		"Debes iniciar sesión para continuar",

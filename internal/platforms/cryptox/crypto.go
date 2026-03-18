@@ -1,4 +1,4 @@
-package crypx
+package cryptox
 
 import (
 	"crypto/rand"

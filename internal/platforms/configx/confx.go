@@ -1,4 +1,4 @@
-package confx
+package configx
 
 import (
 	"errors"
@@ -27,15 +27,15 @@ func Load() (Config, error) {
 	}
 
 	if cfg.WhatsAppToken == "" {
-		return Config{}, errors.New("config load(): you must set your 'WHATSAPP_TOKEN' env var")
+		return Config{}, errors.New("configx load(): you must set your 'WHATSAPP_TOKEN' env var")
 	}
 
 	if cfg.WhatsAppPhone == "" {
-		return Config{}, errors.New("config load(): you must set your 'WHATSAPP_PHONE' env var")
+		return Config{}, errors.New("configx load(): you must set your 'WHATSAPP_PHONE' env var")
 	}
 
 	if cfg.PgDatabaseUrl == "" {
-		return Config{}, errors.New("config load(): you must set your 'PG_DATABASE_URL' env var")
+		return Config{}, errors.New("configx load(): you must set your 'PG_DATABASE_URL' env var")
 	}
 
 	return cfg, nil

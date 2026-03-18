@@ -1,7 +1,7 @@
-package httpx
+package okhttpx
 
 import (
-	"apigo/internal/platforms/aerr/derrx"
+	"apigo/internal/platforms/apperr"
 	"encoding/json"
 	"errors"
 	"io"
@@ -39,7 +39,7 @@ func DecodeJson(r *http.Request, dst any, oper string) error {
 	}
 
 	if err := decoder.Decode(new(struct{})); err != io.EOF {
-		return derrx.Validation(
+		return apperr.ValidationPublic(
 			oper,
 			"http.invalid_json",
 			"El cuerpo JSON debe contener un solo objeto",
@@ -56,7 +56,7 @@ func mapDecodeError(op string, err error) error {
 	}
 
 	if errors.Is(err, io.EOF) {
-		return derrx.Validation(
+		return apperr.ValidationPublic(
 			op,
 			"http.empty_body",
 			"Debes enviar un cuerpo JSON",
@@ -65,7 +65,7 @@ func mapDecodeError(op string, err error) error {
 	}
 
 	if _, ok := errors.AsType[*json.SyntaxError](err); ok {
-		return derrx.Validation(
+		return apperr.ValidationPublic(
 			op,
 			"http.invalid_json",
 			"El cuerpo JSON no es válido",
@@ -74,7 +74,7 @@ func mapDecodeError(op string, err error) error {
 	}
 
 	if _, ok := errors.AsType[*json.UnmarshalTypeError](err); ok {
-		return derrx.Validation(
+		return apperr.ValidationPublic(
 			op,
 			"http.invalid_json",
 			"El cuerpo JSON contiene tipos inválidos",
@@ -83,7 +83,7 @@ func mapDecodeError(op string, err error) error {
 	}
 
 	if strings.HasPrefix(err.Error(), "json: unknown field ") {
-		return derrx.Validation(
+		return apperr.ValidationPublic(
 			op,
 			"http.unknown_field",
 			"El cuerpo JSON contiene campos no permitidos",
@@ -91,7 +91,7 @@ func mapDecodeError(op string, err error) error {
 		)
 	}
 
-	return derrx.Validation(
+	return apperr.ValidationPublic(
 		op,
 		"http.invalid_json",
 		"No se pudo interpretar el cuerpo JSON",

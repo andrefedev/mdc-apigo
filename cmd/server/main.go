@@ -1,8 +1,6 @@
 package main
 
 import (
-	"apigo/internal/features/app"
-	"apigo/internal/modules/whatsapp/messages"
 	"context"
 	"errors"
 	"log/slog"
@@ -12,23 +10,26 @@ import (
 	"syscall"
 	"time"
 
+	"apigo/internal/features/app"
 	"apigo/internal/features/auth"
 	"apigo/internal/features/users"
+	"apigo/internal/platforms/configx"
+	"apigo/internal/platforms/loggerx"
+	"apigo/internal/platforms/okhttpx"
+
 	"apigo/internal/modules/postgres"
 	"apigo/internal/modules/whatsapp"
-	"apigo/internal/platforms/confx"
-	"apigo/internal/platforms/httpx"
-	"apigo/internal/platforms/loggex"
+	"apigo/internal/modules/whatsapp/messages"
 )
 
 func main() {
-	cfg, err := confx.Load()
+	cfg, err := configx.Load()
 	if err != nil {
-		slog.Error("server main: load config", "err", err)
+		slog.Error("server main: load configx", "err", err)
 		os.Exit(1)
 	}
 
-	loggex.SetupLogger(cfg.Env)
+	loggerx.SetupLogger(cfg.Env)
 
 	ctx := context.Background()
 	pool, err := postgres.Open(ctx, cfg.PgDatabaseUrl)
@@ -67,8 +68,8 @@ func main() {
 	)
 
 	identityMiddleware := auth.NewMiddleware(authService)
-	router := httpx.NewAppRouter(
-		httpx.AppRouterDeps{
+	router := okhttpx.NewAppRouter(
+		okhttpx.AppRouterDeps{
 			AppHandler: app.NewHandler(
 				app.HandlerDeps{
 					// empty
@@ -85,12 +86,12 @@ func main() {
 					Identity: identityMiddleware,
 				},
 			),
-			ReadyHandler: httpx.Readyz(pool),
+			ReadyHandler: okhttpx.Readyz(pool),
 		},
 	)
 
-	srv := httpx.NewServer(
-		httpx.ServerConfig{
+	srv := okhttpx.NewServer(
+		okhttpx.ServerConfig{
 			Addr:    cfg.Port,
 			Handler: router,
 		},

@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"apigo/internal/modules/postgres"
-	"apigo/internal/platforms/aerr/aerrx"
+	"apigo/internal/platforms/apperr"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -32,7 +32,7 @@ func (r Repository) CodeInsert(ctx context.Context, data *CodeInsertData) (strin
 			"phone": data.Phone,
 		},
 	).Scan(&ref); err != nil {
-		return "", aerrx.New(aerrx.KindInternal, op, err)
+		return "", apperr.Internal(op, err)
 	}
 
 	return ref, nil
@@ -44,7 +44,7 @@ func (r Repository) CodeDelete(ctx context.Context, ref string) (int64, error) {
 
 	res, err := r.db.Exec(ctx, query, ref)
 	if err != nil {
-		return 0, aerrx.New(aerrx.KindInternal, op, err)
+		return 0, apperr.Internal(op, err)
 	}
 
 	return res.RowsAffected(), nil
@@ -62,19 +62,16 @@ func (r Repository) CodeSelect(ctx context.Context, ref string) (*Code, error) {
 
 	rows, err := r.db.Query(ctx, qry, ref)
 	if err != nil {
-		k := aerrx.KindInternal
-		return nil, aerrx.New(k, op, err)
+		return nil, apperr.Internal(op, err)
 	}
 	defer rows.Close()
 
 	raw, err := pgx.CollectOneRow[_CodeRaw](rows, pgx.RowToStructByNameLax[_CodeRaw])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			k := aerrx.KindNotFound
-			return nil, aerrx.New(k, op, err)
+			return nil, apperr.NotFound(op, err)
 		}
-		k := aerrx.KindInternal
-		return nil, aerrx.New(k, op, err)
+		return nil, apperr.Internal(op, err)
 	}
 
 	return raw.ToModel(), nil
@@ -91,16 +88,16 @@ func (r Repository) IdentitySelectByIdToken(ctx context.Context, idToken string)
 
 	rows, err := r.db.Query(ctx, qry, idToken)
 	if err != nil {
-		return nil, aerrx.New(aerrx.KindInternal, op, err)
+		return nil, apperr.Internal(op, err)
 	}
 	defer rows.Close()
 
 	res, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByNameLax[Identity])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, aerrx.New(aerrx.KindNotFound, op, err)
+			return nil, apperr.NotFound(op, err)
 		}
-		return nil, aerrx.New(aerrx.KindInternal, op, err)
+		return nil, apperr.Internal(op, err)
 	}
 
 	return &res, nil
