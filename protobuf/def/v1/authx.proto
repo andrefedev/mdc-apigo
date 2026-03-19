@@ -1,0 +1,15 @@
+syntax = 'proto3';
+
+package muydelcampo;
+
+option go_package = 'apigo/protobuf/gen/v1;';
+
+option java_package = "com.muydelcampo.apigo";
+
+import 'google/protobuf/timestamp.proto';
+
+message Code {
+  string ref = 1;
+  string phone = 2;
+  google.protobuf.Timestamp date_expired = 3;
+}

@@ -9,8 +9,8 @@ _gen_proto_v1:
 	@rm -rf ./protobuf/gen
 	@mkdir -p ./protobuf/def/v1
 	@mkdir -p ./protobuf/gen/v1
-	@protoc -I=./protobuf/def/v1 -I=$(GOOGLEAPIS_DIR) --go_out=./protobuf/gen/v1 --go_opt=paths=source_relative ./protobuf/def/v1/*.proto
-	@protoc -I=./protobuf/def/v1 -I=$(GOOGLEAPIS_DIR) --go-grpc_out=./protobuf/gen/v1 --go-grpc_opt=paths=source_relative ./protobuf/def/v1/*.proto
+	@PATH=/Users/andrefedev/go/bin:$$PATH protoc -I=./protobuf/def/v1 -I=$(GOOGLEAPIS_DIR) --go_out=./protobuf/gen/v1 --go_opt=paths=source_relative ./protobuf/def/v1/*.proto
+	@PATH=/Users/andrefedev/go/bin:$$PATH protoc -I=./protobuf/def/v1 -I=$(GOOGLEAPIS_DIR) --go-grpc_out=./protobuf/gen/v1 --go-grpc_opt=paths=source_relative ./protobuf/def/v1/*.proto
 
 _gen_proto_dart_v2:
 	@rm -rf $(APP_PROTO_DIR)

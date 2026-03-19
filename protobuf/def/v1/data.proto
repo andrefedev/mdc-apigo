@@ -2,41 +2,13 @@ syntax = 'proto3';
 
 package muydelcampo;
 
-option go_package = 'muydelcampo/protogen/v1';
+option go_package = 'apigo/protobuf/gen/v1;';
 
 option java_package = "com.muydelcampo.apigo";
 
 import 'domain.proto';
 // import 'google/protobuf/timestamp.proto';
 import 'google/protobuf/field_mask.proto';
-
-// # USER CODE # //
-
-message CodeReq {
-  string phone = 1;
-  string channel = 2;
-}
-
-message CodeRes {
-  string ref = 1;
-}
-
-message CodeInfoReq {
-  string ref = 1;
-}
-
-message CodeInfoRes {
-  Code result = 1;
-}
-
-message TokenInfoReq {
-  string ref = 1;
-  string code = 2;
-}
-
-message TokenInfoRes {
-  string id_token = 1;
-}
 
 // # USER # //
 

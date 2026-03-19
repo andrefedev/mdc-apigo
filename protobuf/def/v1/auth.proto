@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package muydelcampo;
+
+option go_package = "apigo/protobuf/gen/v1;";
+
+import "authz.proto";
+
+service AuthService {
+  rpc Code(CodeReq) returns (CodeRes);
+  rpc CodeDetail(CodeDetailReq) returns (CodeDetailRes);
+  rpc VerifyCode(VerifyCodeReq) returns (VerifyCodeRes);
+}
