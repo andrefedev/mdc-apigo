@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.4
-// source: auth.proto
+// source: auth_api.proto
 
 package v1
 
@@ -25,7 +25,7 @@ var File_auth_proto protoreflect.FileDescriptor
 const file_auth_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"auth.proto\x12\vmuydelcampo\x1a\vauthz.proto2\xcd\x01\n" +
+	"auth_api.proto\x12\vmuydelcampo\x1a\vauthz.proto2\xcd\x01\n" +
 	"\vAuthService\x122\n" +
 	"\x04Code\x12\x14.muydelcampo.CodeReq\x1a\x14.muydelcampo.CodeRes\x12D\n" +
 	"\n" +

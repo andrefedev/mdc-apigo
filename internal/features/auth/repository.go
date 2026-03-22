@@ -102,3 +102,7 @@ func (r Repository) IdentitySelectByIdToken(ctx context.Context, idToken string)
 
 	return &res, nil
 }
+
+func (r Repository) SessionSelectByAccessToken(ctx context.Context, accessToken string) (*Session, error) {
+	return nil, nil
+}

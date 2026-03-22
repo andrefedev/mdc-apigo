@@ -56,7 +56,10 @@ func main() {
 	)
 
 	grpcServer := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(okgrpcx.UnaryErrorInterceptor),
+		grpc.ChainUnaryInterceptor(
+			okgrpcx.UnaryErrorInterceptor,
+			okgrpcx.UnaryLoggingInterceptor,
+		),
 	)
 
 	muydelcampov1.RegisterAuthServiceServer(

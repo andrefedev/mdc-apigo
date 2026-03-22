@@ -1,0 +1,16 @@
+
+syntax = 'proto3';
+
+package muydelcampo;
+
+option go_package = 'apigo/protobuf/gen/v1;';
+
+option java_package = "com.muydelcampo.apigo";
+
+import "users_data.proto";
+
+message UserMeReq {}
+
+message UserMeRes {
+  User user = 1;
+}

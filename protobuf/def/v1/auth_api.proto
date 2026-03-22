@@ -4,7 +4,7 @@ package muydelcampo;
 
 option go_package = "apigo/protobuf/gen/v1;";
 
-import "authz.proto";
+import "auth_data.proto";
 
 service AuthService {
   rpc Code(CodeReq) returns (CodeRes);

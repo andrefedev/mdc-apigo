@@ -11,7 +11,6 @@ func ErrInvalidPhone(cause error) error {
 	if cause == nil {
 		cause = errInvalidPhone
 	}
-
 	return apperr.Validation("Auth.ErrInvalidPhone", cause).WithPublic(
 		"auth.invalid_phone",
 		"El número de teléfono no es válido",

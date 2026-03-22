@@ -1,6 +1,6 @@
 PROTO_DIR = "/usr/local/Cellar/protobuf/33.4_1/include"
 GOOGLEAPIS_DIR = "/Users/andrefedev/Documents/Dev/googleapis"
-APP_PROTO_DIR = "/Users/andrefedev/Documents/Development/muydelcampo/flutter/pkg/api/lib/src/api"
+APP_PROTO_DIR = "/Users/andrefedev/Documents/Dev/muydelcampo/flutter/packages/api/lib/src/api"
 
 run:
 	set -a; source .env; set +a; go run ./cmd/server

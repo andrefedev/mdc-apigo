@@ -39,7 +39,7 @@ func StatusError(err error) error {
 	}
 
 	localized := &errdetails.LocalizedMessage{
-		Locale:  "es-CO",
+		Locale:  "es",
 		Message: public.Body,
 	}
 

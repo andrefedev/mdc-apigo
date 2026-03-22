@@ -23,7 +23,7 @@ func NewService(deps ServiceDeps) *Service {
 	return &Service{deps: deps}
 }
 
-func (s *Service) Code(ctx context.Context, phone string) (string, string, error) {
+func (s *Service) Code(ctx context.Context, input *codeInput) (string, string, error) {
 	oper := "Auth.Service.Code"
 
 	// OTP + challenge
@@ -32,8 +32,12 @@ func (s *Service) Code(ctx context.Context, phone string) (string, string, error
 		return "", "", apperr.Internal(oper, err)
 	}
 
-	// guardar codigo en la base de datos
-	data := &CodeInsertData{Code: code, Phone: phone}
+	// InsertData
+	data := &CodeInsertData{
+		Code:  code,
+		Phone: input.Phone,
+	}
+
 	data.Normalize()
 	if err := data.Validation(); err != nil {
 		return "", "", ErrInvalidPhone(err)
@@ -78,9 +82,6 @@ func (s *Service) Code(ctx context.Context, phone string) (string, string, error
 		},
 	}
 	if err := s.deps.MessageService.SendTemplate(ctx, templ); err != nil {
-		//if _, cleanupErr := s.deps.AuthRepository.CodeDelete(ctx, res); cleanupErr != nil {
-		//	slog.ErrorContext(ctx, "auth cleanup code after whatsapp failure", "code_ref", res, "err", cleanupErr)
-		//}
 		return "", "", apperr.Wrap(oper, err)
 	}
 
