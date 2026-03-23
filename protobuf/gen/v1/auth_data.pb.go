@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.4
-// source: authz.proto
+// source: auth_data.proto
 
 package v1
 
@@ -30,7 +30,7 @@ type CodeReq struct {
 
 func (x *CodeReq) Reset() {
 	*x = CodeReq{}
-	mi := &file_authz_proto_msgTypes[0]
+	mi := &file_auth_data_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +42,7 @@ func (x *CodeReq) String() string {
 func (*CodeReq) ProtoMessage() {}
 
 func (x *CodeReq) ProtoReflect() protoreflect.Message {
-	mi := &file_authz_proto_msgTypes[0]
+	mi := &file_auth_data_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,7 +55,7 @@ func (x *CodeReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CodeReq.ProtoReflect.Descriptor instead.
 func (*CodeReq) Descriptor() ([]byte, []int) {
-	return file_authz_proto_rawDescGZIP(), []int{0}
+	return file_auth_data_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *CodeReq) GetPhone() string {
@@ -74,7 +74,7 @@ type CodeRes struct {
 
 func (x *CodeRes) Reset() {
 	*x = CodeRes{}
-	mi := &file_authz_proto_msgTypes[1]
+	mi := &file_auth_data_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -86,7 +86,7 @@ func (x *CodeRes) String() string {
 func (*CodeRes) ProtoMessage() {}
 
 func (x *CodeRes) ProtoReflect() protoreflect.Message {
-	mi := &file_authz_proto_msgTypes[1]
+	mi := &file_auth_data_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -99,7 +99,7 @@ func (x *CodeRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CodeRes.ProtoReflect.Descriptor instead.
 func (*CodeRes) Descriptor() ([]byte, []int) {
-	return file_authz_proto_rawDescGZIP(), []int{1}
+	return file_auth_data_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CodeRes) GetRef() string {
@@ -118,7 +118,7 @@ type CodeDetailReq struct {
 
 func (x *CodeDetailReq) Reset() {
 	*x = CodeDetailReq{}
-	mi := &file_authz_proto_msgTypes[2]
+	mi := &file_auth_data_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -130,7 +130,7 @@ func (x *CodeDetailReq) String() string {
 func (*CodeDetailReq) ProtoMessage() {}
 
 func (x *CodeDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_authz_proto_msgTypes[2]
+	mi := &file_auth_data_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -143,7 +143,7 @@ func (x *CodeDetailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CodeDetailReq.ProtoReflect.Descriptor instead.
 func (*CodeDetailReq) Descriptor() ([]byte, []int) {
-	return file_authz_proto_rawDescGZIP(), []int{2}
+	return file_auth_data_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CodeDetailReq) GetRef() string {
@@ -162,7 +162,7 @@ type CodeDetailRes struct {
 
 func (x *CodeDetailRes) Reset() {
 	*x = CodeDetailRes{}
-	mi := &file_authz_proto_msgTypes[3]
+	mi := &file_auth_data_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -174,7 +174,7 @@ func (x *CodeDetailRes) String() string {
 func (*CodeDetailRes) ProtoMessage() {}
 
 func (x *CodeDetailRes) ProtoReflect() protoreflect.Message {
-	mi := &file_authz_proto_msgTypes[3]
+	mi := &file_auth_data_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -187,7 +187,7 @@ func (x *CodeDetailRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CodeDetailRes.ProtoReflect.Descriptor instead.
 func (*CodeDetailRes) Descriptor() ([]byte, []int) {
-	return file_authz_proto_rawDescGZIP(), []int{3}
+	return file_auth_data_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CodeDetailRes) GetResult() *Code {
@@ -207,7 +207,7 @@ type VerifyCodeReq struct {
 
 func (x *VerifyCodeReq) Reset() {
 	*x = VerifyCodeReq{}
-	mi := &file_authz_proto_msgTypes[4]
+	mi := &file_auth_data_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -219,7 +219,7 @@ func (x *VerifyCodeReq) String() string {
 func (*VerifyCodeReq) ProtoMessage() {}
 
 func (x *VerifyCodeReq) ProtoReflect() protoreflect.Message {
-	mi := &file_authz_proto_msgTypes[4]
+	mi := &file_auth_data_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -232,7 +232,7 @@ func (x *VerifyCodeReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VerifyCodeReq.ProtoReflect.Descriptor instead.
 func (*VerifyCodeReq) Descriptor() ([]byte, []int) {
-	return file_authz_proto_rawDescGZIP(), []int{4}
+	return file_auth_data_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *VerifyCodeReq) GetRef() string {
@@ -259,7 +259,7 @@ type VerifyCodeRes struct {
 
 func (x *VerifyCodeRes) Reset() {
 	*x = VerifyCodeRes{}
-	mi := &file_authz_proto_msgTypes[5]
+	mi := &file_auth_data_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -271,7 +271,7 @@ func (x *VerifyCodeRes) String() string {
 func (*VerifyCodeRes) ProtoMessage() {}
 
 func (x *VerifyCodeRes) ProtoReflect() protoreflect.Message {
-	mi := &file_authz_proto_msgTypes[5]
+	mi := &file_auth_data_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -284,7 +284,7 @@ func (x *VerifyCodeRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VerifyCodeRes.ProtoReflect.Descriptor instead.
 func (*VerifyCodeRes) Descriptor() ([]byte, []int) {
-	return file_authz_proto_rawDescGZIP(), []int{5}
+	return file_auth_data_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *VerifyCodeRes) GetUid() string {
@@ -301,11 +301,11 @@ func (x *VerifyCodeRes) GetIdToken() string {
 	return ""
 }
 
-var File_authz_proto protoreflect.FileDescriptor
+var File_auth_data_proto protoreflect.FileDescriptor
 
-const file_authz_proto_rawDesc = "" +
+const file_auth_data_proto_rawDesc = "" +
 	"\n" +
-	"\vauthz.proto\x12\vmuydelcampo\x1a\vauthx.proto\"\x1f\n" +
+	"\x0fauth_data.proto\x12\vmuydelcampo\x1a\x11auth_domain.proto\"\x1f\n" +
 	"\aCodeReq\x12\x14\n" +
 	"\x05phone\x18\x01 \x01(\tR\x05phone\"\x1b\n" +
 	"\aCodeRes\x12\x10\n" +
@@ -323,19 +323,19 @@ const file_authz_proto_rawDesc = "" +
 	"\x15com.muydelcampo.apigoZ\x16apigo/protobuf/gen/v1;b\x06proto3"
 
 var (
-	file_authz_proto_rawDescOnce sync.Once
-	file_authz_proto_rawDescData []byte
+	file_auth_data_proto_rawDescOnce sync.Once
+	file_auth_data_proto_rawDescData []byte
 )
 
-func file_authz_proto_rawDescGZIP() []byte {
-	file_authz_proto_rawDescOnce.Do(func() {
-		file_authz_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_authz_proto_rawDesc), len(file_authz_proto_rawDesc)))
+func file_auth_data_proto_rawDescGZIP() []byte {
+	file_auth_data_proto_rawDescOnce.Do(func() {
+		file_auth_data_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_auth_data_proto_rawDesc), len(file_auth_data_proto_rawDesc)))
 	})
-	return file_authz_proto_rawDescData
+	return file_auth_data_proto_rawDescData
 }
 
-var file_authz_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
-var file_authz_proto_goTypes = []any{
+var file_auth_data_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_auth_data_proto_goTypes = []any{
 	(*CodeReq)(nil),       // 0: muydelcampo.CodeReq
 	(*CodeRes)(nil),       // 1: muydelcampo.CodeRes
 	(*CodeDetailReq)(nil), // 2: muydelcampo.CodeDetailReq
@@ -344,7 +344,7 @@ var file_authz_proto_goTypes = []any{
 	(*VerifyCodeRes)(nil), // 5: muydelcampo.VerifyCodeRes
 	(*Code)(nil),          // 6: muydelcampo.Code
 }
-var file_authz_proto_depIdxs = []int32{
+var file_auth_data_proto_depIdxs = []int32{
 	6, // 0: muydelcampo.CodeDetailRes.result:type_name -> muydelcampo.Code
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
@@ -353,27 +353,27 @@ var file_authz_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_authz_proto_init() }
-func file_authz_proto_init() {
-	if File_authz_proto != nil {
+func init() { file_auth_data_proto_init() }
+func file_auth_data_proto_init() {
+	if File_auth_data_proto != nil {
 		return
 	}
-	file_authx_proto_init()
+	file_auth_domain_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_authz_proto_rawDesc), len(file_authz_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_data_proto_rawDesc), len(file_auth_data_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_authz_proto_goTypes,
-		DependencyIndexes: file_authz_proto_depIdxs,
-		MessageInfos:      file_authz_proto_msgTypes,
+		GoTypes:           file_auth_data_proto_goTypes,
+		DependencyIndexes: file_auth_data_proto_depIdxs,
+		MessageInfos:      file_auth_data_proto_msgTypes,
 	}.Build()
-	File_authz_proto = out.File
-	file_authz_proto_goTypes = nil
-	file_authz_proto_depIdxs = nil
+	File_auth_data_proto = out.File
+	file_auth_data_proto_goTypes = nil
+	file_auth_data_proto_depIdxs = nil
 }

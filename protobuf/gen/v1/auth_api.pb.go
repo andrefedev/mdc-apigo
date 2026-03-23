@@ -20,12 +20,11 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-var File_auth_proto protoreflect.FileDescriptor
+var File_auth_api_proto protoreflect.FileDescriptor
 
-const file_auth_proto_rawDesc = "" +
+const file_auth_api_proto_rawDesc = "" +
 	"\n" +
-	"\n" +
-	"auth_api.proto\x12\vmuydelcampo\x1a\vauthz.proto2\xcd\x01\n" +
+	"\x0eauth_api.proto\x12\vmuydelcampo\x1a\x0fauth_data.proto2\xcd\x01\n" +
 	"\vAuthService\x122\n" +
 	"\x04Code\x12\x14.muydelcampo.CodeReq\x1a\x14.muydelcampo.CodeRes\x12D\n" +
 	"\n" +
@@ -33,7 +32,7 @@ const file_auth_proto_rawDesc = "" +
 	"\n" +
 	"VerifyCode\x12\x1a.muydelcampo.VerifyCodeReq\x1a\x1a.muydelcampo.VerifyCodeResB\x18Z\x16apigo/protobuf/gen/v1;b\x06proto3"
 
-var file_auth_proto_goTypes = []any{
+var file_auth_api_proto_goTypes = []any{
 	(*CodeReq)(nil),       // 0: muydelcampo.CodeReq
 	(*CodeDetailReq)(nil), // 1: muydelcampo.CodeDetailReq
 	(*VerifyCodeReq)(nil), // 2: muydelcampo.VerifyCodeReq
@@ -41,7 +40,7 @@ var file_auth_proto_goTypes = []any{
 	(*CodeDetailRes)(nil), // 4: muydelcampo.CodeDetailRes
 	(*VerifyCodeRes)(nil), // 5: muydelcampo.VerifyCodeRes
 }
-var file_auth_proto_depIdxs = []int32{
+var file_auth_api_proto_depIdxs = []int32{
 	0, // 0: muydelcampo.AuthService.Code:input_type -> muydelcampo.CodeReq
 	1, // 1: muydelcampo.AuthService.CodeDetail:input_type -> muydelcampo.CodeDetailReq
 	2, // 2: muydelcampo.AuthService.VerifyCode:input_type -> muydelcampo.VerifyCodeReq
@@ -55,26 +54,26 @@ var file_auth_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_auth_proto_init() }
-func file_auth_proto_init() {
-	if File_auth_proto != nil {
+func init() { file_auth_api_proto_init() }
+func file_auth_api_proto_init() {
+	if File_auth_api_proto != nil {
 		return
 	}
-	file_authz_proto_init()
+	file_auth_data_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_proto_rawDesc), len(file_auth_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_api_proto_rawDesc), len(file_auth_api_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_auth_proto_goTypes,
-		DependencyIndexes: file_auth_proto_depIdxs,
+		GoTypes:           file_auth_api_proto_goTypes,
+		DependencyIndexes: file_auth_api_proto_depIdxs,
 	}.Build()
-	File_auth_proto = out.File
-	file_auth_proto_goTypes = nil
-	file_auth_proto_depIdxs = nil
+	File_auth_api_proto = out.File
+	file_auth_api_proto_goTypes = nil
+	file_auth_api_proto_depIdxs = nil
 }

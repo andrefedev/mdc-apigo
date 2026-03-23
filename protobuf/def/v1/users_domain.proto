@@ -1,16 +1,18 @@
-
 syntax = 'proto3';
 
 package muydelcampo;
 
 option go_package = 'apigo/protobuf/gen/v1;';
 
-option java_package = "com.muydelcampo.apigo";
+import 'google/protobuf/timestamp.proto';
 
-import "users_data.proto";
-
-message UserMeReq {}
-
-message UserMeRes {
-  User user = 1;
+message User {
+  string ref = 1;
+  string name = 2;
+  string phone = 3;
+  bool is_staff = 4;
+  bool is_super = 5;
+  bool is_active = 6;
+  optional google.protobuf.Timestamp last_login = 7;
+  google.protobuf.Timestamp date_joined = 8;
 }
