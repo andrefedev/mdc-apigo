@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"apigo/internal/apperr"
 	"apigo/internal/platforms/validatex/validationx"
 	v1 "apigo/protobuf/gen/v1"
 	"fmt"
@@ -26,7 +27,7 @@ func (r *codeInput) Validate() error {
 
 	// Validation
 	if !validationx.IsPhoneNumber(r.Phone) {
-		return fmt.Errorf("%s: %w", oper, ErrInvalidPhone)
+		return fmt.Errorf("%s: %w", oper, apperr.ErrInvalidPhone)
 	}
 
 	return nil

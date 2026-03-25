@@ -6,10 +6,10 @@ import (
 	"log/slog"
 	"testing"
 
-	"apigo/internal/features/auth"
-	"apigo/internal/features/users"
+	"apigo/internal/apperr"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type logRecord struct {
@@ -41,13 +41,13 @@ func (h *captureHandler) WithAttrs(_ []slog.Attr) slog.Handler { return h }
 
 func (h *captureHandler) WithGroup(_ string) slog.Handler { return h }
 
-func TestUnaryLoggingInterceptorLogsAppErrorFields(t *testing.T) {
+func TestUnaryLoggingInterceptorLogsSemanticError(t *testing.T) {
 	handler := &captureHandler{}
 	prev := slog.Default()
 	slog.SetDefault(slog.New(handler))
 	t.Cleanup(func() { slog.SetDefault(prev) })
 
-	appErr := fmt.Errorf("Auth.Code: %w", auth.ErrInvalidPhone)
+	appErr := fmt.Errorf("Auth.Code: %w", apperr.ErrInvalidPhone)
 
 	_, err := UnaryLoggingInterceptor(
 		context.Background(),
@@ -69,49 +69,22 @@ func TestUnaryLoggingInterceptorLogsAppErrorFields(t *testing.T) {
 	if record.level != slog.LevelWarn {
 		t.Fatalf("expected warn level, got %v", record.level)
 	}
-	if got := record.attrs["grpc_code"]; got != "Unknown" {
-		t.Fatalf("expected grpc_code Unknown, got %#v", got)
+	if got := record.attrs["grpc_code"]; got != codes.InvalidArgument.String() {
+		t.Fatalf("expected grpc_code %q, got %#v", codes.InvalidArgument.String(), got)
 	}
-	if got := record.attrs["app_kind"]; got != kindValidation {
-		t.Fatalf("expected app_kind %q, got %#v", kindValidation, got)
-	}
-	if got := record.attrs["app_code"]; got != "auth.invalid_phone" {
-		t.Fatalf("expected app_code auth.invalid_phone, got %#v", got)
+	if _, ok := record.attrs["err"]; !ok {
+		t.Fatal("expected err attribute")
 	}
 }
 
-func TestUnaryLoggingInterceptorExtractsAppFieldsFromStatusDetails(t *testing.T) {
-	handler := &captureHandler{}
-	prev := slog.Default()
-	slog.SetDefault(slog.New(handler))
-	t.Cleanup(func() { slog.SetDefault(prev) })
+func TestStatusErrorMapsSemanticError(t *testing.T) {
+	err := StatusError(fmt.Errorf("Auth.Code: %w", apperr.ErrInvalidPhone))
+	st := status.Convert(err)
 
-	grpcErr := StatusError(fmt.Errorf("Users.Me: %w", users.ErrAuthenticationRequired))
-
-	_, err := UnaryLoggingInterceptor(
-		context.Background(),
-		struct{}{},
-		&grpc.UnaryServerInfo{FullMethod: "/muydelcampo.v1.UserService/UserMe"},
-		func(ctx context.Context, req any) (any, error) {
-			return nil, grpcErr
-		},
-	)
-	if err == nil {
-		t.Fatal("expected error")
+	if st.Code() != codes.InvalidArgument {
+		t.Fatalf("expected code %q, got %q", codes.InvalidArgument, st.Code())
 	}
-
-	if len(handler.records) != 1 {
-		t.Fatalf("expected 1 log record, got %d", len(handler.records))
-	}
-
-	record := handler.records[0]
-	if got := record.attrs["grpc_code"]; got != codes.Unauthenticated.String() {
-		t.Fatalf("expected grpc_code %q, got %#v", codes.Unauthenticated.String(), got)
-	}
-	if got := record.attrs["app_kind"]; got != kindUnauthorized {
-		t.Fatalf("expected app_kind %q, got %#v", kindUnauthorized, got)
-	}
-	if got := record.attrs["app_code"]; got != "users.authentication_required" {
-		t.Fatalf("expected app_code users.authentication_required, got %#v", got)
+	if st.Message() != "El número de teléfono no es válido" {
+		t.Fatalf("expected public message, got %q", st.Message())
 	}
 }
