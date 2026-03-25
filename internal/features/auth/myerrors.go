@@ -1,48 +1,48 @@
 package auth
 
 import (
-	"apigo/internal/platforms/apperr"
 	"errors"
 )
 
-var errInvalidPhone = errors.New("phone validation failed")
+var (
+	ErrInvalidPhone           = errors.New("auth invalid phone")
+	ErrInvalidCode            = errors.New("auth invalid code")
+	ErrCodeExpired            = errors.New("auth code expired")
+	ErrIdentityNotFound       = errors.New("auth identity not found")
+	ErrAuthenticationRequired = errors.New("auth authentication required")
+)
 
-func ErrInvalidPhone(cause error) error {
+func WrapInvalidPhone(cause error) error {
 	if cause == nil {
-		cause = errInvalidPhone
+		return ErrInvalidPhone
 	}
-	return apperr.Validation("Auth.ErrInvalidPhone", cause).WithPublic(
-		"auth.invalid_phone",
-		"El número de teléfono no es válido",
-	)
+	return errors.Join(ErrInvalidPhone, cause)
 }
 
-func ErrInvalidCode(cause error) error {
-	return apperr.Validation("Auth.ErrInvalidCode", cause).WithPublic(
-		"auth.invalid_code",
-		"El código ingresado no es válido",
-	)
+func WrapInvalidCode(cause error) error {
+	if cause == nil {
+		return ErrInvalidCode
+	}
+	return errors.Join(ErrInvalidCode, cause)
 }
 
-func ErrCodeExpired(cause error) error {
-	return apperr.Conflict("Auth.ErrCodeExpired", cause).WithPublic(
-		"auth.code_expired",
-		"El código ya expiró",
-	)
+func WrapCodeExpired(cause error) error {
+	if cause == nil {
+		return ErrCodeExpired
+	}
+	return errors.Join(ErrCodeExpired, cause)
 }
 
-// IDENTITY
-
-func ErrIdentityNotFound(cause error) error {
-	return apperr.NotFound("Auth.ErrIdentityNotFound", cause).WithPublic(
-		"auth.identity_not_found",
-		"Identidad no encontrada",
-	)
+func WrapIdentityNotFound(cause error) error {
+	if cause == nil {
+		return ErrIdentityNotFound
+	}
+	return errors.Join(ErrIdentityNotFound, cause)
 }
 
-func ErrAuthenticationRequired(cause error) error {
-	return apperr.Unauthorized("Auth.ErrAuthenticationRequired", cause).WithPublic(
-		"auth.authentication_required",
-		"Debes iniciar sesión para continuar",
-	)
+func WrapAuthenticationRequired(cause error) error {
+	if cause == nil {
+		return ErrAuthenticationRequired
+	}
+	return errors.Join(ErrAuthenticationRequired, cause)
 }

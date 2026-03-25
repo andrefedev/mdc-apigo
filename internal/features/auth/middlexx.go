@@ -22,8 +22,8 @@ const (
 //	return strings.TrimSpace(strings.TrimPrefix(v, prefix))
 //}
 //
-//func (m *Middleware) AttachIdentity(next http.Handler) http.Handler {
-//	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+//func (m *Middleware) AttachIdentity(next webhook.Handler) webhook.Handler {
+//	return webhook.HandlerFunc(func(w webhook.ResponseWriter, r *webhook.Request) {
 //		ctx := r.Context()
 //		header := r.Header.Get(headerAuthorize)
 //		idToken := bearerToken(header)
@@ -43,8 +43,8 @@ const (
 //	})
 //}
 //
-//func (m *Middleware) IsAuthenticated(next http.Handler) http.Handler {
-//	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+//func (m *Middleware) IsAuthenticated(next webhook.Handler) webhook.Handler {
+//	return webhook.HandlerFunc(func(w webhook.ResponseWriter, r *webhook.Request) {
 //		ctx := r.Context()
 //		identity, ok := IdentityFromContext(ctx)
 //		if !ok || identity == nil || !identity.IsAuthenticated() {

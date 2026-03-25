@@ -2,9 +2,10 @@ package auth
 
 import (
 	"apigo/internal/modules/whatsapp/messages"
-	"apigo/internal/platforms/apperr"
 	"apigo/internal/platforms/cryptox"
 	"context"
+	"errors"
+	"fmt"
 )
 
 type Service struct {
@@ -29,7 +30,7 @@ func (s *Service) Code(ctx context.Context, input *codeInput) (string, string, e
 	// OTP + challenge
 	code, err := cryptox.GenerateRandomNumberString(6)
 	if err != nil {
-		return "", "", apperr.Internal(oper, err)
+		return "", "", fmt.Errorf("%s: generate otp: %w", oper, err)
 	}
 
 	// InsertData
@@ -40,12 +41,12 @@ func (s *Service) Code(ctx context.Context, input *codeInput) (string, string, e
 
 	data.Normalize()
 	if err := data.Validation(); err != nil {
-		return "", "", ErrInvalidPhone(err)
+		return "", "", fmt.Errorf("%s: %w", oper, err)
 	}
 
 	ref, err := s.deps.AuthRepository.CodeInsert(ctx, data)
 	if err != nil {
-		return "", "", apperr.Wrap(oper, err)
+		return "", "", fmt.Errorf("%s: insert code: %w", oper, err)
 	}
 
 	// Send Code Verification...
@@ -82,7 +83,7 @@ func (s *Service) Code(ctx context.Context, input *codeInput) (string, string, e
 		},
 	}
 	if err := s.deps.MessageService.SendTemplate(ctx, templ); err != nil {
-		return "", "", apperr.Wrap(oper, err)
+		return "", "", fmt.Errorf("%s: send template: %w", oper, err)
 	}
 
 	// ELIMINAR EL CODIGO DE LA BASE DE DATOS ??
@@ -99,10 +100,10 @@ func (s *Service) IdentityByIdToken(ctx context.Context, idToken string) (*Ident
 
 	identity, err := s.deps.AuthRepository.IdentitySelectByIdToken(ctx, idToken)
 	if err != nil {
-		if apperr.IsKind(err, apperr.KindNotFound) {
-			return nil, ErrAuthenticationRequired(err)
+		if errors.Is(err, ErrIdentityNotFound) {
+			return nil, fmt.Errorf("%s: %w", op, WrapAuthenticationRequired(err))
 		}
-		return nil, apperr.Wrap(op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return identity, nil

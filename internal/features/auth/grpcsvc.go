@@ -4,8 +4,6 @@ import (
 	"context"
 
 	v1 "apigo/protobuf/gen/v1"
-
-	"apigo/internal/platforms/okgrpcx"
 )
 
 type GrpcSvc struct {
@@ -24,12 +22,12 @@ func NewGrpcSvc(deps GrpcSvcDeps) *GrpcSvc {
 func (h *GrpcSvc) Code(ctx context.Context, req *v1.CodeReq) (*v1.CodeRes, error) {
 	input := codeInputFromGrpc(req)
 	if err := input.Validate(); err != nil {
-		return nil, okgrpcx.StatusError(err)
+		return nil, err
 	}
 
 	ref, _, err := h.deps.Service.Code(ctx, input)
 	if err != nil {
-		return nil, okgrpcx.StatusError(err)
+		return nil, err
 	}
 
 	return &v1.CodeRes{Ref: ref}, nil

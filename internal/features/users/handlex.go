@@ -10,7 +10,7 @@ func (h *Handler) me(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	identity, ok := auth.IdentityFromContext(ctx)
 	if !ok || identity == nil {
-		okhttpx.Fail(w, r, ErrAuthenticationRequired(nil))
+		okhttpx.Fail(w, r, ErrAuthenticationRequired)
 		return
 	}
 

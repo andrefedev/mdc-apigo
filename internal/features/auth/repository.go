@@ -3,9 +3,9 @@ package auth
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"apigo/internal/modules/postgres"
-	"apigo/internal/platforms/apperr"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -32,7 +32,7 @@ func (r Repository) CodeInsert(ctx context.Context, data *CodeInsertData) (strin
 			"phone": data.Phone,
 		},
 	).Scan(&ref); err != nil {
-		return "", apperr.Internal(op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	return ref, nil
@@ -44,7 +44,7 @@ func (r Repository) CodeDelete(ctx context.Context, ref string) (int64, error) {
 
 	res, err := r.db.Exec(ctx, query, ref)
 	if err != nil {
-		return 0, apperr.Internal(op, err)
+		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return res.RowsAffected(), nil
@@ -62,16 +62,16 @@ func (r Repository) CodeSelect(ctx context.Context, ref string) (*Code, error) {
 
 	rows, err := r.db.Query(ctx, qry, ref)
 	if err != nil {
-		return nil, apperr.Internal(op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 	defer rows.Close()
 
 	raw, err := pgx.CollectOneRow[_CodeRaw](rows, pgx.RowToStructByNameLax[_CodeRaw])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, apperr.NotFound(op, err)
+			return nil, fmt.Errorf("%s: %w", op, err)
 		}
-		return nil, apperr.Internal(op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return raw.ToModel(), nil
@@ -88,16 +88,16 @@ func (r Repository) IdentitySelectByIdToken(ctx context.Context, idToken string)
 
 	rows, err := r.db.Query(ctx, qry, idToken)
 	if err != nil {
-		return nil, apperr.Internal(op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 	defer rows.Close()
 
 	res, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByNameLax[Identity])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, apperr.NotFound(op, err)
+			return nil, fmt.Errorf("%s: %w", op, WrapIdentityNotFound(err))
 		}
-		return nil, apperr.Internal(op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return &res, nil

@@ -2,8 +2,8 @@ package messages
 
 import (
 	"apigo/internal/modules/whatsapp"
-	"apigo/internal/platforms/apperr"
 	"context"
+	"fmt"
 )
 
 // Service sends WhatsApp Cloud API messages.
@@ -22,7 +22,7 @@ func (s *Service) SendTemplate(ctx context.Context, req *TemplateMessageRequest)
 	body := newTemplateMessage(req)
 	path := s.client.PhoneNumberId() + "/" + "messages"
 	if err := s.client.Post(ctx, path, body); err != nil {
-		return apperr.Internal(op, err)
+		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	return nil

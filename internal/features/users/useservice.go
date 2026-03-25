@@ -1,8 +1,9 @@
 package users
 
 import (
-	"apigo/internal/platforms/apperr"
 	"context"
+	"errors"
+	"fmt"
 )
 
 type Service struct {
@@ -25,11 +26,11 @@ func (s *Service) GetByRef(ctx context.Context, ref string) (*User, error) {
 
 	user, err := s.deps.UserRepository.Select(ctx, ref)
 	if err != nil {
-		if apperr.IsKind(err, apperr.KindNotFound) {
-			return nil, ErrUserNotFound(err)
+		if errors.Is(err, ErrUserNotFound) {
+			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 
-		return nil, apperr.Wrap(op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return user, nil

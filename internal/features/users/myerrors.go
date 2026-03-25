@@ -1,19 +1,24 @@
 package users
 
 import (
-	"apigo/internal/platforms/apperr"
+	"errors"
 )
 
-func ErrUserNotFound(cause error) error {
-	return apperr.NotFound("Users.ErrUserNotFound", cause).WithPublic(
-		"users.user_not_found",
-		"Usuario no encontrado",
-	)
+var (
+	ErrUserNotFound           = errors.New("users user not found")
+	ErrAuthenticationRequired = errors.New("users authentication required")
+)
+
+func WrapUserNotFound(cause error) error {
+	if cause == nil {
+		return ErrUserNotFound
+	}
+	return errors.Join(ErrUserNotFound, cause)
 }
 
-func ErrAuthenticationRequired(cause error) error {
-	return apperr.Unauthorized("Users.ErrAuthenticationRequired", cause).WithPublic(
-		"users.authentication_required",
-		"Debes iniciar sesión para continuar",
-	)
+func WrapAuthenticationRequired(cause error) error {
+	if cause == nil {
+		return ErrAuthenticationRequired
+	}
+	return errors.Join(ErrAuthenticationRequired, cause)
 }
