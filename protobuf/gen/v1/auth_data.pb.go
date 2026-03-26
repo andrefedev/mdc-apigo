@@ -197,7 +197,7 @@ func (x *CodeDetailRes) GetResult() *Code {
 	return nil
 }
 
-type VerifyCodeReq struct {
+type CodeVerifyReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
 	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
@@ -205,20 +205,20 @@ type VerifyCodeReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *VerifyCodeReq) Reset() {
-	*x = VerifyCodeReq{}
+func (x *CodeVerifyReq) Reset() {
+	*x = CodeVerifyReq{}
 	mi := &file_auth_data_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *VerifyCodeReq) String() string {
+func (x *CodeVerifyReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*VerifyCodeReq) ProtoMessage() {}
+func (*CodeVerifyReq) ProtoMessage() {}
 
-func (x *VerifyCodeReq) ProtoReflect() protoreflect.Message {
+func (x *CodeVerifyReq) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_data_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -230,26 +230,26 @@ func (x *VerifyCodeReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use VerifyCodeReq.ProtoReflect.Descriptor instead.
-func (*VerifyCodeReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use CodeVerifyReq.ProtoReflect.Descriptor instead.
+func (*CodeVerifyReq) Descriptor() ([]byte, []int) {
 	return file_auth_data_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *VerifyCodeReq) GetRef() string {
+func (x *CodeVerifyReq) GetRef() string {
 	if x != nil {
 		return x.Ref
 	}
 	return ""
 }
 
-func (x *VerifyCodeReq) GetCode() string {
+func (x *CodeVerifyReq) GetCode() string {
 	if x != nil {
 		return x.Code
 	}
 	return ""
 }
 
-type VerifyCodeRes struct {
+type CodeVerifyRes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Uid           string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
 	IdToken       string                 `protobuf:"bytes,2,opt,name=id_token,json=idToken,proto3" json:"id_token,omitempty"`
@@ -257,20 +257,20 @@ type VerifyCodeRes struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *VerifyCodeRes) Reset() {
-	*x = VerifyCodeRes{}
+func (x *CodeVerifyRes) Reset() {
+	*x = CodeVerifyRes{}
 	mi := &file_auth_data_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *VerifyCodeRes) String() string {
+func (x *CodeVerifyRes) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*VerifyCodeRes) ProtoMessage() {}
+func (*CodeVerifyRes) ProtoMessage() {}
 
-func (x *VerifyCodeRes) ProtoReflect() protoreflect.Message {
+func (x *CodeVerifyRes) ProtoReflect() protoreflect.Message {
 	mi := &file_auth_data_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -282,19 +282,19 @@ func (x *VerifyCodeRes) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use VerifyCodeRes.ProtoReflect.Descriptor instead.
-func (*VerifyCodeRes) Descriptor() ([]byte, []int) {
+// Deprecated: Use CodeVerifyRes.ProtoReflect.Descriptor instead.
+func (*CodeVerifyRes) Descriptor() ([]byte, []int) {
 	return file_auth_data_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *VerifyCodeRes) GetUid() string {
+func (x *CodeVerifyRes) GetUid() string {
 	if x != nil {
 		return x.Uid
 	}
 	return ""
 }
 
-func (x *VerifyCodeRes) GetIdToken() string {
+func (x *CodeVerifyRes) GetIdToken() string {
 	if x != nil {
 		return x.IdToken
 	}
@@ -314,10 +314,10 @@ const file_auth_data_proto_rawDesc = "" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\":\n" +
 	"\rCodeDetailRes\x12)\n" +
 	"\x06result\x18\x01 \x01(\v2\x11.muydelcampo.CodeR\x06result\"5\n" +
-	"\rVerifyCodeReq\x12\x10\n" +
+	"\rCodeVerifyReq\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\"<\n" +
-	"\rVerifyCodeRes\x12\x10\n" +
+	"\rCodeVerifyRes\x12\x10\n" +
 	"\x03uid\x18\x01 \x01(\tR\x03uid\x12\x19\n" +
 	"\bid_token\x18\x02 \x01(\tR\aidTokenB/\n" +
 	"\x15com.muydelcampo.apigoZ\x16apigo/protobuf/gen/v1;b\x06proto3"
@@ -340,8 +340,8 @@ var file_auth_data_proto_goTypes = []any{
 	(*CodeRes)(nil),       // 1: muydelcampo.CodeRes
 	(*CodeDetailReq)(nil), // 2: muydelcampo.CodeDetailReq
 	(*CodeDetailRes)(nil), // 3: muydelcampo.CodeDetailRes
-	(*VerifyCodeReq)(nil), // 4: muydelcampo.VerifyCodeReq
-	(*VerifyCodeRes)(nil), // 5: muydelcampo.VerifyCodeRes
+	(*CodeVerifyReq)(nil), // 4: muydelcampo.CodeVerifyReq
+	(*CodeVerifyRes)(nil), // 5: muydelcampo.CodeVerifyRes
 	(*Code)(nil),          // 6: muydelcampo.Code
 }
 var file_auth_data_proto_depIdxs = []int32{

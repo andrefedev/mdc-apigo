@@ -20,7 +20,7 @@ func NewRepository(db *postgres.Pgdb) *Repository {
 
 func (r Repository) CodeInsert(ctx context.Context, data *CodeInsertData) (string, error) {
 	op := "Auth.Repository.CodeInsert"
-	qry := `INSERT INTO users_codes (code, phone) VALUES(@code, @phone) returning id;`
+	qry := `INSERT INTO users_codes_original (code, phone) VALUES(@code, @phone) returning id;`
 
 	// CodeData
 	var ref string
@@ -40,7 +40,7 @@ func (r Repository) CodeInsert(ctx context.Context, data *CodeInsertData) (strin
 
 func (r Repository) CodeDelete(ctx context.Context, ref string) (int64, error) {
 	op := "Auth.Repository.CodeDelete"
-	query := "DELETE FROM users_codes WHERE id = $1"
+	query := "DELETE FROM users_codes_original WHERE id = $1"
 
 	res, err := r.db.Exec(ctx, query, ref)
 	if err != nil {
@@ -57,7 +57,7 @@ func (r Repository) CodeSelect(ctx context.Context, ref string) (*Code, error) {
 	SELECT
 	id, code, phone,
 	date_created, date_expired
-	FROM users_codes WHERE id = $1
+	FROM users_codes_original WHERE id = $1
 	`
 
 	rows, err := r.db.Query(ctx, qry, ref)
@@ -69,13 +69,33 @@ func (r Repository) CodeSelect(ctx context.Context, ref string) (*Code, error) {
 	raw, err := pgx.CollectOneRow[_CodeRaw](rows, pgx.RowToStructByNameLax[_CodeRaw])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, fmt.Errorf("%s: %w", op, err)
+			return nil, fmt.Errorf("%s: %w", op, WrapCodeNotFound(err))
 		}
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return raw.ToModel(), nil
 }
+
+func (r Repository) UserRefByPhone(ctx context.Context, phone string) (*string, error) {
+	op := "Auth.Repository.UserRefByPhone"
+	qry := `SELECT id FROM users WHERE phone = $1`
+
+	rows, err := r.db.Query(ctx, qry, phone)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	var uid string
+	if err := rows.Scan(&uid); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, WrapUserNotFound(err))
+	}
+
+	return &uid, nil
+}
+
+// IAM... OR SESSION...
 
 func (r Repository) IdentitySelectByIdToken(ctx context.Context, idToken string) (*Identity, error) {
 	op := "Auth.Repository.IdentitySelectByIdToken"
@@ -103,6 +123,71 @@ func (r Repository) IdentitySelectByIdToken(ctx context.Context, idToken string)
 	return &res, nil
 }
 
-func (r Repository) SessionSelectByAccessToken(ctx context.Context, accessToken string) (*Session, error) {
-	return nil, nil
+func (r Repository) UserRefSelectByPhone(ctx context.Context, phone string) (string, error) {
+	op := "Auth.Repository.UserRefSelectByPhone"
+
+	qry := `
+	SELECT id
+	FROM users
+	WHERE phone = $1
+	LIMIT 1
+	`
+
+	var userRef string
+	if err := r.db.QueryRow(ctx, qry, phone).Scan(&userRef); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return "", fmt.Errorf("%s: %w", op, WrapUserNotFound(err))
+		}
+		return "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	return userRef, nil
+}
+
+func (r Repository) UserIdTokenUpdate(ctx context.Context, userRef, idToken string) error {
+	op := "Auth.Repository.UserIdTokenUpdate"
+
+	qry := `
+	UPDATE users
+	SET idk = $2, last_login = NOW()
+	WHERE id = $1
+	`
+
+	res, err := r.db.Exec(ctx, qry, userRef, idToken)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	if res.RowsAffected() == 0 {
+		return fmt.Errorf("%s: %w", op, WrapUserNotFound(nil))
+	}
+
+	return nil
+}
+
+func (r Repository) SessionSelectByToken(ctx context.Context, token string) (*Session, error) {
+	op := "Auth.Repository.SessionSelectByToken"
+
+	qry := `
+	SELECT
+	id, uid, token_hash, last_used_at,
+	date_expires, date_created, date_revoked
+	FROM auth_sessions WHERE token_hash = $1
+	`
+
+	rows, err := r.db.Query(ctx, qry, token)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	raw, err := pgx.CollectOneRow[Session](rows, pgx.RowToStructByNameLax[Session])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return raw.ToModel(), nil
+
 }

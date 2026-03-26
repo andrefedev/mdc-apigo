@@ -30,23 +30,23 @@ const file_auth_api_proto_rawDesc = "" +
 	"\n" +
 	"CodeDetail\x12\x1a.muydelcampo.CodeDetailReq\x1a\x1a.muydelcampo.CodeDetailRes\x12D\n" +
 	"\n" +
-	"VerifyCode\x12\x1a.muydelcampo.VerifyCodeReq\x1a\x1a.muydelcampo.VerifyCodeResB\x18Z\x16apigo/protobuf/gen/v1;b\x06proto3"
+	"CodeVerify\x12\x1a.muydelcampo.CodeVerifyReq\x1a\x1a.muydelcampo.CodeVerifyResB\x18Z\x16apigo/protobuf/gen/v1;b\x06proto3"
 
 var file_auth_api_proto_goTypes = []any{
 	(*CodeReq)(nil),       // 0: muydelcampo.CodeReq
 	(*CodeDetailReq)(nil), // 1: muydelcampo.CodeDetailReq
-	(*VerifyCodeReq)(nil), // 2: muydelcampo.VerifyCodeReq
+	(*CodeVerifyReq)(nil), // 2: muydelcampo.CodeVerifyReq
 	(*CodeRes)(nil),       // 3: muydelcampo.CodeRes
 	(*CodeDetailRes)(nil), // 4: muydelcampo.CodeDetailRes
-	(*VerifyCodeRes)(nil), // 5: muydelcampo.VerifyCodeRes
+	(*CodeVerifyRes)(nil), // 5: muydelcampo.CodeVerifyRes
 }
 var file_auth_api_proto_depIdxs = []int32{
 	0, // 0: muydelcampo.AuthService.Code:input_type -> muydelcampo.CodeReq
 	1, // 1: muydelcampo.AuthService.CodeDetail:input_type -> muydelcampo.CodeDetailReq
-	2, // 2: muydelcampo.AuthService.VerifyCode:input_type -> muydelcampo.VerifyCodeReq
+	2, // 2: muydelcampo.AuthService.CodeVerify:input_type -> muydelcampo.CodeVerifyReq
 	3, // 3: muydelcampo.AuthService.Code:output_type -> muydelcampo.CodeRes
 	4, // 4: muydelcampo.AuthService.CodeDetail:output_type -> muydelcampo.CodeDetailRes
-	5, // 5: muydelcampo.AuthService.VerifyCode:output_type -> muydelcampo.VerifyCodeRes
+	5, // 5: muydelcampo.AuthService.CodeVerify:output_type -> muydelcampo.CodeVerifyRes
 	3, // [3:6] is the sub-list for method output_type
 	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

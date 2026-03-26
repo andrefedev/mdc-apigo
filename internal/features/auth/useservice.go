@@ -1,11 +1,13 @@
 package auth
 
 import (
+	"apigo/internal/features/users"
 	"apigo/internal/modules/whatsapp/messages"
 	"apigo/internal/platforms/cryptox"
 	"context"
 	"errors"
 	"fmt"
+	"time"
 )
 
 type Service struct {
@@ -13,7 +15,7 @@ type Service struct {
 }
 
 type ServiceDeps struct {
-	AuthRepository *Repository
+	Repository     *Repository
 	MessageService *messages.Service
 	// UserRepository *users.Repo
 	// WhatsApp *WhatsApp.CloudAPIClient
@@ -24,7 +26,7 @@ func NewService(deps ServiceDeps) *Service {
 	return &Service{deps: deps}
 }
 
-func (s *Service) Code(ctx context.Context, input *codeInput) (string, string, error) {
+func (s *Service) Code(ctx context.Context, input *CodeInput) (string, string, error) {
 	oper := "Auth.Service.Code"
 
 	// OTP + challenge
@@ -38,13 +40,11 @@ func (s *Service) Code(ctx context.Context, input *codeInput) (string, string, e
 		Code:  code,
 		Phone: input.Phone,
 	}
-
-	data.Normalize()
 	if err := data.Validation(); err != nil {
 		return "", "", fmt.Errorf("%s: %w", oper, err)
 	}
 
-	ref, err := s.deps.AuthRepository.CodeInsert(ctx, data)
+	ref, err := s.deps.Repository.CodeInsert(ctx, data)
 	if err != nil {
 		return "", "", fmt.Errorf("%s: insert code: %w", oper, err)
 	}
@@ -90,9 +90,101 @@ func (s *Service) Code(ctx context.Context, input *codeInput) (string, string, e
 	return ref, code, nil
 }
 
-func (s *Service) CodeVerify(ctx context.Context, code string) (bool, error) {
-	// pasado un ref y un code debemos poder validar..
-	return false, nil
+func (s *Service) CodeVerify(ctx context.Context, input CodeVerifyInput) (*VerifyCodeResult, error) {
+	op := "Auth.Service.CodeVerify"
+
+	result := new(VerifyCodeResult)
+
+	res, err := s.deps.Repository.CodeSelect(ctx, input.Ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: code select: %w", op, err)
+	}
+	if res.Code != input.Code {
+		return nil, ErrInvalidCode
+	}
+	if time.Now().After(res.DateExpired) {
+		return nil, ErrCodeExpired
+	}
+
+	// Puedo importar User???
+	// usuario existe?
+	uid, err := s.deps.Repository.UserRefSelectByPhone(ctx, res.Phone)
+	if err != nil {
+		return nil, fmt.Errorf("%s: user ref by phone: %w", op, err)
+	}
+
+	idToken, err := cryptox.GenerateRandomString(32)
+	if err != nil {
+		return nil, fmt.Errorf("%s: generate id token: %w", op, err)
+	}
+
+	// crear la session...
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+
+		// transaccion
+		// create session
+		//create table auth_sessions
+		//(
+		//	id           uuid default uuid_generate_v4() not null
+		//constraint users_sessions_pk
+		//primary key,
+		//uid          uuid                            not null
+		//constraint users_sessions_users_id_fk
+		//references users,
+		//token_hash   varchar(40),
+		//last_used_at timestamp with time zone,
+		//date_expires timestamp with time zone,
+		//date_created timestamp with time zone,
+		//date_revoked timestamp with time zone
+		//);
+		//
+		//alter table auth_sessions
+		//owner to dev;
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	if err := s.deps.AuthRepository.db.WithTx(ctx, func(txCtx context.Context) error {
+		code, err := s.deps.AuthRepository.CodeSelect(txCtx, input.Ref)
+		if err != nil {
+			return fmt.Errorf("%s: code select: %w", op, err)
+		}
+
+		if time.Now().After(code.DateExpired) {
+			return ErrCodeExpired
+		}
+		if code.Code != input.Code {
+			return ErrInvalidCode
+		}
+
+		userRef, err := s.deps.AuthRepository.UserRefSelectByPhone(txCtx, code.Phone)
+		if err != nil {
+			return fmt.Errorf("%s: user by phone: %w", op, err)
+		}
+
+		idToken, err := cryptox.GenerateRandomString(32)
+		if err != nil {
+			return fmt.Errorf("%s: generate id token: %w", op, err)
+		}
+
+		if err := s.deps.AuthRepository.UserIdTokenUpdate(txCtx, userRef, idToken); err != nil {
+			return fmt.Errorf("%s: update id token: %w", op, err)
+		}
+
+		if _, err := s.deps.AuthRepository.CodeDelete(txCtx, input.Ref); err != nil {
+			return fmt.Errorf("%s: delete code: %w", op, err)
+		}
+
+		result.UserRef = userRef
+		result.IdToken = idToken
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (s *Service) IdentityByIdToken(ctx context.Context, idToken string) (*Identity, error) {

@@ -64,8 +64,8 @@ func main() {
 
 	muydelcampov1.RegisterAuthServiceServer(
 		grpcServer,
-		auth.NewGrpcSvc(
-			auth.GrpcSvcDeps{
+		auth.NewHandler(
+			auth.HandlerDeps{
 				Service: authService,
 			},
 		),

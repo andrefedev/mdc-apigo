@@ -23,6 +23,13 @@ func UnaryLoggingInterceptor(ctx context.Context, req any, info *grpc.UnaryServe
 		logger = logger.With("peer_addr", p.Addr.String())
 	}
 
+	grpcCodeOf := func(err error) codes.Code {
+		if err == nil {
+			return codes.OK
+		}
+		return status.Code(StatusError(err))
+	}
+
 	resp, err := handler(ctx, req)
 	attrs := []any{
 		"grpc_code", grpcCodeOf(err).String(),
@@ -41,6 +48,10 @@ func UnaryLoggingInterceptor(ctx context.Context, req any, info *grpc.UnaryServe
 	return resp, err
 }
 
+func UnaryLogInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+	return UnaryLoggingInterceptor(ctx, req, info, handler)
+}
+
 func UnaryErrorInterceptor(ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	resp, err := handler(ctx, req)
 	if err != nil {
@@ -48,16 +59,4 @@ func UnaryErrorInterceptor(ctx context.Context, req any, _ *grpc.UnaryServerInfo
 	}
 
 	return resp, nil
-}
-
-func UnaryLogInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-	return UnaryLoggingInterceptor(ctx, req, info, handler)
-}
-
-func grpcCodeOf(err error) codes.Code {
-	if err == nil {
-		return codes.OK
-	}
-
-	return status.Code(StatusError(err))
 }

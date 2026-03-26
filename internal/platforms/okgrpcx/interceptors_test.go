@@ -75,6 +75,9 @@ func TestUnaryLoggingInterceptorLogsSemanticError(t *testing.T) {
 	if _, ok := record.attrs["err"]; !ok {
 		t.Fatal("expected err attribute")
 	}
+	if got := fmt.Sprint(record.attrs["err"]); got != "Auth.Code: invalid phone" {
+		t.Fatalf("expected wrapped error string, got %q", got)
+	}
 }
 
 func TestStatusErrorMapsSemanticError(t *testing.T) {

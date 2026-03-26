@@ -13,13 +13,18 @@ type Code struct {
 }
 
 type Session struct {
-	Ref         string    `db:"id"`
-	UserRef     string    `db:"uid"`
-	TokenHash   string    `db:"token_hash"`
-	LastUsedAt  time.Time `db:"last_used_at"`
-	DateExpires time.Time `db:"date_expires"`
-	DateCreated time.Time `db:"date_created"`
-	DateRevoked time.Time `db:"date_revoked"`
+	Ref         string     `db:"id"`
+	UserRef     string     `db:"uid"`
+	TokenHash   string     `db:"token_hash"`
+	LastUsedAt  *time.Time `db:"last_used_at"`
+	DateExpires time.Time  `db:"date_expires"`
+	DateCreated time.Time  `db:"date_created"`
+	DateRevoked *time.Time `db:"date_revoked"`
+}
+
+type VerifyCodeResult struct {
+	UserRef string
+	IdToken string
 }
 
 type Identity struct {

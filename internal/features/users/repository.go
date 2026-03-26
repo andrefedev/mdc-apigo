@@ -95,7 +95,7 @@ func (r Repository) Select(ctx context.Context, ref string) (*User, error) {
 
 	qry := `
 	SELECT
-	id, idk, name, lookups, is_staff, is_super, is_active, last_login, date_joined
+	id, idk, name, phone, is_staff, is_super, is_active, last_login, date_joined
 	FROM users WHERE id = $1
 	`
 

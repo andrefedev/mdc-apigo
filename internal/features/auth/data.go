@@ -2,7 +2,6 @@ package auth
 
 import (
 	"apigo/internal/platforms/validatex/validationx"
-	"errors"
 )
 
 // INTERNO
@@ -17,8 +16,12 @@ func (d *CodeInsertData) Normalize() {
 }
 
 func (d *CodeInsertData) Validation() error {
+	// Normalize
+	d.Phone = validationx.ClearString(d.Phone)
+
+	// Validation
 	if !validationx.IsPhoneNumber(d.Phone) {
-		return errors.New("el número de télefono no es válido")
+		return ErrInvalidPhone
 	}
 
 	return nil

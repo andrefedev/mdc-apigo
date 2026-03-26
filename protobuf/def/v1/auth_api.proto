@@ -9,5 +9,5 @@ import "auth_data.proto";
 service AuthService {
   rpc Code(CodeReq) returns (CodeRes);
   rpc CodeDetail(CodeDetailReq) returns (CodeDetailRes);
-  rpc VerifyCode(VerifyCodeReq) returns (VerifyCodeRes);
+  rpc CodeVerify(CodeVerifyReq) returns (CodeVerifyRes);
 }

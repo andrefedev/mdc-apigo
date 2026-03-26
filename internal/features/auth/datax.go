@@ -1,33 +1,34 @@
 package auth
 
 import (
-	"apigo/internal/apperr"
-	"apigo/internal/platforms/validatex/validationx"
-	v1 "apigo/protobuf/gen/v1"
 	"fmt"
+
+	v1 "apigo/protobuf/gen/v1"
+
+	"apigo/internal/platforms/validatex/validationx"
 )
 
 // REQUEST
 
-type codeInput struct {
+type CodeInput struct {
 	Phone string
 }
 
-func codeInputFromGrpc(req *v1.CodeReq) *codeInput {
-	return &codeInput{
+func NewCodeInput(req *v1.CodeReq) *CodeInput {
+	return &CodeInput{
 		Phone: req.GetPhone(),
 	}
 }
 
-func (r *codeInput) Validate() error {
-	const oper = "Auth.CodeRequest.Validate"
+func (r *CodeInput) Validate() error {
+	const oper = "Auth.CodeInput.Validate"
 
-	// Normalization
+	// Normalize
 	r.Phone = validationx.ClearString(r.Phone)
 
 	// Validation
 	if !validationx.IsPhoneNumber(r.Phone) {
-		return fmt.Errorf("%s: %w", oper, apperr.ErrInvalidPhone)
+		return fmt.Errorf("%s: %w", oper, ErrInvalidPhone)
 	}
 
 	return nil
@@ -35,9 +36,27 @@ func (r *codeInput) Validate() error {
 
 // ····
 
-type VerifyCodeInput struct {
+type CodeVerifyInput struct {
 	Ref  string
 	Code string
+}
+
+func NewCodeVerifyInput(req *v1.CodeVerifyReq) *CodeVerifyInput {
+	return &CodeVerifyInput{
+		Ref:  req.GetRef(),
+		Code: req.GetCode(),
+	}
+}
+
+func (r *CodeVerifyInput) Validate() error {
+	const oper = "Auth.VerifyCodeInput.Validate"
+	// Normalize
+	// Validation
+	if !validationx.IsOneTimeCode(r.Code) {
+		return fmt.Errorf("%s: %w", oper, ErrInvalidCode)
+	}
+
+	return nil
 }
 
 //func NewCodeInput(req *v1.CodeReq) *CodeInput {

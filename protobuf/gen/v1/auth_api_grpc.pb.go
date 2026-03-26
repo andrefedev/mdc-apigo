@@ -21,7 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	AuthService_Code_FullMethodName       = "/muydelcampo.AuthService/Code"
 	AuthService_CodeDetail_FullMethodName = "/muydelcampo.AuthService/CodeDetail"
-	AuthService_VerifyCode_FullMethodName = "/muydelcampo.AuthService/VerifyCode"
+	AuthService_CodeVerify_FullMethodName = "/muydelcampo.AuthService/CodeVerify"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -30,7 +30,7 @@ const (
 type AuthServiceClient interface {
 	Code(ctx context.Context, in *CodeReq, opts ...grpc.CallOption) (*CodeRes, error)
 	CodeDetail(ctx context.Context, in *CodeDetailReq, opts ...grpc.CallOption) (*CodeDetailRes, error)
-	VerifyCode(ctx context.Context, in *VerifyCodeReq, opts ...grpc.CallOption) (*VerifyCodeRes, error)
+	CodeVerify(ctx context.Context, in *CodeVerifyReq, opts ...grpc.CallOption) (*CodeVerifyRes, error)
 }
 
 type authServiceClient struct {
@@ -61,10 +61,10 @@ func (c *authServiceClient) CodeDetail(ctx context.Context, in *CodeDetailReq, o
 	return out, nil
 }
 
-func (c *authServiceClient) VerifyCode(ctx context.Context, in *VerifyCodeReq, opts ...grpc.CallOption) (*VerifyCodeRes, error) {
+func (c *authServiceClient) CodeVerify(ctx context.Context, in *CodeVerifyReq, opts ...grpc.CallOption) (*CodeVerifyRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(VerifyCodeRes)
-	err := c.cc.Invoke(ctx, AuthService_VerifyCode_FullMethodName, in, out, cOpts...)
+	out := new(CodeVerifyRes)
+	err := c.cc.Invoke(ctx, AuthService_CodeVerify_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (c *authServiceClient) VerifyCode(ctx context.Context, in *VerifyCodeReq, o
 type AuthServiceServer interface {
 	Code(context.Context, *CodeReq) (*CodeRes, error)
 	CodeDetail(context.Context, *CodeDetailReq) (*CodeDetailRes, error)
-	VerifyCode(context.Context, *VerifyCodeReq) (*VerifyCodeRes, error)
+	CodeVerify(context.Context, *CodeVerifyReq) (*CodeVerifyRes, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -94,8 +94,8 @@ func (UnimplementedAuthServiceServer) Code(context.Context, *CodeReq) (*CodeRes,
 func (UnimplementedAuthServiceServer) CodeDetail(context.Context, *CodeDetailReq) (*CodeDetailRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method CodeDetail not implemented")
 }
-func (UnimplementedAuthServiceServer) VerifyCode(context.Context, *VerifyCodeReq) (*VerifyCodeRes, error) {
-	return nil, status.Error(codes.Unimplemented, "method VerifyCode not implemented")
+func (UnimplementedAuthServiceServer) CodeVerify(context.Context, *CodeVerifyReq) (*CodeVerifyRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method CodeVerify not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -154,20 +154,20 @@ func _AuthService_CodeDetail_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_VerifyCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VerifyCodeReq)
+func _AuthService_CodeVerify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CodeVerifyReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).VerifyCode(ctx, in)
+		return srv.(AuthServiceServer).CodeVerify(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_VerifyCode_FullMethodName,
+		FullMethod: AuthService_CodeVerify_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).VerifyCode(ctx, req.(*VerifyCodeReq))
+		return srv.(AuthServiceServer).CodeVerify(ctx, req.(*CodeVerifyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -188,8 +188,8 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_CodeDetail_Handler,
 		},
 		{
-			MethodName: "VerifyCode",
-			Handler:    _AuthService_VerifyCode_Handler,
+			MethodName: "CodeVerify",
+			Handler:    _AuthService_CodeVerify_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

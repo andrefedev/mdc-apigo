@@ -24,12 +24,12 @@ message CodeDetailRes {
   Code result = 1;
 }
 
-message VerifyCodeReq {
+message CodeVerifyReq {
   string ref = 1;
   string code = 2;
 }
 
-message VerifyCodeRes {
+message CodeVerifyRes {
   string uid = 1;
   string id_token = 2;
 }
