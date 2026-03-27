@@ -2,13 +2,15 @@ package auth
 
 import "context"
 
-type identityKey struct{}
+type contextKey string
 
-func WithIdentity(ctx context.Context, v *Identity) context.Context {
-	return context.WithValue(ctx, identityKey{}, v)
+const identityContextKey contextKey = "auth.identity"
+
+func WithIdentity(ctx context.Context, identity *Identity) context.Context {
+	return context.WithValue(ctx, identityContextKey, identity)
 }
 
 func IdentityFromContext(ctx context.Context) (*Identity, bool) {
-	v, ok := ctx.Value(identityKey{}).(*Identity)
-	return v, ok
+	identity, ok := ctx.Value(identityContextKey).(*Identity)
+	return identity, ok
 }

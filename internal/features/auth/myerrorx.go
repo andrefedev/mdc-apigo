@@ -39,6 +39,9 @@ func GrpcStatusError(err error) error {
 	if errors.Is(err, ErrSessionExpired) {
 		return status.Error(codes.Unauthenticated, "Debes iniciar sesión para continuar")
 	}
+	if errors.Is(err, ErrForbidden) {
+		return status.Error(codes.PermissionDenied, "No tienes permisos para realizar esta acción")
+	}
 
 	return nil
 }

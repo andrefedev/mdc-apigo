@@ -6,6 +6,8 @@ import (
 	v1 "apigo/protobuf/gen/v1"
 
 	"apigo/internal/platforms/validatex/validationx"
+
+	"github.com/google/uuid"
 )
 
 // REQUEST
@@ -29,6 +31,30 @@ func (r *CodeInput) Validate() error {
 	// Validation
 	if !validationx.IsPhoneNumber(r.Phone) {
 		return fmt.Errorf("%s: %w", oper, ErrInvalidPhone)
+	}
+
+	return nil
+}
+
+type CodeDetailInput struct {
+	Ref string
+}
+
+func NewCodeDetailInput(req *v1.CodeDetailReq) *CodeDetailInput {
+	return &CodeDetailInput{
+		Ref: req.GetRef(),
+	}
+}
+
+func (r *CodeDetailInput) Validate() error {
+	const oper = "Auth.CodeDetailInput.Validate"
+
+	// Normalize
+	r.Ref = validationx.ClearString(r.Ref)
+
+	// Validation
+	if err := uuid.Validate(r.Ref); err != nil {
+		return fmt.Errorf("%s: %w", oper, err)
 	}
 
 	return nil

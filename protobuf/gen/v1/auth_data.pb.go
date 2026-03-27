@@ -155,7 +155,7 @@ func (x *CodeDetailReq) GetRef() string {
 
 type CodeDetailRes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Result        *Code                  `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	Code          *Code                  `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -190,9 +190,9 @@ func (*CodeDetailRes) Descriptor() ([]byte, []int) {
 	return file_auth_data_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CodeDetailRes) GetResult() *Code {
+func (x *CodeDetailRes) GetCode() *Code {
 	if x != nil {
-		return x.Result
+		return x.Code
 	}
 	return nil
 }
@@ -311,9 +311,9 @@ const file_auth_data_proto_rawDesc = "" +
 	"\aCodeRes\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\"!\n" +
 	"\rCodeDetailReq\x12\x10\n" +
-	"\x03ref\x18\x01 \x01(\tR\x03ref\":\n" +
-	"\rCodeDetailRes\x12)\n" +
-	"\x06result\x18\x01 \x01(\v2\x11.muydelcampo.CodeR\x06result\"5\n" +
+	"\x03ref\x18\x01 \x01(\tR\x03ref\"6\n" +
+	"\rCodeDetailRes\x12%\n" +
+	"\x04code\x18\x01 \x01(\v2\x11.muydelcampo.CodeR\x04code\"5\n" +
 	"\rCodeVerifyReq\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\"M\n" +
@@ -345,7 +345,7 @@ var file_auth_data_proto_goTypes = []any{
 	(*Code)(nil),          // 6: muydelcampo.Code
 }
 var file_auth_data_proto_depIdxs = []int32{
-	6, // 0: muydelcampo.CodeDetailRes.result:type_name -> muydelcampo.Code
+	6, // 0: muydelcampo.CodeDetailRes.code:type_name -> muydelcampo.Code
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name

@@ -1,4 +1,4 @@
-package wabas
+package wabacloud
 
 import (
 	"apigo/internal/modules/postgres"

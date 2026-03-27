@@ -18,6 +18,7 @@ var (
 	ErrSessionExpired  = errors.New("auth session expired")
 	ErrSessionRevoked  = errors.New("auth session revoked")
 	ErrSessionRequired = errors.New("auth session required")
+	ErrForbidden       = errors.New("auth forbidden")
 )
 
 func WrapInvalidCode(cause error) error {
@@ -74,4 +75,11 @@ func WrapSessionRequired(cause error) error {
 		return ErrSessionRequired
 	}
 	return errors.Join(ErrSessionRequired, cause)
+}
+
+func WrapForbidden(cause error) error {
+	if cause == nil {
+		return ErrForbidden
+	}
+	return errors.Join(ErrForbidden, cause)
 }

@@ -15,7 +15,7 @@ func IsEmail(email string) bool {
 	return err == nil
 }
 
-func IsValidUUID(value string) bool {
+func IsValidRef(value string) bool {
 	if err := uuid.Validate(value); err != nil {
 		return false
 	}

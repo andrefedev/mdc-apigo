@@ -1,35 +1,13 @@
-package auth
+package okgrpc
 
 import (
+	"apigo/internal/features/auth"
 	"context"
 	"strings"
-
-	v1 "apigo/protobuf/gen/v1"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
-
-const (
-	headerAuthorize = "authorization"
-)
-
-type Middleware struct {
-	Service       *Service
-	publicMethods map[string]struct{}
-}
-
-func NewMiddleware(service *Service) *Middleware {
-	return &Middleware{
-		Service: service,
-		publicMethods: map[string]struct{}{
-			v1.AuthService_Code_FullMethodName:                                 {},
-			v1.AuthService_CodeDetail_FullMethodName:                           {},
-			v1.AuthService_CodeVerify_FullMethodName:                           {},
-			"/server.reflection.v1alpha.ServerReflection/ServerReflectionInfo": {},
-		},
-	}
-}
 
 func bearerToken(values []string) string {
 	if len(values) == 0 {
@@ -45,12 +23,12 @@ func bearerToken(values []string) string {
 	return strings.TrimSpace(strings.TrimPrefix(value, prefix))
 }
 
-func (m *Middleware) isPublicMethod(method string) bool {
+func (m *Server) isPublicMethod(method string) bool {
 	_, ok := m.publicMethods[method]
 	return ok
 }
 
-func (m *Middleware) AttachIdentityUnaryInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+func (m *Server) AttachIdentityUnaryInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
 	idToken := bearerToken(md.Get(headerAuthorize))
 	if idToken == "" {
@@ -65,7 +43,7 @@ func (m *Middleware) AttachIdentityUnaryInterceptor(ctx context.Context, req any
 	return handler(WithIdentity(ctx, identity), req)
 }
 
-func (m *Middleware) AuthorizeUnaryInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+func (m *Server) AuthorizeUnaryInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
 	idToken := bearerToken(md.Get(headerAuthorize))
 	if idToken == "" {
@@ -83,17 +61,21 @@ func (m *Middleware) AuthorizeUnaryInterceptor(ctx context.Context, req any, inf
 	return handler(WithIdentity(ctx, identity), req)
 }
 
+// ############
+// # METHOD's #
+// ############
+
 func RequireLogin(ctx context.Context) (*Identity, error) {
 	identity, ok := IdentityFromContext(ctx)
 	if !ok || identity == nil || !identity.IsAuthenticated() {
-		return nil, WrapSessionRequired(nil)
+		return nil, auth.WrapSessionRequired(nil)
 	}
 
 	return identity, nil
 }
 
 func RequireStaff(ctx context.Context) (*Identity, error) {
-	identity, err := RequireAuthenticated(ctx)
+	identity, err := RequireLogin(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -11,5 +11,6 @@ import 'google/protobuf/timestamp.proto';
 message Code {
   string ref = 1;
   string phone = 2;
-  google.protobuf.Timestamp date_expired = 3;
+  google.protobuf.Timestamp date_created = 3;
+  google.protobuf.Timestamp date_expired = 4;
 }

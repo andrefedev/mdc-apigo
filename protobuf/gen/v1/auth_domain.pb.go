@@ -26,7 +26,8 @@ type Code struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
 	Phone         string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
-	DateExpired   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=date_expired,json=dateExpired,proto3" json:"date_expired,omitempty"`
+	DateCreated   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=date_created,json=dateCreated,proto3" json:"date_created,omitempty"`
+	DateExpired   *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=date_expired,json=dateExpired,proto3" json:"date_expired,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -75,6 +76,13 @@ func (x *Code) GetPhone() string {
 	return ""
 }
 
+func (x *Code) GetDateCreated() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DateCreated
+	}
+	return nil
+}
+
 func (x *Code) GetDateExpired() *timestamppb.Timestamp {
 	if x != nil {
 		return x.DateExpired
@@ -86,11 +94,12 @@ var File_auth_domain_proto protoreflect.FileDescriptor
 
 const file_auth_domain_proto_rawDesc = "" +
 	"\n" +
-	"\x11auth_domain.proto\x12\vmuydelcampo\x1a\x1fgoogle/protobuf/timestamp.proto\"m\n" +
+	"\x11auth_domain.proto\x12\vmuydelcampo\x1a\x1fgoogle/protobuf/timestamp.proto\"\xac\x01\n" +
 	"\x04Code\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x14\n" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x12=\n" +
-	"\fdate_expired\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\vdateExpiredB/\n" +
+	"\fdate_created\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\x12=\n" +
+	"\fdate_expired\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\vdateExpiredB/\n" +
 	"\x15com.muydelcampo.apigoZ\x16apigo/protobuf/gen/v1;b\x06proto3"
 
 var (
@@ -111,12 +120,13 @@ var file_auth_domain_proto_goTypes = []any{
 	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
 }
 var file_auth_domain_proto_depIdxs = []int32{
-	1, // 0: muydelcampo.Code.date_expired:type_name -> google.protobuf.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	1, // 0: muydelcampo.Code.date_created:type_name -> google.protobuf.Timestamp
+	1, // 1: muydelcampo.Code.date_expired:type_name -> google.protobuf.Timestamp
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_auth_domain_proto_init() }

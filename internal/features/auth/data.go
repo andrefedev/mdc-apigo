@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"time"
+
 	"apigo/internal/platforms/validatex/validationx"
 )
 
@@ -28,6 +30,7 @@ func (d *CodeInsertData) Validation() error {
 }
 
 type SessionInsertData struct {
-	UserRef   string `db:"uid"`
-	TokenHash string `db:"token_hash"`
+	UserRef     string    `db:"uid"`
+	TokenHash   string    `db:"token_hash"`
+	DateExpires time.Time `db:"date_expires"`
 }

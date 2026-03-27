@@ -33,6 +33,21 @@ func (h *Handler) Code(ctx context.Context, req *v1.CodeReq) (*v1.CodeRes, error
 	return &v1.CodeRes{Ref: ref}, nil
 }
 
+func (h *Handler) CodeDetail(ctx context.Context, req *v1.CodeDetailReq) (*v1.CodeDetailRes, error) {
+	input := NewCodeDetailInput(req)
+	if err := input.Validate(); err != nil {
+		return nil, err
+	}
+
+	res, err := h.deps.Service.CodeDetail(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	code := res.ToProto()
+	return &v1.CodeDetailRes{Code: code}, nil
+}
+
 func (h *Handler) CodeVerify(ctx context.Context, req *v1.CodeVerifyReq) (*v1.CodeVerifyRes, error) {
 	input := NewCodeVerifyInput(req)
 	if err := input.Validate(); err != nil {
