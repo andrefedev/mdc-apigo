@@ -50,7 +50,7 @@ func main() {
 
 	authService := auth.NewService(
 		auth.ServiceDeps{
-			AuthRepository: authRepo,
+			Repository:     authRepo,
 			MessageService: msgService,
 		},
 	)

@@ -26,3 +26,8 @@ func (d *CodeInsertData) Validation() error {
 
 	return nil
 }
+
+type SessionInsertData struct {
+	UserRef   string `db:"uid"`
+	TokenHash string `db:"token_hash"`
+}

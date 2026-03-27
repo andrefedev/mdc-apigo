@@ -30,6 +30,6 @@ message CodeVerifyReq {
 }
 
 message CodeVerifyRes {
-  string uid = 1;
-  string id_token = 2;
+  string user_ref = 1;
+  string access_token = 2;
 }

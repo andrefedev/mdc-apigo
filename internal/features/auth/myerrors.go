@@ -11,10 +11,13 @@ var (
 	ErrCodeExpired  = errors.New("auth code expired")
 	ErrCodeNotFound = errors.New("auth code not found")
 
-	ErrAuthenticationRequired = errors.New("auth authentication required")
+	ErrUserNotFound = errors.New("auth user not found")
 
-	ErrUserNotFound    = errors.New("auth user not found")
 	ErrSessionNotFound = errors.New("auth session not found")
+
+	ErrSessionExpired  = errors.New("auth session expired")
+	ErrSessionRevoked  = errors.New("auth session revoked")
+	ErrSessionRequired = errors.New("auth session required")
 )
 
 func WrapInvalidCode(cause error) error {
@@ -38,13 +41,6 @@ func WrapCodeNotFound(cause error) error {
 	return errors.Join(ErrCodeNotFound, cause)
 }
 
-func WrapAuthenticationRequired(cause error) error {
-	if cause == nil {
-		return ErrAuthenticationRequired
-	}
-	return errors.Join(ErrAuthenticationRequired, cause)
-}
-
 func WrapUserNotFound(cause error) error {
 	if cause == nil {
 		return ErrUserNotFound
@@ -57,4 +53,25 @@ func WrapSessionNotFound(cause error) error {
 		return ErrSessionNotFound
 	}
 	return errors.Join(ErrSessionNotFound, cause)
+}
+
+func WrapSessionExpired(cause error) error {
+	if cause == nil {
+		return ErrSessionExpired
+	}
+	return errors.Join(ErrSessionExpired, cause)
+}
+
+func WrapSessionRevoked(cause error) error {
+	if cause == nil {
+		return ErrSessionRevoked
+	}
+	return errors.Join(ErrSessionRevoked, cause)
+}
+
+func WrapSessionRequired(cause error) error {
+	if cause == nil {
+		return ErrSessionRequired
+	}
+	return errors.Join(ErrSessionRequired, cause)
 }

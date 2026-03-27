@@ -11,6 +11,15 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+func UnaryErrorInterceptor(ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+	resp, err := handler(ctx, req)
+	if err != nil {
+		return nil, StatusError(err)
+	}
+
+	return resp, nil
+}
+
 func UnaryLoggingInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	start := time.Now()
 
@@ -46,17 +55,4 @@ func UnaryLoggingInterceptor(ctx context.Context, req any, info *grpc.UnaryServe
 
 	logger.InfoContext(ctx, "grpc request completed", attrs...)
 	return resp, err
-}
-
-func UnaryLogInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-	return UnaryLoggingInterceptor(ctx, req, info, handler)
-}
-
-func UnaryErrorInterceptor(ctx context.Context, req any, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-	resp, err := handler(ctx, req)
-	if err != nil {
-		return nil, StatusError(err)
-	}
-
-	return resp, nil
 }

@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"testing"
 
-	"apigo/internal/apperr"
+	"apigo/internal/features/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -47,7 +47,7 @@ func TestUnaryLoggingInterceptorLogsSemanticError(t *testing.T) {
 	slog.SetDefault(slog.New(handler))
 	t.Cleanup(func() { slog.SetDefault(prev) })
 
-	appErr := fmt.Errorf("Auth.Code: %w", apperr.ErrInvalidPhone)
+	appErr := fmt.Errorf("Auth.Code: %w", auth.ErrInvalidPhone)
 
 	_, err := UnaryLoggingInterceptor(
 		context.Background(),
@@ -75,13 +75,13 @@ func TestUnaryLoggingInterceptorLogsSemanticError(t *testing.T) {
 	if _, ok := record.attrs["err"]; !ok {
 		t.Fatal("expected err attribute")
 	}
-	if got := fmt.Sprint(record.attrs["err"]); got != "Auth.Code: invalid phone" {
+	if got := fmt.Sprint(record.attrs["err"]); got != "Auth.Code: invalid phone number" {
 		t.Fatalf("expected wrapped error string, got %q", got)
 	}
 }
 
 func TestStatusErrorMapsSemanticError(t *testing.T) {
-	err := StatusError(fmt.Errorf("Auth.Code: %w", apperr.ErrInvalidPhone))
+	err := StatusError(fmt.Errorf("Auth.Code: %w", auth.ErrInvalidPhone))
 	st := status.Convert(err)
 
 	if st.Code() != codes.InvalidArgument {

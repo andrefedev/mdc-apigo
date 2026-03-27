@@ -1,13 +1,13 @@
 package auth
 
 import (
-	"apigo/internal/features/users"
-	"apigo/internal/modules/whatsapp/messages"
-	"apigo/internal/platforms/cryptox"
 	"context"
 	"errors"
 	"fmt"
 	"time"
+
+	"apigo/internal/modules/whatsapp/messages"
+	"apigo/internal/platforms/cryptox"
 )
 
 type Service struct {
@@ -17,9 +17,6 @@ type Service struct {
 type ServiceDeps struct {
 	Repository     *Repository
 	MessageService *messages.Service
-	// UserRepository *users.Repo
-	// WhatsApp *WhatsApp.CloudAPIClient
-	// JWT *authn.JWT
 }
 
 func NewService(deps ServiceDeps) *Service {
@@ -29,13 +26,11 @@ func NewService(deps ServiceDeps) *Service {
 func (s *Service) Code(ctx context.Context, input *CodeInput) (string, string, error) {
 	oper := "Auth.Service.Code"
 
-	// OTP + challenge
 	code, err := cryptox.GenerateRandomNumberString(6)
 	if err != nil {
 		return "", "", fmt.Errorf("%s: generate otp: %w", oper, err)
 	}
 
-	// InsertData
 	data := &CodeInsertData{
 		Code:  code,
 		Phone: input.Phone,
@@ -49,7 +44,6 @@ func (s *Service) Code(ctx context.Context, input *CodeInput) (string, string, e
 		return "", "", fmt.Errorf("%s: insert code: %w", oper, err)
 	}
 
-	// Send Code Verification...
 	templ := &messages.TemplateMessageRequest{
 		To:   data.Phone,
 		Type: messages.TypeTemplate,
@@ -86,117 +80,85 @@ func (s *Service) Code(ctx context.Context, input *CodeInput) (string, string, e
 		return "", "", fmt.Errorf("%s: send template: %w", oper, err)
 	}
 
-	// ELIMINAR EL CODIGO DE LA BASE DE DATOS ??
 	return ref, code, nil
 }
 
-func (s *Service) CodeVerify(ctx context.Context, input CodeVerifyInput) (*VerifyCodeResult, error) {
-	op := "Auth.Service.CodeVerify"
+func (s *Service) CodeVerify(ctx context.Context, input *CodeVerifyInput) (string, string, error) {
+	const op = "Auth.Service.CodeVerify"
 
-	result := new(VerifyCodeResult)
-
-	res, err := s.deps.Repository.CodeSelect(ctx, input.Ref)
-	if err != nil {
-		return nil, fmt.Errorf("%s: code select: %w", op, err)
-	}
-	if res.Code != input.Code {
-		return nil, ErrInvalidCode
-	}
-	if time.Now().After(res.DateExpired) {
-		return nil, ErrCodeExpired
-	}
-
-	// Puedo importar User???
-	// usuario existe?
-	uid, err := s.deps.Repository.UserRefSelectByPhone(ctx, res.Phone)
-	if err != nil {
-		return nil, fmt.Errorf("%s: user ref by phone: %w", op, err)
-	}
-
-	idToken, err := cryptox.GenerateRandomString(32)
-	if err != nil {
-		return nil, fmt.Errorf("%s: generate id token: %w", op, err)
-	}
-
-	// crear la session...
+	var uid string
+	var idk string
+	// REQUIERE SESSION >>>
 	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
-
-		// transaccion
-		// create session
-		//create table auth_sessions
-		//(
-		//	id           uuid default uuid_generate_v4() not null
-		//constraint users_sessions_pk
-		//primary key,
-		//uid          uuid                            not null
-		//constraint users_sessions_users_id_fk
-		//references users,
-		//token_hash   varchar(40),
-		//last_used_at timestamp with time zone,
-		//date_expires timestamp with time zone,
-		//date_created timestamp with time zone,
-		//date_revoked timestamp with time zone
-		//);
-		//
-		//alter table auth_sessions
-		//owner to dev;
-
-		return nil
-	}); err != nil {
-		return nil, err
-	}
-
-	if err := s.deps.AuthRepository.db.WithTx(ctx, func(txCtx context.Context) error {
-		code, err := s.deps.AuthRepository.CodeSelect(txCtx, input.Ref)
+		code, err := s.deps.Repository.CodeSelect(ctx, input.Ref)
 		if err != nil {
-			return fmt.Errorf("%s: code select: %w", op, err)
+			return fmt.Errorf("%s: %w", op, err)
 		}
 
-		if time.Now().After(code.DateExpired) {
-			return ErrCodeExpired
-		}
 		if code.Code != input.Code {
-			return ErrInvalidCode
+			return fmt.Errorf("%s: %w", op, WrapInvalidCode(err))
+		}
+		if time.Now().After(code.DateExpired) {
+			return fmt.Errorf("%s: %w", op, WrapCodeExpired(err))
 		}
 
-		userRef, err := s.deps.AuthRepository.UserRefSelectByPhone(txCtx, code.Phone)
+		uid, err = s.deps.Repository.UserRefByPhone(ctx, code.Phone)
 		if err != nil {
-			return fmt.Errorf("%s: user by phone: %w", op, err)
+			return fmt.Errorf("%s: %w", op, err)
 		}
 
-		idToken, err := cryptox.GenerateRandomString(32)
+		idk, err = cryptox.GenerateRandomString(32)
 		if err != nil {
-			return fmt.Errorf("%s: generate id token: %w", op, err)
+			return fmt.Errorf("%s: %w", op, err)
 		}
 
-		if err := s.deps.AuthRepository.UserIdTokenUpdate(txCtx, userRef, idToken); err != nil {
-			return fmt.Errorf("%s: update id token: %w", op, err)
+		// session insert
+		if _, err := s.deps.Repository.SessionInsert(
+			ctx,
+			&SessionInsertData{
+				UserRef:   uid,
+				TokenHash: cryptox.HashIdToken(idk),
+			},
+		); err != nil {
+			return fmt.Errorf("%s: %w", op, err)
 		}
 
-		if _, err := s.deps.AuthRepository.CodeDelete(txCtx, input.Ref); err != nil {
-			return fmt.Errorf("%s: delete code: %w", op, err)
+		// SUCCESS...
+		if _, err := s.deps.Repository.CodeDelete(ctx, input.Ref); err != nil {
+			return fmt.Errorf("%s: %w", op, err)
 		}
 
-		result.UserRef = userRef
-		result.IdToken = idToken
 		return nil
 	}); err != nil {
-		return nil, err
+		return "", "", err
 	}
 
-	return result, nil
+	return uid, idk, nil
 }
 
-func (s *Service) IdentityByIdToken(ctx context.Context, idToken string) (*Identity, error) {
+func (s *Service) SessionByIdToken(ctx context.Context, idk string) (*Session, error) {
 	const op = "Auth.Service.IdentityByIdToken"
 
-	identity, err := s.deps.AuthRepository.IdentitySelectByIdToken(ctx, idToken)
+	idk = cryptox.HashIdToken(idk)
+	session, err := s.deps.Repository.SessionSelectByToken(ctx, idk)
 	if err != nil {
-		if errors.Is(err, ErrIdentityNotFound) {
-			return nil, fmt.Errorf("%s: %w", op, WrapAuthenticationRequired(err))
+		if errors.Is(err, ErrSessionNotFound) {
+			err = WrapSessionRequired(err)
 		}
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return identity, nil
+	// si encontramos la session...
+	// vericiar que no haya expirado y tampoco tenga estado revocado
+	if time.Now().After(session.DateExpired) {
+		// session expirada
+		return nil, WrapSessionExpired(err)
+	}
+
+	// Session revocada
+	if session.DateRevoked != nil {
+		return nil, WrapSessionRevoked(err)
+	}
+
+	return session, nil
 }

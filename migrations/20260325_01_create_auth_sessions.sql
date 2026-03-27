@@ -3,10 +3,10 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS auth_sessions (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     uid uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    token_hash text NOT NULL UNIQUE,
+    token_hash varchar(40),
     last_used_at timestamptz NULL,
-    date_expires timestamptz NOT NULL,
-    date_created timestamptz NOT NULL DEFAULT NOW(),
+    date_expires timestamptz NULL,
+    date_created timestamptz NULL,
     date_revoked timestamptz NULL
 );
 

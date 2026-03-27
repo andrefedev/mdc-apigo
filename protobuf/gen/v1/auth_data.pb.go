@@ -251,8 +251,8 @@ func (x *CodeVerifyReq) GetCode() string {
 
 type CodeVerifyRes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uid           string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	IdToken       string                 `protobuf:"bytes,2,opt,name=id_token,json=idToken,proto3" json:"id_token,omitempty"`
+	UserRef       string                 `protobuf:"bytes,1,opt,name=user_ref,json=userRef,proto3" json:"user_ref,omitempty"`
+	AccessToken   string                 `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -287,16 +287,16 @@ func (*CodeVerifyRes) Descriptor() ([]byte, []int) {
 	return file_auth_data_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *CodeVerifyRes) GetUid() string {
+func (x *CodeVerifyRes) GetUserRef() string {
 	if x != nil {
-		return x.Uid
+		return x.UserRef
 	}
 	return ""
 }
 
-func (x *CodeVerifyRes) GetIdToken() string {
+func (x *CodeVerifyRes) GetAccessToken() string {
 	if x != nil {
-		return x.IdToken
+		return x.AccessToken
 	}
 	return ""
 }
@@ -316,10 +316,10 @@ const file_auth_data_proto_rawDesc = "" +
 	"\x06result\x18\x01 \x01(\v2\x11.muydelcampo.CodeR\x06result\"5\n" +
 	"\rCodeVerifyReq\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
-	"\x04code\x18\x02 \x01(\tR\x04code\"<\n" +
-	"\rCodeVerifyRes\x12\x10\n" +
-	"\x03uid\x18\x01 \x01(\tR\x03uid\x12\x19\n" +
-	"\bid_token\x18\x02 \x01(\tR\aidTokenB/\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\"M\n" +
+	"\rCodeVerifyRes\x12\x19\n" +
+	"\buser_ref\x18\x01 \x01(\tR\auserRef\x12!\n" +
+	"\faccess_token\x18\x02 \x01(\tR\vaccessTokenB/\n" +
 	"\x15com.muydelcampo.apigoZ\x16apigo/protobuf/gen/v1;b\x06proto3"
 
 var (
