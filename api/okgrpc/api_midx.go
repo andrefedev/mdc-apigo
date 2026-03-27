@@ -48,38 +48,37 @@ func isPublicMethod(method string) bool {
 
 func requireLogin(ctx context.Context) (*auth.Session, error) {
 	session, ok := SessionFromContext(ctx)
-	if !ok || session == nil || !session.IsAuthenticated() {
+	if !ok || session == nil {
 		return nil, auth.WrapSessionRequired(nil)
 	}
 
 	return session, nil
 }
 
-func requireStaff(ctx context.Context) (*auth.Session, error) {
-	identity, err := RequireLogin(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if !identity.CanAccessBackoffice() {
-		return nil, WrapForbidden(nil)
-	}
-
-	return identity, nil
-}
-
-func requireSuperUser(ctx context.Context) (*auth.Session, error) {
-	session, err := RequireLogin(ctx)
+func requireRootUser(ctx context.Context) (*auth.Session, error) {
+	session, err := requireLogin(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	// require user...
+	//if !session.CanManageUsers() {
+	//	return nil, WrapForbidden(nil)
+	//}
 
-	if !session.CanManageUsers() {
-		return nil, WrapForbidden(nil)
+	return session, nil
+}
+
+func requireStaffUser(ctx context.Context) (*auth.Session, error) {
+	session, err := requireLogin(ctx)
+	if err != nil {
+		return nil, err
 	}
+	//if !identity.Is() {
+	//	return nil, WrapForbidden(nil)
+	//}
 
-	return identity, nil
+	return session, nil
 }
 
 // #################

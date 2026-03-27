@@ -15,7 +15,6 @@ import (
 	"apigo/internal/features/auth"
 	"apigo/internal/modules/postgres"
 	"apigo/internal/modules/whatsapp"
-	"apigo/internal/modules/whatsapp/messages"
 	"apigo/internal/platforms/configx"
 	"apigo/internal/platforms/loggerx"
 	"apigo/internal/platforms/okgrpcx"
@@ -34,6 +33,7 @@ func main() {
 	// ############
 	// # DATABASE #
 	// ############
+
 	ctx := context.Background()
 	pool, err := postgres.Open(ctx, cfg.PgDatabaseUrl)
 	if err != nil {
@@ -43,37 +43,16 @@ func main() {
 	defer pool.Close()
 
 	pgdb := postgres.NewPgdb(pool)
+
 	// ################
 	// # END_DATABASE #
 	// ################
-
-	// ##############
-	// # REPOSITORY #
-	// ##############
-	authRepo := auth.NewRepository(pgdb)
-	//userRepo := auth.NewRepository(pgdb)
-	// ##################
-	// # END_REPOSITORY #
-	// ##################
-
-	// ###############
-	// # USESERVICES #
-	// ###############
-	authService := auth.NewService(
-		auth.ServiceDeps{
-			Repository:     authRepo,
-			MessageService: msgService,
-		},
-	)
-	// ###################
-	// # END_USESERVICES #
-	// ###################
 
 	serverx := okgrpc.NewServer(
 		okgrpc.ServerDeps{
 			AuthRepository: auth.NewRepository(pgdb),
 			UserRepository: users.NewRepository(pgdb),
-			WhatsAppCloudApi: whatsapp.NewClient(
+			WhatsAppClient: whatsapp.NewClient(
 				whatsapp.Config{
 					ApiToken: cfg.WhatsAppToken,
 					ApiPhone: cfg.WhatsAppPhone,
@@ -82,38 +61,18 @@ func main() {
 		},
 	)
 
-	wabacli := whatsapp.NewClient(
-		whatsapp.Config{
-			ApiToken: cfg.WhatsAppToken,
-			ApiPhone: cfg.WhatsAppPhone,
-		},
-	)
-
-	msgService := messages.NewService(wabacli)
-
-	authService := auth.NewService(
-		auth.ServiceDeps{
-			Repository:     authRepo,
-			MessageService: msgService,
-		},
-	)
-	authMiddleware := auth.NewMiddleware(authService)
-
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			okgrpcx.UnaryErrorInterceptor,
 			okgrpcx.UnaryLoggingInterceptor,
-			authMiddleware.AuthorizeUnaryInterceptor,
+			okgrpc.SessionUnaryInterceptor(serverx),
+			okgrpc.AuthorizeUnaryInterceptor(serverx),
 		),
 	)
 
 	muydelcampov1.RegisterAuthServiceServer(
 		grpcServer,
-		auth.NewHandler(
-			auth.HandlerDeps{
-				Service: authService,
-			},
-		),
+		okgrpc.NewAuthService(serverx),
 	)
 
 	lis, err := net.Listen("tcp", cfg.Port)

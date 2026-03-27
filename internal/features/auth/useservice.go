@@ -4,14 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"apigo/internal/modules/whatsapp/messages"
 	"apigo/internal/platforms/cryptox"
 )
-
-const sessionDuration = 60 * 24 * time.Hour
 
 type Service struct {
 	deps ServiceDeps
@@ -97,7 +94,6 @@ func (s *Service) CodeVerify(ctx context.Context, input *CodeVerifyInput) (strin
 		if err != nil {
 			return fmt.Errorf("%s: %w", op, err)
 		}
-
 		if code.Code != input.Code {
 			return fmt.Errorf("%s: %w", op, WrapInvalidCode(err))
 		}
@@ -105,6 +101,8 @@ func (s *Service) CodeVerify(ctx context.Context, input *CodeVerifyInput) (strin
 			return fmt.Errorf("%s: %w", op, WrapCodeExpired(err))
 		}
 
+		// Es probable que el usuario no exista
+		// por lo que se debe crearlo.
 		uid, err = s.deps.Repository.UserRefByPhone(ctx, code.Phone)
 		if err != nil {
 			return fmt.Errorf("%s: %w", op, err)
@@ -119,9 +117,8 @@ func (s *Service) CodeVerify(ctx context.Context, input *CodeVerifyInput) (strin
 		if _, err := s.deps.Repository.SessionInsert(
 			ctx,
 			&SessionInsertData{
-				UserRef:     uid,
-				TokenHash:   cryptox.HashIdToken(idk),
-				DateExpires: time.Now().Add(sessionDuration),
+				UserRef:   uid,
+				TokenHash: cryptox.HashIdToken(idk),
 			},
 		); err != nil {
 			return fmt.Errorf("%s: %w", op, err)
@@ -172,7 +169,7 @@ func (s *Service) SessionByIdToken(ctx context.Context, idk string) (*Session, e
 	}
 
 	// session expirada
-	if time.Now().After(session.DateExpires) {
+	if time.Now().After(session.DateExpired) {
 		return nil, fmt.Errorf("%s: %w", op, WrapSessionExpired(nil))
 	}
 
@@ -182,30 +179,4 @@ func (s *Service) SessionByIdToken(ctx context.Context, idk string) (*Session, e
 	}
 
 	return session, nil
-}
-
-func (s *Service) IdentityByIdToken(ctx context.Context, idk string) (*Identity, error) {
-	const op = "Auth.Service.IdentityByIdToken"
-
-	idk = strings.TrimSpace(idk)
-	if idk == "" {
-		return nil, fmt.Errorf("%s: %w", op, WrapSessionRequired(nil))
-	}
-
-	identity, err := s.deps.Repository.IdentitySelectByToken(ctx, cryptox.HashIdToken(idk))
-	if err != nil {
-		if errors.Is(err, ErrSessionNotFound) {
-			err = WrapSessionRequired(err)
-		}
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	if time.Now().After(identity.DateExpires) {
-		return nil, fmt.Errorf("%s: %w", op, WrapSessionExpired(nil))
-	}
-	if identity.DateRevoked != nil {
-		return nil, fmt.Errorf("%s: %w", op, WrapSessionRevoked(nil))
-	}
-
-	return identity, nil
 }

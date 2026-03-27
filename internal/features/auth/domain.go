@@ -32,30 +32,15 @@ type Session struct {
 	IsStaff     bool       `db:"is_staff"`
 	IsActive    bool       `db:"is_active"`
 	TokenHash   string     `db:"token_hash"`
-	LastUsedAt  *time.Time `db:"last_used_at"`
 	DateExpired time.Time  `db:"date_expires"`
 	DateCreated time.Time  `db:"date_created"`
 	DateRevoked *time.Time `db:"date_revoked"`
 }
 
-type Identity struct {
-	SessionRef  string     `db:"session_id"`
-	UserRef     string     `db:"uid"`
-	DateExpires time.Time  `db:"date_expires"`
-	DateRevoked *time.Time `db:"date_revoked"`
-	IsActive    bool       `db:"is_active"`
-	IsStaff     bool       `db:"is_staff"`
-	IsSuper     bool       `db:"is_super"`
-}
-
-func (i *Identity) IsAuthenticated() bool {
-	return i != nil && i.SessionRef != "" && i.UserRef != ""
-}
-
-func (i *Identity) CanAccessBackoffice() bool {
-	return i != nil && i.IsActive && (i.IsStaff || i.IsSuper)
-}
-
-func (i *Identity) CanManageUsers() bool {
+func (i *Session) IsRoot() bool {
 	return i != nil && i.IsActive && i.IsSuper
+}
+
+func (i *Session) IsEmployee() bool {
+	return i != nil && i.IsActive && (i.IsStaff || i.IsSuper)
 }

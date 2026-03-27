@@ -71,14 +71,8 @@ func (r Repository) CodeSelect(ctx context.Context, ref string) (*Code, error) {
 }
 
 func (r Repository) UserRefByPhone(ctx context.Context, phone string) (string, error) {
-	op := "Auth.Repository.UserRefByPhone"
-
-	qry := `
-	SELECT id
-	FROM users
-	WHERE phone = $1
-	LIMIT 1
-	`
+	const op = "Auth.Repository.UserRefByPhone"
+	qry := `SELECT id FROM users WHERE phone = $1 LIMIT 1`
 
 	var userRef string
 	if err := r.db.QueryRow(ctx, qry, phone).Scan(&userRef); err != nil {
@@ -94,8 +88,8 @@ func (r Repository) UserRefByPhone(ctx context.Context, phone string) (string, e
 func (r Repository) SessionInsert(ctx context.Context, data *SessionInsertData) (string, error) {
 	op := "Auth.Repository.SessionInsert"
 	qry := `
-	INSERT INTO auth_sessions (uid, token_hash, date_expires, last_used_at, date_created)
-	VALUES (@uid, @token_hash, @date_expires, NOW(), NOW())
+	INSERT INTO auth_sessions (uid, token_hash, date_expired, last_used_at, date_created)
+	VALUES (@uid, @token_hash, @date_expired, NOW(), NOW())
 	RETURNING id
 	`
 
@@ -144,11 +138,9 @@ func (r Repository) SessionSelect(ctx context.Context, ref string) (*Session, er
 func (r Repository) SessionSelectByToken(ctx context.Context, token string) (*Session, error) {
 	const op = "Auth.Repository.SessionSelectByToken"
 	qry := `
-	SELECT id, uid,  token_hash, last_used_at, date_expired, date_created, date_revoked
-	FROM auth_sessions AS s
-	JOIN users AS u ON u.id = s.uid
-	WHERE token_hash = $1
-	LIMIT 1
+	SELECT s.id, s.uid, s.token_hash, s.date_expired, s.date_revoked, s.date_created,
+	u.is_super AS is_super, u.is_staff AS is_staff, u.is_active AS is_active -- ok --
+	FROM auth_sessions AS s JOIN users AS u ON u.id = s.uid WHERE token_hash = $1 LIMIT 1
 	`
 
 	rows, err := r.db.Query(ctx, qry, token)
@@ -158,41 +150,6 @@ func (r Repository) SessionSelectByToken(ctx context.Context, token string) (*Se
 	defer rows.Close()
 
 	result, err := pgx.CollectOneRow(rows, pgx.RowToStructByNameLax[Session])
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			err = WrapSessionNotFound(err)
-		}
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	return new(result), nil
-}
-
-func (r Repository) IdentitySelectByToken(ctx context.Context, tokenHash string) (*Identity, error) {
-	const op = "Auth.Repository.IdentitySelectByToken"
-
-	qry := `
-	SELECT
-		s.id AS session_id,
-		s.uid,
-		s.date_expires,
-		s.date_revoked,
-		u.is_active,
-		u.is_staff,
-		u.is_super
-	FROM auth_sessions s
-	JOIN users u ON u.id = s.uid
-	WHERE s.token_hash = $1
-	LIMIT 1
-	`
-
-	rows, err := r.db.Query(ctx, qry, tokenHash)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-	defer rows.Close()
-
-	result, err := pgx.CollectOneRow(rows, pgx.RowToStructByNameLax[Identity])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = WrapSessionNotFound(err)
