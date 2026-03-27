@@ -119,7 +119,7 @@ func (r Repository) SessionSelect(ctx context.Context, ref string) (*Session, er
 	const op = "Auth.Repository.SessionSelect"
 
 	qry := `
-	SELECT id, uid, token_hash, last_used_at, date_expires, date_created, date_revoked
+	SELECT id, uid, token_hash, last_used_at, date_expired, date_created, date_revoked
 	FROM auth_sessions
 	WHERE id = $1
 	`
@@ -144,8 +144,9 @@ func (r Repository) SessionSelect(ctx context.Context, ref string) (*Session, er
 func (r Repository) SessionSelectByToken(ctx context.Context, token string) (*Session, error) {
 	const op = "Auth.Repository.SessionSelectByToken"
 	qry := `
-	SELECT id, uid, token_hash, last_used_at, date_expires, date_created, date_revoked
-	FROM auth_sessions
+	SELECT id, uid,  token_hash, last_used_at, date_expired, date_created, date_revoked
+	FROM auth_sessions AS s
+	JOIN users AS u ON u.id = s.uid
 	WHERE token_hash = $1
 	LIMIT 1
 	`

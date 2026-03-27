@@ -28,9 +28,12 @@ func (r *Code) ToProto() *v1.Code {
 type Session struct {
 	Ref         string     `db:"id"`
 	UserRef     string     `db:"uid"`
+	IsSuper     bool       `db:"is_super"`
+	IsStaff     bool       `db:"is_staff"`
+	IsActive    bool       `db:"is_active"`
 	TokenHash   string     `db:"token_hash"`
 	LastUsedAt  *time.Time `db:"last_used_at"`
-	DateExpires time.Time  `db:"date_expires"`
+	DateExpired time.Time  `db:"date_expires"`
 	DateCreated time.Time  `db:"date_created"`
 	DateRevoked *time.Time `db:"date_revoked"`
 }
