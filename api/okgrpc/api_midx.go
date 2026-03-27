@@ -1,12 +1,21 @@
 package okgrpc
 
 import (
-	"apigo/internal/features/auth"
 	"context"
+	"slices"
 	"strings"
+
+	v1 "apigo/protobuf/gen/v1"
+
+	"apigo/internal/features/auth"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+)
+
+const (
+	userContext     = "userContext"
+	headerAuthorize = "authorization"
 )
 
 func bearerToken(values []string) string {
@@ -14,67 +23,39 @@ func bearerToken(values []string) string {
 		return ""
 	}
 
-	const prefix = "Bearer "
 	value := strings.TrimSpace(values[0])
-	if value == "" || !strings.HasPrefix(value, prefix) {
+	if value == "" {
 		return ""
 	}
 
-	return strings.TrimSpace(strings.TrimPrefix(value, prefix))
+	return strings.TrimSpace(value)
 }
 
-func (m *Server) isPublicMethod(method string) bool {
-	_, ok := m.publicMethods[method]
-	return ok
-}
-
-func (m *Server) AttachIdentityUnaryInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-	md, _ := metadata.FromIncomingContext(ctx)
-	idToken := bearerToken(md.Get(headerAuthorize))
-	if idToken == "" {
-		return handler(ctx, req)
+func isPublicMethod(method string) bool {
+	m := []string{
+		v1.AuthService_Code_FullMethodName,
+		v1.AuthService_CodeDetail_FullMethodName,
+		v1.AuthService_CodeVerify_FullMethodName,
+		"/server.reflection.v1alpha.ServerReflection/ServerReflectionInfo",
 	}
 
-	identity, err := m.Service.IdentityByIdToken(ctx, idToken)
-	if err != nil {
-		return nil, err
-	}
-
-	return handler(WithIdentity(ctx, identity), req)
-}
-
-func (m *Server) AuthorizeUnaryInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-	md, _ := metadata.FromIncomingContext(ctx)
-	idToken := bearerToken(md.Get(headerAuthorize))
-	if idToken == "" {
-		if m.isPublicMethod(info.FullMethod) {
-			return handler(ctx, req)
-		}
-		return nil, WrapSessionRequired(nil)
-	}
-
-	identity, err := m.Service.IdentityByIdToken(ctx, idToken)
-	if err != nil {
-		return nil, err
-	}
-
-	return handler(WithIdentity(ctx, identity), req)
+	return slices.Contains(m, method)
 }
 
 // ############
 // # METHOD's #
 // ############
 
-func RequireLogin(ctx context.Context) (*Identity, error) {
-	identity, ok := IdentityFromContext(ctx)
-	if !ok || identity == nil || !identity.IsAuthenticated() {
+func requireLogin(ctx context.Context) (*auth.Session, error) {
+	session, ok := SessionFromContext(ctx)
+	if !ok || session == nil || !session.IsAuthenticated() {
 		return nil, auth.WrapSessionRequired(nil)
 	}
 
-	return identity, nil
+	return session, nil
 }
 
-func RequireStaff(ctx context.Context) (*Identity, error) {
+func requireStaff(ctx context.Context) (*auth.Session, error) {
 	identity, err := RequireLogin(ctx)
 	if err != nil {
 		return nil, err
@@ -86,14 +67,62 @@ func RequireStaff(ctx context.Context) (*Identity, error) {
 	return identity, nil
 }
 
-func RequireSuperUser(ctx context.Context) (*Identity, error) {
+func requireSuperUser(ctx context.Context) (*auth.Session, error) {
 	session, err := RequireLogin(ctx)
 	if err != nil {
 		return nil, err
 	}
+
+	// require user...
+
 	if !session.CanManageUsers() {
 		return nil, WrapForbidden(nil)
 	}
 
 	return identity, nil
+}
+
+// #################
+// # INTERCEPTOR's #
+// #################
+
+func SessionUnaryInterceptor(srv *Server) grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			return handler(ctx, req)
+		}
+
+		value := bearerToken(md.Get(headerAuthorize))
+		if value == "" {
+			return handler(ctx, req)
+		}
+
+		session, err := srv.AuthService.SessionByIdToken(ctx, value)
+		if err != nil {
+			return nil, err
+		}
+
+		return handler(WithSession(ctx, session), req)
+	}
+}
+
+func AuthorizeUnaryInterceptor(srv *Server) grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		md, _ := metadata.FromIncomingContext(ctx)
+		idk := bearerToken(md.Get(headerAuthorize))
+		if idk == "" {
+			if isPublicMethod(info.FullMethod) {
+				return handler(ctx, req)
+			}
+			return nil, auth.WrapSessionRequired(nil)
+		}
+
+		session, err := srv.AuthService.SessionByIdToken(ctx, idk)
+		if err != nil {
+			return nil, err
+		}
+
+		return handler(WithSession(ctx, session), req)
+	}
 }
