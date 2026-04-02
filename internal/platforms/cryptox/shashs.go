@@ -1,11 +1,11 @@
 package cryptox
 
 import (
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/hex"
 )
 
 func HashIdToken(token string) string {
-	sum := sha1.Sum([]byte(token))
+	sum := sha256.Sum256([]byte(token))
 	return hex.EncodeToString(sum[:])
 }

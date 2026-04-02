@@ -6,15 +6,13 @@ import (
 	"apigo/internal/platforms/validatex/validationx"
 )
 
-// INTERNO
+// ########
+// # CODE #
+// ########
 
 type CodeInsertData struct {
 	Code  string `db:"code"`
 	Phone string `db:"phone"`
-}
-
-func (d *CodeInsertData) Normalize() {
-	d.Phone = validationx.ClearString(d.Phone)
 }
 
 func (d *CodeInsertData) Validation() error {
@@ -29,8 +27,12 @@ func (d *CodeInsertData) Validation() error {
 	return nil
 }
 
+// ###########
+// # SESSION #
+// ###########
+
 type SessionInsertData struct {
 	UserRef     string    `db:"uid"`
 	TokenHash   string    `db:"token_hash"`
-	DateExpires time.Time `db:"date_expires"`
+	DateExpired time.Time `db:"date_expired"`
 }

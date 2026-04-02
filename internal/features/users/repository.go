@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"apigo/internal/modules/postgres"
 
@@ -91,11 +93,11 @@ func NewRepository(db *postgres.Pgdb) *Repository {
 //}
 
 func (r Repository) Select(ctx context.Context, ref string) (*User, error) {
-	op := "User.Repository.Select"
+	const op = "User.Repository.Select"
 
 	qry := `
 	SELECT
-	id, idk, name, phone, is_staff, is_super, is_active, last_login, date_joined
+	id, name, phone, is_staff, is_super, is_active, last_login, date_joined
 	FROM users WHERE id = $1
 	`
 
@@ -105,23 +107,23 @@ func (r Repository) Select(ctx context.Context, ref string) (*User, error) {
 	}
 	defer rows.Close()
 
-	raw, err := pgx.CollectExactlyOneRow[UserRaw](rows, pgx.RowToStructByNameLax[UserRaw])
+	res, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByNameLax[User])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, fmt.Errorf("%s: %w", op, WrapUserNotFound(err))
+			err = WrapUserNotFound(err)
 		}
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return raw.ToModel(), nil
+	return new(res), nil
 }
 
 func (r Repository) SelectByPhone(ctx context.Context, phone string) (*User, error) {
-	op := "User.Repository.SelectByPhone"
+	const op = "User.Repository.SelectByPhone"
 
 	qry := `
 	SELECT
-	id, idk, name, phone, is_staff, is_super, is_active, last_login, date_joined
+	id, name, phone, is_staff, is_super, is_active, last_login, date_joined
 	FROM users WHERE phone = $1
 	`
 
@@ -131,15 +133,93 @@ func (r Repository) SelectByPhone(ctx context.Context, phone string) (*User, err
 	}
 	defer rows.Close()
 
-	raw, err := pgx.CollectExactlyOneRow[UserRaw](rows, pgx.RowToStructByNameLax[UserRaw])
+	res, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByNameLax[User])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, fmt.Errorf("%s: %w", op, WrapUserNotFound(err))
+			err = WrapUserNotFound(err)
 		}
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return raw.ToModel(), nil
+	return new(res), nil
+}
+
+func (r Repository) SelectAll(ctx context.Context, filter *FilterData, paging *PagingData) ([]*User, error) {
+	const op = "User.Repository.SelectAll"
+
+	qry := `
+	SELECT
+	u.id, u.name, u.phone, u.is_super, u.is_staff, u.is_active, u.last_login, u.date_joined
+	FROM users AS u
+	`
+
+	// # BEGIN FILTER #
+	var values []any
+	var clauses []string
+
+	if filter != nil {
+		// FLAT_QUERY
+		if filter.FlatQuery != nil {
+			q := strings.TrimSpace(*filter.FlatQuery)
+			if q != "" {
+				_, err := strconv.ParseInt(q, 10, 64)
+				if err == nil {
+					values = append(values, "%"+q+"%")
+					clauses = append(clauses, fmt.Sprintf(`u.phone ILIKE $%d`, len(values)))
+				} else {
+					values = append(values, "%"+q+"%")
+					clauses = append(clauses, fmt.Sprintf(`u.name ILIKE $%d`, len(values)))
+				}
+			}
+		}
+
+		// IS_SUPER
+		if filter.IsSuper != nil {
+			values = append(values, *filter.IsSuper)
+			clauses = append(clauses, fmt.Sprintf(`u.is_super = $%d`, len(values)))
+		}
+
+		// IS_STAFF
+		if filter.IsStaff != nil {
+			values = append(values, *filter.IsStaff)
+			clauses = append(clauses, fmt.Sprintf(`u.is_staff = $%d`, len(values)))
+		}
+
+		// IS_ACTIVE
+		if filter.IsActive != nil {
+			values = append(values, *filter.IsActive)
+			clauses = append(clauses, fmt.Sprintf(`u.is_active = $%d`, len(values)))
+		}
+	}
+
+	// # CLASUSES SEP #
+	if len(clauses) > 0 {
+		qry += " WHERE " + strings.Join(clauses, " AND ")
+	}
+
+	// # ORDER BY #
+	qry += " ORDER BY u.date_joined DESC, u.id DESC"
+
+	// # PAGINATION #
+	if paging != nil {
+		qry += fmt.Sprintf(` LIMIT %d `, paging.Limit)
+		qry += fmt.Sprintf(` OFFSET %d `, paging.Offset)
+	}
+
+	// # END DEFAULT FILTER #
+
+	rows, err := r.db.Query(ctx, qry, values...)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	users, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[User])
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return users, nil
 }
 
 //func (r Repository) ExistsByPhone(ctx context.Context, lookups string) (bool, error) {
@@ -152,87 +232,4 @@ func (r Repository) SelectByPhone(ctx context.Context, phone string) (*User, err
 //	}
 //
 //	return exists, nil
-//}
-
-//func (r Repository) SelectAll(ctx context.Context, filter *FilterData, paging *PagingData) ([]*User, error) {
-//	p := "User.Repository.SelectAll"
-//
-//	qry := `
-//	SELECT
-//	u.id, u.name, u.lookups, u.is_super, u.is_staff, u.is_active, u.last_login, u.date_joined
-//	FROM users AS u
-//	`
-//
-//	// # BEGIN FILTER #
-//	var values []any
-//	var clauses []string
-//
-//	if filter != nil {
-//		// FLAT_QUERY
-//		if filter.FlatQuery != nil {
-//			q := strings.TrimSpace(*filter.FlatQuery)
-//			if q != "" {
-//				_, err := strconv.ParseInt(q, 10, 64)
-//				if err == nil {
-//					values = append(values, "%"+q+"%")
-//					clauses = append(clauses, fmt.Sprintf(`u.lookups ILIKE $%d`, len(values)))
-//				} else {
-//					values = append(values, "%"+q+"%")
-//					clauses = append(clauses, fmt.Sprintf(`u.name ILIKE $%d`, len(values)))
-//				}
-//			}
-//		}
-//
-//		// IS_SUPER
-//		if filter.IsSuper != nil {
-//			values = append(values, *filter.IsSuper)
-//			clauses = append(clauses, fmt.Sprintf(`u.is_super = $%d`, len(values)))
-//		}
-//
-//		// IS_STAFF
-//		if filter.IsStaff != nil {
-//			values = append(values, *filter.IsStaff)
-//			clauses = append(clauses, fmt.Sprintf(`u.is_staff = $%d`, len(values)))
-//		}
-//
-//		// IS_ACTIVE
-//		if filter.IsActive != nil {
-//			values = append(values, *filter.IsActive)
-//			clauses = append(clauses, fmt.Sprintf(`u.is_active = $%d`, len(values)))
-//		}
-//	}
-//
-//	// # CLASUSES SEP #
-//	if len(clauses) > 0 {
-//		qry += " WHERE " + strings.Join(clauses, " AND ")
-//	}
-//
-//	// # ORDER BY #
-//	qry += " ORDER BY u.date_joined DESC, u.id DESC"
-//
-//	// # PAGINATION #
-//	if paging != nil {
-//		qry += fmt.Sprintf(` LIMIT %d `, paging.Limit)
-//		qry += fmt.Sprintf(` OFFSET %d `, paging.Offset)
-//	}
-//
-//	// # END DEFAULT FILTER #
-//
-//	rows, err := r.db.Query(ctx, qry, values...)
-//	if err != nil {
-//		return nil, aerr.K(aerrx.KindInternal, p).WithCause(err)
-//	}
-//	defer rows.Close()
-//
-//	raws, err := pgx.CollectRows(rows, pgx.RowToStructByNameLax[UserRaw])
-//	if err != nil {
-//		return nil, aerr.K(aerrx.KindInternal, p).WithCause(err)
-//	}
-//
-//	users := make([]*User, len(raws))
-//	for i, raw := range raws {
-//		users[i] = raw.ToModel()
-//	}
-//
-//	return users, nil
 //}

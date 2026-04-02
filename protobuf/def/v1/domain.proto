@@ -1,0 +1,46 @@
+syntax = 'proto3';
+
+package muydelcampo;
+
+option go_package = 'apigo/protobuf/gen/v1;';
+
+option java_package = "com.muydelcampo.apigo";
+
+import "google/protobuf/timestamp.proto";
+
+message Code {
+  string ref = 1;
+  string phone = 2;
+  google.protobuf.Timestamp date_created = 3;
+  google.protobuf.Timestamp date_expired = 4;
+}
+
+message User {
+  string ref = 1;
+  string name = 2;
+  string phone = 3;
+  bool is_staff = 4;
+  bool is_super = 5;
+  bool is_active = 6;
+  optional google.protobuf.Timestamp last_login = 7;
+  google.protobuf.Timestamp date_joined = 8;
+}
+
+message UserAddr {
+  string ref = 1;
+  string pid = 2; // place ref
+  double lat = 3;
+  double lng = 4;
+  string name = 5;
+  string cmna = 6;
+  string route = 7;
+  string street = 8;
+  string neighb = 9;
+  string locality = 10;
+  string sublocal = 11;
+  string address1 = 12; // casa / apto complemento
+  string address2 = 13; // instrucciones de entrega
+  bool is_default = 14;
+  google.protobuf.Timestamp date_created = 15;
+  google.protobuf.Timestamp date_updated = 16;
+}

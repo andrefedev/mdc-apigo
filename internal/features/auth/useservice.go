@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"apigo/internal/modules/whatsapp/messages"
@@ -113,6 +114,9 @@ func (s *Service) CodeVerify(ctx context.Context, input *CodeVerifyInput) (strin
 			return fmt.Errorf("%s: %w", op, err)
 		}
 
+		log.Printf("idk: %s", idk)
+		log.Printf("idk2: %s", cryptox.HashIdToken(idk))
+
 		// session insert
 		if _, err := s.deps.Repository.SessionInsert(
 			ctx,
@@ -158,6 +162,9 @@ func (s *Service) SessionByIdToken(ctx context.Context, idk string) (*Session, e
 	if idk == "" {
 		return nil, fmt.Errorf("%s: %w", op, WrapSessionRequired(nil))
 	}
+
+	log.Printf("idk: %s", idk)
+	log.Printf("idk2: %s", cryptox.HashIdToken(idk))
 
 	idk = cryptox.HashIdToken(idk)
 	session, err := s.deps.Repository.SessionSelectByToken(ctx, idk)

@@ -1,13 +1,11 @@
-package okgrpcx
+package okgrpc
 
 import (
-	"apigo/internal/features/auth"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func StatusError(err error) error {
+func statusError(err error) error {
 	if err == nil {
 		return nil
 	}
@@ -16,7 +14,7 @@ func StatusError(err error) error {
 		return err
 	}
 
-	if st := auth.GrpcStatusError(err); st != nil {
+	if st := grpcStatusError(err); st != nil {
 		return st
 	}
 

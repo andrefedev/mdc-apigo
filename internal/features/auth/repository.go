@@ -88,8 +88,8 @@ func (r Repository) UserRefByPhone(ctx context.Context, phone string) (string, e
 func (r Repository) SessionInsert(ctx context.Context, data *SessionInsertData) (string, error) {
 	op := "Auth.Repository.SessionInsert"
 	qry := `
-	INSERT INTO auth_sessions (uid, token_hash, date_expired, last_used_at, date_created)
-	VALUES (@uid, @token_hash, @date_expired, NOW(), NOW())
+	INSERT INTO auth_sessions (uid, token_hash)
+	VALUES (@uid, @token_hash)
 	RETURNING id
 	`
 
@@ -98,9 +98,9 @@ func (r Repository) SessionInsert(ctx context.Context, data *SessionInsertData) 
 		ctx,
 		qry,
 		pgx.NamedArgs{
-			"uid":          data.UserRef,
-			"token_hash":   data.TokenHash,
-			"date_expires": data.DateExpires,
+			"uid":        data.UserRef,
+			"token_hash": data.TokenHash,
+			// "date_expired": data.DateExpired,
 		},
 	).Scan(&ref); err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)

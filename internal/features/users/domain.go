@@ -1,18 +1,44 @@
 package users
 
-import "time"
+import (
+	v1 "apigo/protobuf/gen/v1"
+	"time"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
 
 type User struct {
-	Ref        string     `json:"id"`
-	Idk        *string    `json:"-"`
-	Name       string     `json:"name"`
-	Phone      string     `json:"lookups"`
-	IsSuper    bool       `json:"is_super"`
-	IsStaff    bool       `json:"is_staff"`
-	IsActive   bool       `json:"is_active"`
-	IsPremium  bool       `json:"is_premium"`
-	LastLogin  *time.Time `json:"last_login"`
-	DateJoined time.Time  `json:"date_joined"`
+	Ref        string     `db:"id"`
+	Name       string     `db:"name"`
+	Phone      string     `db:"phone"`
+	IsStaff    bool       `db:"is_staff"`
+	IsSuper    bool       `db:"is_super"`
+	IsActive   bool       `db:"is_active"`
+	LastLogin  *time.Time `db:"last_login"`
+	DateJoined time.Time  `db:"date_joined"`
+}
+
+func (u User) ToProto() *v1.User {
+	var dateJoined *timestamppb.Timestamp
+	if !u.DateJoined.IsZero() {
+		dateJoined = timestamppb.New(u.DateJoined)
+	}
+
+	var lastLogin *timestamppb.Timestamp
+	if u.LastLogin != nil && !u.LastLogin.IsZero() {
+		lastLogin = timestamppb.New(*u.LastLogin)
+	}
+
+	return &v1.User{
+		Ref:        u.Ref,
+		Name:       u.Name,
+		Phone:      u.Phone,
+		IsSuper:    u.IsSuper,
+		IsStaff:    u.IsStaff,
+		IsActive:   u.IsActive,
+		LastLogin:  lastLogin,
+		DateJoined: dateJoined,
+	}
 }
 
 //

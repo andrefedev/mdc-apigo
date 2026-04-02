@@ -1,0 +1,69 @@
+syntax = 'proto3';
+
+package muydelcampo;
+
+option go_package = 'apigo/protobuf/gen/v1;';
+
+option java_package = "com.muydelcampo.apigo";
+
+import "domain.proto";
+
+// CODE
+
+
+message CodeReq {
+  string phone = 1;
+}
+
+message CodeRes {
+  string ref = 1;
+}
+
+message CodeDetailReq {
+  string ref = 1;
+}
+
+message CodeDetailRes {
+  Code code = 1;
+}
+
+message CodeVerifyReq {
+  string ref = 1;
+  string code = 2;
+}
+
+message CodeVerifyRes {
+  string user_ref = 1;
+  string access_token = 2;
+}
+
+// USER
+
+message UsermeReq {}
+
+message UsermeRes {
+  User user = 1;
+}
+
+//
+
+message UserListAllReq {
+  Filter filter = 1;
+  Paging paging = 2;
+
+  message Filter {
+    optional bool is_super = 3;
+    optional bool is_staff = 4;
+    optional bool is_active = 5;
+    optional string flat_query = 6;
+  }
+
+  message Paging {
+    int32 limit = 1;
+    int32 offset = 2;
+  }
+}
+
+message UserListAllRes{
+  repeated User users = 1;
+}

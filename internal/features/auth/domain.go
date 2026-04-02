@@ -32,7 +32,7 @@ type Session struct {
 	IsStaff     bool       `db:"is_staff"`
 	IsActive    bool       `db:"is_active"`
 	TokenHash   string     `db:"token_hash"`
-	DateExpired time.Time  `db:"date_expires"`
+	DateExpired time.Time  `db:"date_expired"`
 	DateCreated time.Time  `db:"date_created"`
 	DateRevoked *time.Time `db:"date_revoked"`
 }

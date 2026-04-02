@@ -10,7 +10,6 @@ import (
 // # USER #
 
 type Data struct {
-	Idk       *string
 	Name      string
 	Phone     string
 	IsSuper   bool
@@ -20,19 +19,29 @@ type Data struct {
 }
 
 type FilterData struct {
-	IsSuper   *bool
-	IsStaff   *bool
-	IsActive  *bool
-	FlatQuery *string
+	IsSuper   *bool   `db:"is_super"`
+	IsStaff   *bool   `db:"is_staff"`
+	IsActive  *bool   `db:"is_active"`
+	FlatQuery *string `db:"flat_query"`
 }
 
-func (r *FilterData) Normalize() {
-	if r.FlatQuery != nil {
-		r.FlatQuery = new(validationx.ClearString(*r.FlatQuery))
+func _NewFilterData(input *FilterInput) *FilterData {
+	return &FilterData{
+		IsSuper:   input.IsSuper,
+		IsStaff:   input.IsStaff,
+		IsActive:  input.IsActive,
+		FlatQuery: input.FlatQuery,
 	}
 }
 
-func (r *FilterData) Validation() error {
+func (r *FilterData) Validate() error {
+	// Normalize
+	if r.FlatQuery != nil {
+		r.FlatQuery = new(validationx.ClearString(*r.FlatQuery))
+	}
+
+	// Validation
+
 	return nil
 }
 
@@ -41,14 +50,25 @@ type PagingData struct {
 	Offset int32
 }
 
-func (r *PagingData) Normalize() {
-	if r.Limit == 0 {
-		r.Limit = 20
+func _NewPagingData(input *PagingInput) *PagingData {
+	return &PagingData{
+		Limit:  input.Limit,
+		Offset: input.Offset,
 	}
-
 }
 
-func (r *PagingData) Validation() error {
+func (r *PagingData) Validate() error {
+	// Normalize
+	limit := int32(20)
+	if r.Limit == 0 {
+		r.Limit = limit
+	}
+	if r.Limit > limit {
+		r.Limit = limit
+	}
+
+	// Validation
+
 	return nil
 }
 
@@ -70,11 +90,7 @@ type AddrData struct {
 	IsDefault bool
 }
 
-func (r *AddrData) Normalize() {
-
-}
-
-func (r *AddrData) Validation(paths []string) error {
+func (r *AddrData) Validate(paths []string) error {
 	if paths == nil || len(paths) == 0 {
 		paths = []string{
 			"pid", "lat", "lng", "name", "cmna", "route", "street",

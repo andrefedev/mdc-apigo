@@ -4,10 +4,18 @@ package muydelcampo;
 
 option go_package = "apigo/protobuf/gen/v1;";
 
-import "auth_data.proto";
+import "data.proto";
 
-service AuthService {
+service ApiService {
+
+  // AUTH_SERVICE
   rpc Code(CodeReq) returns (CodeRes);
   rpc CodeDetail(CodeDetailReq) returns (CodeDetailRes);
   rpc CodeVerify(CodeVerifyReq) returns (CodeVerifyRes);
+
+  // USER_SERVICE
+  rpc Userme(UsermeReq) returns (UsermeRes);
+
+  rpc UserListAll(UserListAllReq) returns (UserListAllRes);
+
 }

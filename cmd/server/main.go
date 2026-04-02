@@ -17,8 +17,7 @@ import (
 	"apigo/internal/modules/whatsapp"
 	"apigo/internal/platforms/configx"
 	"apigo/internal/platforms/loggerx"
-	"apigo/internal/platforms/okgrpcx"
-	muydelcampov1 "apigo/protobuf/gen/v1"
+	v1 "apigo/protobuf/gen/v1"
 )
 
 func main() {
@@ -61,19 +60,16 @@ func main() {
 		},
 	)
 
-	grpcServer := grpc.NewServer(
+	serverg := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			okgrpcx.UnaryErrorInterceptor,
-			okgrpcx.UnaryLoggingInterceptor,
+			okgrpc.UnaryErrorInterceptor,
+			okgrpc.UnaryLoggingInterceptor,
 			okgrpc.SessionUnaryInterceptor(serverx),
 			okgrpc.AuthorizeUnaryInterceptor(serverx),
 		),
 	)
 
-	muydelcampov1.RegisterAuthServiceServer(
-		grpcServer,
-		okgrpc.NewAuthService(serverx),
-	)
+	v1.RegisterApiServiceServer(serverg, serverx)
 
 	lis, err := net.Listen("tcp", cfg.Port)
 	if err != nil {
@@ -87,7 +83,7 @@ func main() {
 	serverErr := make(chan error, 1)
 	go func() {
 		slog.Info("grpc server listening", "addr", cfg.Port)
-		if err := grpcServer.Serve(lis); err != nil {
+		if err := serverg.Serve(lis); err != nil {
 			serverErr <- err
 		}
 	}()
@@ -95,7 +91,7 @@ func main() {
 	select {
 	case <-signalCtx.Done():
 		slog.Info("grpc shutdown requested")
-		grpcServer.GracefulStop()
+		serverg.GracefulStop()
 	case err := <-serverErr:
 		slog.Error("grpc server serve", "err", err)
 		os.Exit(1)
