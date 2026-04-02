@@ -78,9 +78,10 @@ func requireStaffUser(ctx context.Context) (*auth.Session, error) {
 	if err != nil {
 		return nil, err
 	}
-	//if !identity.Is() {
-	//	return nil, WrapForbidden(nil)
-	//}
+
+	if !session.IsEmployee() {
+		return nil, auth.WrapForbidden(nil)
+	}
 
 	return session, nil
 }

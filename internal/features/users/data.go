@@ -9,15 +9,6 @@ import (
 
 // # USER #
 
-type Data struct {
-	Name      string
-	Phone     string
-	IsSuper   bool
-	IsStaff   bool
-	IsActive  bool
-	LastLogin *time.Time
-}
-
 type FilterData struct {
 	IsSuper   *bool   `db:"is_super"`
 	IsStaff   *bool   `db:"is_staff"`
@@ -71,6 +62,17 @@ func (r *PagingData) Validate() error {
 
 	return nil
 }
+
+type InsertData struct {
+	Name      string     `db:"name"`
+	Phone     string     `db:"phone"`
+	IsSuper   bool       `db:"is_super"`
+	IsStaff   bool       `db:"is_staff"`
+	IsActive  bool       `db:"is_active"`
+	LastLogin *time.Time `db:"last_login"`
+}
+
+func _NewInsertData(input *InsertInput)
 
 // # USER ADDR DATA #
 

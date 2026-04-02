@@ -32,6 +32,10 @@ func IsOneTimeCode(value string) bool {
 
 // NORMALIZE
 
+func NormalizeName(value string) string {
+	return strings.Join(strings.Fields(value), " ")
+}
+
 func ClearString(value string) string {
 	value = spaceRegexp.ReplaceAllString(value, " ")
 	return strings.TrimSpace(value)

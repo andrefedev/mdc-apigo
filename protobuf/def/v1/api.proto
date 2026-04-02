@@ -16,6 +16,9 @@ service ApiService {
   // USER_SERVICE
   rpc Userme(UsermeReq) returns (UsermeRes);
 
+  rpc UserDetail(UserDetailReq) returns (UserDetailRes);
+  rpc UserCreate(UserCreateReq) returns (UserCreateRes);
+  rpc UserUpdate(UserUpdateReq) returns (UserUpdateRes);
   rpc UserListAll(UserListAllReq) returns (UserListAllRes);
 
 }

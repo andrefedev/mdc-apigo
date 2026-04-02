@@ -23,6 +23,9 @@ const (
 	ApiService_CodeDetail_FullMethodName  = "/muydelcampo.ApiService/CodeDetail"
 	ApiService_CodeVerify_FullMethodName  = "/muydelcampo.ApiService/CodeVerify"
 	ApiService_Userme_FullMethodName      = "/muydelcampo.ApiService/Userme"
+	ApiService_UserDetail_FullMethodName  = "/muydelcampo.ApiService/UserDetail"
+	ApiService_UserCreate_FullMethodName  = "/muydelcampo.ApiService/UserCreate"
+	ApiService_UserUpdate_FullMethodName  = "/muydelcampo.ApiService/UserUpdate"
 	ApiService_UserListAll_FullMethodName = "/muydelcampo.ApiService/UserListAll"
 )
 
@@ -36,6 +39,9 @@ type ApiServiceClient interface {
 	CodeVerify(ctx context.Context, in *CodeVerifyReq, opts ...grpc.CallOption) (*CodeVerifyRes, error)
 	// USER_SERVICE
 	Userme(ctx context.Context, in *UsermeReq, opts ...grpc.CallOption) (*UsermeRes, error)
+	UserDetail(ctx context.Context, in *UserDetailReq, opts ...grpc.CallOption) (*UserDetailRes, error)
+	UserCreate(ctx context.Context, in *UserCreateReq, opts ...grpc.CallOption) (*UserCreateRes, error)
+	UserUpdate(ctx context.Context, in *UserUpdateReq, opts ...grpc.CallOption) (*UserUpdateRes, error)
 	UserListAll(ctx context.Context, in *UserListAllReq, opts ...grpc.CallOption) (*UserListAllRes, error)
 }
 
@@ -87,6 +93,36 @@ func (c *apiServiceClient) Userme(ctx context.Context, in *UsermeReq, opts ...gr
 	return out, nil
 }
 
+func (c *apiServiceClient) UserDetail(ctx context.Context, in *UserDetailReq, opts ...grpc.CallOption) (*UserDetailRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserDetailRes)
+	err := c.cc.Invoke(ctx, ApiService_UserDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiServiceClient) UserCreate(ctx context.Context, in *UserCreateReq, opts ...grpc.CallOption) (*UserCreateRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserCreateRes)
+	err := c.cc.Invoke(ctx, ApiService_UserCreate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiServiceClient) UserUpdate(ctx context.Context, in *UserUpdateReq, opts ...grpc.CallOption) (*UserUpdateRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserUpdateRes)
+	err := c.cc.Invoke(ctx, ApiService_UserUpdate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *apiServiceClient) UserListAll(ctx context.Context, in *UserListAllReq, opts ...grpc.CallOption) (*UserListAllRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserListAllRes)
@@ -107,6 +143,9 @@ type ApiServiceServer interface {
 	CodeVerify(context.Context, *CodeVerifyReq) (*CodeVerifyRes, error)
 	// USER_SERVICE
 	Userme(context.Context, *UsermeReq) (*UsermeRes, error)
+	UserDetail(context.Context, *UserDetailReq) (*UserDetailRes, error)
+	UserCreate(context.Context, *UserCreateReq) (*UserCreateRes, error)
+	UserUpdate(context.Context, *UserUpdateReq) (*UserUpdateRes, error)
 	UserListAll(context.Context, *UserListAllReq) (*UserListAllRes, error)
 	mustEmbedUnimplementedApiServiceServer()
 }
@@ -129,6 +168,15 @@ func (UnimplementedApiServiceServer) CodeVerify(context.Context, *CodeVerifyReq)
 }
 func (UnimplementedApiServiceServer) Userme(context.Context, *UsermeReq) (*UsermeRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method Userme not implemented")
+}
+func (UnimplementedApiServiceServer) UserDetail(context.Context, *UserDetailReq) (*UserDetailRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method UserDetail not implemented")
+}
+func (UnimplementedApiServiceServer) UserCreate(context.Context, *UserCreateReq) (*UserCreateRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method UserCreate not implemented")
+}
+func (UnimplementedApiServiceServer) UserUpdate(context.Context, *UserUpdateReq) (*UserUpdateRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method UserUpdate not implemented")
 }
 func (UnimplementedApiServiceServer) UserListAll(context.Context, *UserListAllReq) (*UserListAllRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method UserListAll not implemented")
@@ -226,6 +274,60 @@ func _ApiService_Userme_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ApiService_UserDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).UserDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_UserDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).UserDetail(ctx, req.(*UserDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiService_UserCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserCreateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).UserCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_UserCreate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).UserCreate(ctx, req.(*UserCreateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiService_UserUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserUpdateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).UserUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_UserUpdate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).UserUpdate(ctx, req.(*UserUpdateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ApiService_UserListAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserListAllReq)
 	if err := dec(in); err != nil {
@@ -266,6 +368,18 @@ var ApiService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Userme",
 			Handler:    _ApiService_Userme_Handler,
+		},
+		{
+			MethodName: "UserDetail",
+			Handler:    _ApiService_UserDetail_Handler,
+		},
+		{
+			MethodName: "UserCreate",
+			Handler:    _ApiService_UserCreate_Handler,
+		},
+		{
+			MethodName: "UserUpdate",
+			Handler:    _ApiService_UserUpdate_Handler,
 		},
 		{
 			MethodName: "UserListAll",

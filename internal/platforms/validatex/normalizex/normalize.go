@@ -8,6 +8,10 @@ import (
 	"golang.org/x/text/language"
 )
 
+func NormalizeName(s string) string {
+	return strings.Join(strings.Fields(s), " ")
+}
+
 func NormalizeTitle(s string) string {
 	s = strings.Join(strings.Fields(s), " ") // colapsa espacios
 	lc := cases.Lower(language.Spanish)
@@ -15,9 +19,10 @@ func NormalizeTitle(s string) string {
 
 	return tc.String(lc.String(s))
 }
-func NormalizarStreet(input string) string {
+
+func NormalizarStreet(s string) string {
 	// Trim espacios extras al inicio y final
-	text := strings.TrimSpace(input)
+	text := strings.TrimSpace(s)
 
 	// Eliminar cualquier cantidad de '#'
 	reHash := regexp.MustCompile(`#*`)

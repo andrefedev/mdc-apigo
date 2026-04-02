@@ -25,7 +25,7 @@ var File_api_proto protoreflect.FileDescriptor
 const file_api_proto_rawDesc = "" +
 	"\n" +
 	"\tapi.proto\x12\vmuydelcampo\x1a\n" +
-	"data.proto2\xcf\x02\n" +
+	"data.proto2\xa1\x04\n" +
 	"\n" +
 	"ApiService\x122\n" +
 	"\x04Code\x12\x14.muydelcampo.CodeReq\x1a\x14.muydelcampo.CodeRes\x12D\n" +
@@ -33,7 +33,13 @@ const file_api_proto_rawDesc = "" +
 	"CodeDetail\x12\x1a.muydelcampo.CodeDetailReq\x1a\x1a.muydelcampo.CodeDetailRes\x12D\n" +
 	"\n" +
 	"CodeVerify\x12\x1a.muydelcampo.CodeVerifyReq\x1a\x1a.muydelcampo.CodeVerifyRes\x128\n" +
-	"\x06Userme\x12\x16.muydelcampo.UsermeReq\x1a\x16.muydelcampo.UsermeRes\x12G\n" +
+	"\x06Userme\x12\x16.muydelcampo.UsermeReq\x1a\x16.muydelcampo.UsermeRes\x12D\n" +
+	"\n" +
+	"UserDetail\x12\x1a.muydelcampo.UserDetailReq\x1a\x1a.muydelcampo.UserDetailRes\x12D\n" +
+	"\n" +
+	"UserCreate\x12\x1a.muydelcampo.UserCreateReq\x1a\x1a.muydelcampo.UserCreateRes\x12D\n" +
+	"\n" +
+	"UserUpdate\x12\x1a.muydelcampo.UserUpdateReq\x1a\x1a.muydelcampo.UserUpdateRes\x12G\n" +
 	"\vUserListAll\x12\x1b.muydelcampo.UserListAllReq\x1a\x1b.muydelcampo.UserListAllResB\x18Z\x16apigo/protobuf/gen/v1;b\x06proto3"
 
 var file_api_proto_goTypes = []any{
@@ -41,29 +47,41 @@ var file_api_proto_goTypes = []any{
 	(*CodeDetailReq)(nil),  // 1: muydelcampo.CodeDetailReq
 	(*CodeVerifyReq)(nil),  // 2: muydelcampo.CodeVerifyReq
 	(*UsermeReq)(nil),      // 3: muydelcampo.UsermeReq
-	(*UserListAllReq)(nil), // 4: muydelcampo.UserListAllReq
-	(*CodeRes)(nil),        // 5: muydelcampo.CodeRes
-	(*CodeDetailRes)(nil),  // 6: muydelcampo.CodeDetailRes
-	(*CodeVerifyRes)(nil),  // 7: muydelcampo.CodeVerifyRes
-	(*UsermeRes)(nil),      // 8: muydelcampo.UsermeRes
-	(*UserListAllRes)(nil), // 9: muydelcampo.UserListAllRes
+	(*UserDetailReq)(nil),  // 4: muydelcampo.UserDetailReq
+	(*UserCreateReq)(nil),  // 5: muydelcampo.UserCreateReq
+	(*UserUpdateReq)(nil),  // 6: muydelcampo.UserUpdateReq
+	(*UserListAllReq)(nil), // 7: muydelcampo.UserListAllReq
+	(*CodeRes)(nil),        // 8: muydelcampo.CodeRes
+	(*CodeDetailRes)(nil),  // 9: muydelcampo.CodeDetailRes
+	(*CodeVerifyRes)(nil),  // 10: muydelcampo.CodeVerifyRes
+	(*UsermeRes)(nil),      // 11: muydelcampo.UsermeRes
+	(*UserDetailRes)(nil),  // 12: muydelcampo.UserDetailRes
+	(*UserCreateRes)(nil),  // 13: muydelcampo.UserCreateRes
+	(*UserUpdateRes)(nil),  // 14: muydelcampo.UserUpdateRes
+	(*UserListAllRes)(nil), // 15: muydelcampo.UserListAllRes
 }
 var file_api_proto_depIdxs = []int32{
-	0, // 0: muydelcampo.ApiService.Code:input_type -> muydelcampo.CodeReq
-	1, // 1: muydelcampo.ApiService.CodeDetail:input_type -> muydelcampo.CodeDetailReq
-	2, // 2: muydelcampo.ApiService.CodeVerify:input_type -> muydelcampo.CodeVerifyReq
-	3, // 3: muydelcampo.ApiService.Userme:input_type -> muydelcampo.UsermeReq
-	4, // 4: muydelcampo.ApiService.UserListAll:input_type -> muydelcampo.UserListAllReq
-	5, // 5: muydelcampo.ApiService.Code:output_type -> muydelcampo.CodeRes
-	6, // 6: muydelcampo.ApiService.CodeDetail:output_type -> muydelcampo.CodeDetailRes
-	7, // 7: muydelcampo.ApiService.CodeVerify:output_type -> muydelcampo.CodeVerifyRes
-	8, // 8: muydelcampo.ApiService.Userme:output_type -> muydelcampo.UsermeRes
-	9, // 9: muydelcampo.ApiService.UserListAll:output_type -> muydelcampo.UserListAllRes
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: muydelcampo.ApiService.Code:input_type -> muydelcampo.CodeReq
+	1,  // 1: muydelcampo.ApiService.CodeDetail:input_type -> muydelcampo.CodeDetailReq
+	2,  // 2: muydelcampo.ApiService.CodeVerify:input_type -> muydelcampo.CodeVerifyReq
+	3,  // 3: muydelcampo.ApiService.Userme:input_type -> muydelcampo.UsermeReq
+	4,  // 4: muydelcampo.ApiService.UserDetail:input_type -> muydelcampo.UserDetailReq
+	5,  // 5: muydelcampo.ApiService.UserCreate:input_type -> muydelcampo.UserCreateReq
+	6,  // 6: muydelcampo.ApiService.UserUpdate:input_type -> muydelcampo.UserUpdateReq
+	7,  // 7: muydelcampo.ApiService.UserListAll:input_type -> muydelcampo.UserListAllReq
+	8,  // 8: muydelcampo.ApiService.Code:output_type -> muydelcampo.CodeRes
+	9,  // 9: muydelcampo.ApiService.CodeDetail:output_type -> muydelcampo.CodeDetailRes
+	10, // 10: muydelcampo.ApiService.CodeVerify:output_type -> muydelcampo.CodeVerifyRes
+	11, // 11: muydelcampo.ApiService.Userme:output_type -> muydelcampo.UsermeRes
+	12, // 12: muydelcampo.ApiService.UserDetail:output_type -> muydelcampo.UserDetailRes
+	13, // 13: muydelcampo.ApiService.UserCreate:output_type -> muydelcampo.UserCreateRes
+	14, // 14: muydelcampo.ApiService.UserUpdate:output_type -> muydelcampo.UserUpdateRes
+	15, // 15: muydelcampo.ApiService.UserListAll:output_type -> muydelcampo.UserListAllRes
+	8,  // [8:16] is the sub-list for method output_type
+	0,  // [0:8] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_api_proto_init() }

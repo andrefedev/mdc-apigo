@@ -6,6 +6,8 @@ import (
 
 	"apigo/internal/features/auth"
 	v1 "apigo/protobuf/gen/v1"
+
+	"github.com/google/uuid"
 )
 
 func (s Server) Code(ctx context.Context, req *v1.CodeReq) (*v1.CodeRes, error) {
@@ -67,7 +69,32 @@ func (s Server) Userme(ctx context.Context, _ *v1.UsermeReq) (*v1.UsermeRes, err
 	return &v1.UsermeRes{User: user.ToProto()}, nil
 }
 
+func (s Server) UserDetail(ctx context.Context, req *v1.UserDetailReq) (*v1.UserDetailRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ref := req.GetRef()
+	if err := uuid.Validate(ref); err != nil {
+		return nil, err
+	}
+
+	user, err := s.UserService.Get(ctx, ref)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.UserDetailRes{User: user.ToProto()}, nil
+}
+
 func (s Server) UserListAll(ctx context.Context, req *v1.UserListAllReq) (*v1.UserListAllRes, error) {
+	// Auth
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// filter
 	f := req.GetFilter()
 	filter := users.NewFilterDataInput(f)

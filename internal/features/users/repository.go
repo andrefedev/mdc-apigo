@@ -222,6 +222,76 @@ func (r Repository) SelectAll(ctx context.Context, filter *FilterData, paging *P
 	return users, nil
 }
 
+func (r Repository) Insert(ctx context.Context, data *InserData) (string, error) {
+	query := `INSERT INTO users (name, phone, is_super, is_staff, is_active) VALUES (@name, @phone, @is_super, @is_staff, @is_active) RETURNING id;`
+
+	var ref string
+	if err := x.queryRow(
+		ctx,
+		query,
+		pgx.NamedArgs{
+			"name":      data.Name,
+			"phone":     data.Phone,
+			"is_super":  data.IsSuper,
+			"is_staff":  data.IsStaff,
+			"is_active": data.IsActive,
+		},
+	).Scan(&ref); err != nil {
+		return "", fmt.Errorf("Repository.UserInsert: [db query row]: [%w]", err)
+	}
+
+	return ref, nil
+}
+
+func (r Repository) Update(ctx context.Context, ref string, paths []string, data *domain.UserData) (int64, error) {
+	var values []any
+	var clauses []string
+	for _, path := range paths {
+		switch path {
+		case "idk":
+			values = append(values, data.Idk)
+			clauses = append(clauses, fmt.Sprintf(`idk = $%d`, len(values)))
+		case "name":
+			values = append(values, data.Name)
+			clauses = append(clauses, fmt.Sprintf(`name = $%d`, len(values)))
+		case "phone":
+			values = append(values, data.Phone)
+			clauses = append(clauses, fmt.Sprintf(`phone = $%d`, len(values)))
+		case "is_super":
+			values = append(values, data.IsSuper)
+			clauses = append(clauses, fmt.Sprintf(`is_super = $%d`, len(values)))
+		case "is_staff":
+			values = append(values, data.IsStaff)
+			clauses = append(clauses, fmt.Sprintf(`is_staff = $%d`, len(values)))
+		case "is_active":
+			values = append(values, data.IsActive)
+			clauses = append(clauses, fmt.Sprintf(`is_active = $%d`, len(values)))
+		case "last_login":
+			values = append(values, data.LastLogin)
+			clauses = append(clauses, fmt.Sprintf(`last_login = $%d`, len(values)))
+		}
+	}
+	if len(clauses) == 0 {
+		return 0, nil // nada que actualizar
+	}
+
+	// Update sets
+	xquery := "UPDATE users"
+	xquery += " SET " + strings.Join(clauses, ", ")
+
+	// Where
+	values = append(values, ref)
+	xquery += fmt.Sprintf(" WHERE id = $%d", len(values))
+
+	// exec
+	res, err := x.exec(ctx, xquery, values...)
+	if err != nil {
+		return 0, fmt.Errorf("Repository.UserUpdate: [db query exec] [%w]", err)
+	}
+
+	return res.RowsAffected(), nil
+}
+
 //func (r Repository) ExistsByPhone(ctx context.Context, lookups string) (bool, error) {
 //	qry := `SELECT EXISTS (SELECT 1 FROM users WHERE lookups = $1);`
 //

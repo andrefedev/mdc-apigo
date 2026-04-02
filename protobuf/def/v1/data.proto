@@ -6,6 +6,8 @@ option go_package = 'apigo/protobuf/gen/v1;';
 
 option java_package = "com.muydelcampo.apigo";
 
+import 'google/protobuf/field_mask.proto';
+
 import "domain.proto";
 
 // CODE
@@ -45,7 +47,48 @@ message UsermeRes {
   User user = 1;
 }
 
-//
+
+message UserDetailReq {
+  string ref = 1;
+}
+
+message UserDetailRes {
+  User user = 1;
+}
+
+message UserCreateReq {
+  Payload payload = 1;
+
+  message Payload {
+    string name = 1;
+    string phone = 2;
+    bool is_super = 3;
+    bool is_staff = 4;
+    bool isActive = 5;
+  }
+}
+
+message UserCreateRes {
+  User user = 1;
+}
+
+message UserUpdateReq {
+  string ref = 1;
+  Payload payload = 2;
+  google.protobuf.FieldMask updateMask = 3;
+
+  message Payload {
+    string name = 1;
+    string phone = 2;
+    bool is_super = 3;
+    bool is_staff = 4;
+    bool is_active = 5;
+  }
+}
+
+message UserUpdateRes {
+  User user = 1;
+}
 
 message UserListAllReq {
   Filter filter = 1;
