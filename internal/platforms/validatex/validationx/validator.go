@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"net/mail"
+	"regexp"
 	"strings"
 
 	"github.com/google/uuid"
@@ -23,7 +24,7 @@ func IsValidRef(value string) bool {
 }
 
 func IsPhoneNumber(value string) bool {
-	return phoneRegexp.MatchString(value)
+	return regexp.MustCompile(`^[1-9]\d{7,14}$`).MatchString(value)
 }
 
 func IsOneTimeCode(value string) bool {

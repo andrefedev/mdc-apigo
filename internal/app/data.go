@@ -106,6 +106,8 @@ func (r *UserPagingData) Validate() error {
 	return nil
 }
 
+// USER_INSERT_DATA__
+
 type UserInsertData struct {
 	Name      string     `db:"name"`
 	Phone     string     `db:"phone"`
@@ -129,6 +131,28 @@ func NewUserInsertData(input *UserInsertInput) *UserInsertData {
 
 }
 
+func (r *UserInsertData) Validate() error {
+	const op = "App.UserInsertData.Validate"
+
+	// Normalize
+	r.Name = normalizex.NormalizeName(r.Name)
+	r.Phone = validationx.ClearString(r.Phone)
+
+	// Validation
+
+	if r.Name == "" {
+		return fmt.Errorf("%s: %w", op, ErrInvalidName)
+	}
+
+	if !validationx.IsPhoneNumber(r.Phone) {
+		return fmt.Errorf("%s: %w", op, ErrInvalidPhone)
+	}
+
+	return nil
+}
+
+// USER_UPDATE_DATA__
+
 type UserUpdateData struct {
 	Name      string     `db:"name"`
 	Phone     string     `db:"phone"`
@@ -138,11 +162,11 @@ type UserUpdateData struct {
 	LastLogin *time.Time `db:"last_login"`
 }
 
-func NewUserUpdateData(input *UserUpdateData) *UserUpdateData {
+func NewUserUpdateData(input *UserUpdateInput) *UserUpdateData {
 	if input == nil {
 		return &UserUpdateData{}
 	}
-	return &UserInsertData{
+	return &UserUpdateData{
 		Name:     input.Name,
 		Phone:    input.Phone,
 		IsSuper:  input.IsSuper,
@@ -150,6 +174,31 @@ func NewUserUpdateData(input *UserUpdateData) *UserUpdateData {
 		IsActive: input.IsActive,
 	}
 
+}
+
+func (r UserUpdateData) Validate(paths []string) error {
+	const op = "App.UserUpdateData.Validate"
+
+	for _, path := range paths {
+		switch strings.TrimSpace(path) {
+		case "name":
+			r.Name = normalizex.NormalizeName(r.Name)
+			if r.Name == "" {
+				return fmt.Errorf("%s: %w", op, ErrInvalidName)
+			}
+		case "phone":
+			r.Phone = validationx.ClearString(r.Phone)
+			if !validationx.IsPhoneNumber(r.Phone) {
+				return fmt.Errorf("%s: %w", op, ErrInvalidPhone)
+			}
+		case "last_login":
+			if r.LastLogin == nil {
+				return fmt.Errorf("%s: %w", op, ErrInvalidLastLogin)
+			}
+		}
+	}
+
+	return nil
 }
 
 // # USER ADDR DATA #

@@ -86,3 +86,10 @@ func WrapInvalidPhone(cause error) error {
 
 	return errors.Join(ErrInvalidPhone, cause)
 }
+
+func WrapUserExists(cause error) error {
+	if cause == nil {
+		return ErrUserExists
+	}
+	return errors.Join(ErrUserExists, cause)
+}

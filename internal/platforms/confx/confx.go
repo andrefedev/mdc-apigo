@@ -38,6 +38,10 @@ func Load() (Config, error) {
 		return Config{}, errors.New("confx load(): you must set your 'PG_DATABASE_URL' env var")
 	}
 
+	if cfg.GoogleMapsApiKey == "" {
+		return Config{}, errors.New("confx load(): you must set your 'GOOGLE_MAPS_API_KEY' env var")
+	}
+
 	return cfg, nil
 }
 

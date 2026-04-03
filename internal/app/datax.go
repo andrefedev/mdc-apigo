@@ -3,6 +3,7 @@ package app
 import (
 	"apigo/internal/platforms/validatex/normalizex"
 	"fmt"
+	"strings"
 
 	v1 "apigo/protobuf/gen/v1"
 
@@ -184,7 +185,7 @@ func NewUserInsertInput(payload *v1.UserCreateReq_Payload) *UserInsertInput {
 }
 
 func (r *UserInsertInput) Validate() error {
-	const op = "App.InsertInput.Validate"
+	const op = "App.UserInsertInput.Validate"
 
 	// Normalize
 	r.Name = normalizex.NormalizeName(r.Name)
@@ -193,11 +194,11 @@ func (r *UserInsertInput) Validate() error {
 	// Validation
 
 	if r.Name == "" {
-
+		return fmt.Errorf("%s: %w", op, ErrInvalidName)
 	}
 
 	if !validationx.IsPhoneNumber(r.Phone) {
-
+		return fmt.Errorf("%s: %w", op, ErrInvalidPhone)
 	}
 
 	return nil
@@ -206,11 +207,11 @@ func (r *UserInsertInput) Validate() error {
 // USER_UPDATE_INPUT
 
 type UserUpdateInput struct {
-	Name     string `db:"name"`
-	Phone    string `db:"phone"`
-	IsSuper  bool   `db:"is_super"`
-	IsStaff  bool   `db:"is_staff"`
-	IsActive bool   `db:"is_active"`
+	Name     string
+	Phone    string
+	IsSuper  bool
+	IsStaff  bool
+	IsActive bool
 }
 
 func NewUserUpdateInput(payload *v1.UserUpdateReq_Payload) *UserUpdateInput {
@@ -227,23 +228,21 @@ func NewUserUpdateInput(payload *v1.UserUpdateReq_Payload) *UserUpdateInput {
 	}
 }
 
-func (r *UserUpdateInput) Validate() error {
+func (r *UserUpdateInput) Validate(paths []string) error {
 	const op = "App.UserUpdateInput.Validate"
 
-	// Normalize
-	r.Name = normalizex.NormalizeName(r.Name)
-	r.Phone = validationx.ClearString(r.Phone)
-
-	// Validation
-	if r.Name != "" {
-		if len(r.Name) < 2 {
-			return fmt.Errorf("%s: %w", op, ErrInvalidName)
-		}
-	}
-
-	if r.Phone != "" {
-		if !validationx.IsPhoneNumber(r.Phone) {
-			return fmt.Errorf("%s: %w", op, ErrInvalidPhone)
+	for _, path := range paths {
+		switch strings.TrimSpace(path) {
+		case "name":
+			r.Name = normalizex.NormalizeName(r.Name)
+			if r.Name == "" {
+				return fmt.Errorf("%s: %w", op, ErrInvalidName)
+			}
+		case "phone":
+			r.Phone = validationx.ClearString(r.Phone)
+			if !validationx.IsPhoneNumber(r.Phone) {
+				return fmt.Errorf("%s: %w", op, ErrInvalidPhone)
+			}
 		}
 	}
 

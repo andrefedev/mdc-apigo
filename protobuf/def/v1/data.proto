@@ -110,3 +110,32 @@ message UserListAllReq {
 message UserListAllRes{
   repeated User users = 1;
 }
+
+// GOOGLE_MAPS__
+
+message PlaceDetailReq {
+  string ref = 1;
+  string token = 2;
+}
+
+message PlaceDetailRes {
+  Place result = 1;
+}
+
+message ReverseGeocodeReq {
+  double lat = 1;
+  double lng = 2;
+}
+
+message ReverseGeocodeRes {
+  Place result = 1;
+}
+
+message PlaceAutocompleteReq {
+  string query = 1;
+}
+
+message PlaceAutocompleteRes {
+  string token = 1;
+  repeated Prediction results = 2;
+}

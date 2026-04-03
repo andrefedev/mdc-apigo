@@ -151,136 +151,6 @@ func (r Repository) SessionSelectByToken(ctx context.Context, token string) (*Se
 
 // USER___
 
-func (r Repository) UserSelect(ctx context.Context, ref string) (*User, error) {
-	const op = "App.Repository.UserSelect"
-
-	qry := `
-	SELECT
-	id, name, phone, is_staff, is_super, is_active, last_login, date_joined
-	FROM users WHERE id = $1
-	`
-
-	rows, err := r.db.Query(ctx, qry, ref)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-	defer rows.Close()
-
-	res, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByNameLax[User])
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			err = WrapUserNotFound(err)
-		}
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	return new(res), nil
-}
-
-func (r Repository) UserSelectByPhone(ctx context.Context, phone string) (*User, error) {
-	const op = "App.Repository.UserSelectByPhone"
-
-	qry := `
-	SELECT
-	id, name, phone, is_staff, is_super, is_active, last_login, date_joined
-	FROM users WHERE phone = $1
-	`
-
-	rows, err := r.db.Query(ctx, qry, phone)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-	defer rows.Close()
-
-	res, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByNameLax[User])
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			err = WrapUserNotFound(err)
-		}
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	return new(res), nil
-}
-
-func (r Repository) UserSelectAll(ctx context.Context, filter *UserFilterData, paging *UserPagingData) ([]*User, error) {
-	const op = "App.Repository.UserSelectAll"
-
-	qry := `
-	SELECT
-	u.id, u.name, u.phone, u.is_super, u.is_staff, u.is_active, u.last_login, u.date_joined
-	FROM users AS u
-	`
-
-	// # BEGIN FILTER #
-	var values []any
-	var clauses []string
-
-	if filter != nil {
-		// FLAT_QUERY
-		if filter.FlatQuery != nil {
-			q := strings.TrimSpace(*filter.FlatQuery)
-			if q != "" {
-				_, err := strconv.ParseInt(q, 10, 64)
-				if err == nil {
-					values = append(values, "%"+q+"%")
-					clauses = append(clauses, fmt.Sprintf(`u.phone ILIKE $%d`, len(values)))
-				} else {
-					values = append(values, "%"+q+"%")
-					clauses = append(clauses, fmt.Sprintf(`u.name ILIKE $%d`, len(values)))
-				}
-			}
-		}
-
-		// IS_SUPER
-		if filter.IsSuper != nil {
-			values = append(values, *filter.IsSuper)
-			clauses = append(clauses, fmt.Sprintf(`u.is_super = $%d`, len(values)))
-		}
-
-		// IS_STAFF
-		if filter.IsStaff != nil {
-			values = append(values, *filter.IsStaff)
-			clauses = append(clauses, fmt.Sprintf(`u.is_staff = $%d`, len(values)))
-		}
-
-		// IS_ACTIVE
-		if filter.IsActive != nil {
-			values = append(values, *filter.IsActive)
-			clauses = append(clauses, fmt.Sprintf(`u.is_active = $%d`, len(values)))
-		}
-	}
-
-	// # CLASUSES SEP #
-	if len(clauses) > 0 {
-		qry += " WHERE " + strings.Join(clauses, " AND ")
-	}
-
-	// # ORDER BY #
-	qry += " ORDER BY u.date_joined DESC, u.id DESC"
-
-	// # PAGINATION #
-	if paging != nil {
-		qry += fmt.Sprintf(` LIMIT %d `, paging.Limit)
-		qry += fmt.Sprintf(` OFFSET %d `, paging.Offset)
-	}
-
-	// # END DEFAULT FILTER #
-
-	rows, err := r.db.Query(ctx, qry, values...)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-	defer rows.Close()
-
-	users, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[User])
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	return users, nil
-}
-
 func (r Repository) UserInsert(ctx context.Context, data *UserInsertData) (string, error) {
 	const op = "App.Repository.UserInsert"
 
@@ -353,6 +223,32 @@ func (r Repository) UserUpdate(ctx context.Context, ref string, paths []string, 
 	return res.RowsAffected(), nil
 }
 
+func (r Repository) UserSelect(ctx context.Context, ref string) (*User, error) {
+	const op = "App.Repository.UserSelect"
+
+	qry := `
+	SELECT
+	id, name, phone, is_staff, is_super, is_active, last_login, date_joined
+	FROM users WHERE id = $1
+	`
+
+	rows, err := r.db.Query(ctx, qry, ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	res, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByNameLax[User])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			err = WrapUserNotFound(err)
+		}
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return new(res), nil
+}
+
 func (r Repository) UserRefByPhone(ctx context.Context, phone string) (string, error) {
 	const op = "App.Repository.UserRefByPhone"
 
@@ -367,4 +263,108 @@ func (r Repository) UserRefByPhone(ctx context.Context, phone string) (string, e
 	}
 
 	return userRef, nil
+}
+
+func (r Repository) UserSelectByPhone(ctx context.Context, phone string) (*User, error) {
+	const op = "App.Repository.UserSelectByPhone"
+
+	qry := `
+	SELECT
+	id, name, phone, is_staff, is_super, is_active, last_login, date_joined
+	FROM users WHERE phone = $1
+	`
+
+	rows, err := r.db.Query(ctx, qry, phone)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	res, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByNameLax[User])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			err = WrapUserNotFound(err)
+		}
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return new(res), nil
+}
+
+func (r Repository) UserSelectAll(ctx context.Context, filter *UserFilterData, paging *UserPagingData) ([]*User, error) {
+	const op = "App.Repository.UserSelectAll"
+
+	qry := `
+	SELECT
+	u.id, u.name, u.phone, u.is_super, u.is_staff, u.is_active, u.last_login, u.date_joined
+	FROM users AS u
+	`
+
+	// # BEGIN FILTER #
+	var values []any
+	var clauses []string
+
+	if filter != nil {
+		// FLAT_QUERY
+		if filter.FlatQuery != nil {
+			q := strings.TrimSpace(*filter.FlatQuery)
+			if q != "" {
+				_, err := strconv.ParseInt(q, 10, 64)
+				if err == nil {
+					values = append(values, "%"+q+"%")
+					clauses = append(clauses, fmt.Sprintf(`u.phone ILIKE $%d`, len(values)))
+				} else {
+					values = append(values, "%"+q+"%")
+					clauses = append(clauses, fmt.Sprintf(`unaccent(lower(u.name)) ILIKE unaccent(lower($%d))`, len(values)))
+				}
+			}
+		}
+
+		// IS_SUPER
+		if filter.IsSuper != nil {
+			values = append(values, *filter.IsSuper)
+			clauses = append(clauses, fmt.Sprintf(`u.is_super = $%d`, len(values)))
+		}
+
+		// IS_STAFF
+		if filter.IsStaff != nil {
+			values = append(values, *filter.IsStaff)
+			clauses = append(clauses, fmt.Sprintf(`u.is_staff = $%d`, len(values)))
+		}
+
+		// IS_ACTIVE
+		if filter.IsActive != nil {
+			values = append(values, *filter.IsActive)
+			clauses = append(clauses, fmt.Sprintf(`u.is_active = $%d`, len(values)))
+		}
+	}
+
+	// # CLASUSES SEP #
+	if len(clauses) > 0 {
+		qry += " WHERE " + strings.Join(clauses, " AND ")
+	}
+
+	// # ORDER BY #
+	qry += " ORDER BY u.date_joined DESC, u.id DESC"
+
+	// # PAGINATION #
+	if paging != nil {
+		qry += fmt.Sprintf(` LIMIT %d `, paging.Limit)
+		qry += fmt.Sprintf(` OFFSET %d `, paging.Offset)
+	}
+
+	// # END DEFAULT FILTER #
+
+	rows, err := r.db.Query(ctx, qry, values...)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	users, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[User])
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return users, nil
 }

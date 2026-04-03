@@ -1,15 +1,17 @@
 package gmaps
 
 import (
-	"apigo"
+	"apigo/internal/platforms/validatex/normalizex"
 	"context"
 	"fmt"
 	"log"
+	"time"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"googlemaps.github.io/maps"
 )
 
-type MapsVendor struct {
+type MapService struct {
 	client *maps.Client
 }
 
@@ -24,12 +26,40 @@ var latLng2 = &maps.LatLng{
 	Lng: -75.58688348047991,
 }
 
-func NewMapsVendor(client *maps.Client) *MapsVendor {
-	return &MapsVendor{client}
+func NewMapService(client *maps.Client) *MapService {
+	return &MapService{client}
+}
+
+func Open(ctx context.Context, pgDatabaseUrl string) (*pgxpool.Pool, error) {
+
+	cfg, err := pgxpool.ParseConfig(pgDatabaseUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	cfg.MaxConns = 10
+	cfg.MinIdleConns = 0
+	cfg.MaxConnIdleTime = 5 * time.Minute
+	cfg.MaxConnLifetime = 30 * time.Minute
+
+	pool, err := pgxpool.NewWithConfig(ctx, cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	// check ping
+	ctxPing, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := pool.Ping(ctxPing); err != nil {
+		return nil, err
+	}
+
+	return pool, nil
 }
 
 // PlaceDetails función
-func (r MapsVendor) PlaceDetails(ctx context.Context, placeRef string, token maps.PlaceAutocompleteSessionToken) (*domain.Place, error) {
+func (r MapService) PlaceDetails(ctx context.Context, placeRef string, token maps.PlaceAutocompleteSessionToken) (*Place, error) {
 	fields := []maps.PlaceDetailsFieldMask{
 		maps.PlaceDetailsFieldMaskName,
 		maps.PlaceDetailsFieldMaskPlaceID,
@@ -52,11 +82,11 @@ func (r MapsVendor) PlaceDetails(ctx context.Context, placeRef string, token map
 		return nil, fmt.Errorf("MapsVendor.PlaceDetails: [%w]", err)
 	}
 
-	result := &domain.Place{
+	result := &Place{
 		Ref:     pd.PlaceID,
 		Lat:     pd.Geometry.Location.Lat,
 		Lng:     pd.Geometry.Location.Lng,
-		Name:    apigo.NormalizeTitle(pd.Name),
+		Name:    normalizex.NormalizeTitle(pd.Name),
 		Address: pd.FormattedAddress,
 	}
 
@@ -87,7 +117,7 @@ func (r MapsVendor) PlaceDetails(ctx context.Context, placeRef string, token map
 }
 
 // ReverseGeocode función
-func (r MapsVendor) ReverseGeocode(ctx context.Context, lat, lng float64) (*domain.Place, error) {
+func (r MapService) ReverseGeocode(ctx context.Context, lat, lng float64) (*Place, error) {
 	req := &maps.GeocodingRequest{
 		LatLng:       &maps.LatLng{Lat: lat, Lng: lng},
 		Region:       "co",
@@ -107,7 +137,7 @@ func (r MapsVendor) ReverseGeocode(ctx context.Context, lat, lng float64) (*doma
 	}
 
 	first := res[0]
-	result := &domain.Place{
+	result := &Place{
 		Ref:     first.PlaceID,
 		Lat:     first.Geometry.Location.Lat,
 		Lng:     first.Geometry.Location.Lng,
@@ -118,13 +148,13 @@ func (r MapsVendor) ReverseGeocode(ctx context.Context, lat, lng float64) (*doma
 		for _, t := range comp.Types {
 			switch t {
 			case "route":
-				result.Route = apigo.NormalizarStreet(comp.ShortName)
+				result.Route = normalizex.NormalizarStreet(comp.ShortName)
 			case "street_number":
-				result.Street = apigo.NormalizarStreet(comp.ShortName)
+				result.Street = normalizex.NormalizarStreet(comp.ShortName)
 			case "locality":
-				result.Locality = apigo.NormalizeTitle(comp.LongName) // city or locality
+				result.Locality = normalizex.NormalizeTitle(comp.LongName) // city or locality
 			case "neighborhood":
-				result.Neighb = apigo.NormalizeTitle(comp.LongName) // barrio neighborhood
+				result.Neighb = normalizex.NormalizeTitle(comp.LongName) // barrio neighborhood
 			}
 		}
 
@@ -135,7 +165,7 @@ func (r MapsVendor) ReverseGeocode(ctx context.Context, lat, lng float64) (*doma
 }
 
 // PlaceAutocomplete función
-func (r MapsVendor) PlaceAutocomplete(ctx context.Context, input string, token maps.PlaceAutocompleteSessionToken) ([]*domain.Prediction, error) {
+func (r MapService) PlaceAutocomplete(ctx context.Context, input string, token maps.PlaceAutocompleteSessionToken) ([]*Prediction, error) {
 	req := &maps.PlaceAutocompleteRequest{
 		Input:        input,
 		Radius:       25000, // 50km
@@ -153,10 +183,10 @@ func (r MapsVendor) PlaceAutocomplete(ctx context.Context, input string, token m
 		return nil, fmt.Errorf("MapsVedor.PlaceAutocomqplete: [client place autocomplete] [%w]", err)
 	}
 
-	predictions := make([]*domain.Prediction, 0)
+	predictions := make([]*Prediction, 0)
 	for _, p := range res.Predictions {
 
-		var prediction domain.Prediction
+		var prediction Prediction
 		prediction.Ref = p.PlaceID
 		prediction.Desc = p.Description
 		prediction.Title = p.StructuredFormatting.MainText
@@ -167,7 +197,7 @@ func (r MapsVendor) PlaceAutocomplete(ctx context.Context, input string, token m
 	return predictions, nil
 }
 
-func (r MapsVendor) ComputeDistanceMatrix(ctx context.Context, dests []maps.LatLng) error {
+func (r MapService) ComputeDistanceMatrix(ctx context.Context, dests []maps.LatLng) error {
 	origin := latLng2.String()
 	destination := latLng.String()
 

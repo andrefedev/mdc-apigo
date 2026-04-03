@@ -21,4 +21,8 @@ service ApiService {
   rpc UserUpdate(UserUpdateReq) returns (UserUpdateRes);
   rpc UserListAll(UserListAllReq) returns (UserListAllRes);
 
+  // GOOGLE_MAPS__
+  rpc PlaceDetail(PlaceDetailReq) returns (PlaceDetailRes);
+  rpc ReverseGeocode(ReverseGeocodeReq) returns (ReverseGeocodeRes);
+  rpc PlaceAutocomplete(PlaceAutocompleteReq) returns (PlaceAutocompleteRes);
 }

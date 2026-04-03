@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type UseService struct {
@@ -95,10 +97,10 @@ func (s *UseService) CodeVerify(ctx context.Context, input *CodeVerifyInput) (st
 			return fmt.Errorf("%s: %w", op, err)
 		}
 		if code.Code != input.Code {
-			return fmt.Errorf("%s: %w", op, WrapInvalidCode(err))
+			return fmt.Errorf("%s: %w", op, WrapInvalidCode(nil))
 		}
 		if time.Now().After(code.DateExpired) {
-			return fmt.Errorf("%s: %w", op, WrapCodeExpired(err))
+			return fmt.Errorf("%s: %w", op, WrapCodeExpired(nil))
 		}
 
 		// Es probable que el usuario no exista
@@ -188,6 +190,79 @@ func (s *UseService) SessionByIdToken(ctx context.Context, idk string) (*Session
 }
 
 // USER__
+
+func (s *UseService) UserCreate(ctx context.Context, input *UserInsertInput) (*User, error) {
+	const op = "App.UseService.UserCreate"
+
+	// manejar: usuario existente
+	user, err := s.deps.Repository.UserSelectByPhone(ctx, input.Phone)
+	if err != nil && !errors.Is(err, ErrUserNotFound) {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	if user != nil && user.Phone == input.Phone {
+		return nil, fmt.Errorf("%s: %w", op, WrapUserExists(nil))
+	}
+
+	data := NewUserInsertData(input)
+	if err := data.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		ref, err := s.deps.Repository.UserInsert(ctx, data)
+		if err != nil {
+			return err
+		}
+
+		user, err = s.deps.Repository.UserSelect(ctx, ref)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return user, nil
+}
+
+func (s *UseService) UserUpdate(ctx context.Context, ref string, paths []string, input *UserUpdateInput) (*User, error) {
+	const op = "App.UseService.UserUpdate"
+
+	if err := uuid.Validate(ref); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	data := NewUserUpdateData(input)
+	if err := data.Validate(paths); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	// manejar: usuario
+	user, err := s.deps.Repository.UserSelect(ctx, ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		_, err := s.deps.Repository.UserUpdate(ctx, ref, paths, data)
+		if err != nil {
+			return err
+		}
+
+		user, err = s.deps.Repository.UserSelect(ctx, ref)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return user, nil
+}
 
 func (s *UseService) UserDetail(ctx context.Context, ref string) (*User, error) {
 	const op = "App.UseService.UserDetail"

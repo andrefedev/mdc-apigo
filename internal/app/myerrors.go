@@ -18,9 +18,15 @@ var (
 // USER___
 
 var (
+	ErrUserExists    = errors.New("user already exists")
 	ErrUserNotFound  = errors.New("user not found")
 	ErrLoginRequired = errors.New("login required")
 
-	ErrInvalidName  = errors.New("invalid user name")
-	ErrInvalidPhone = errors.New("invalid user phone number")
+	ErrInvalidName      = errors.New("user invalid name")
+	ErrInvalidPhone     = errors.New("user invalid phone")
+	ErrInvalidLastLogin = errors.New("user invalid last login")
+)
+
+var (
+	ErrInvalidMaskPath = errors.New("invalid mask path")
 )

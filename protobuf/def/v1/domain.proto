@@ -44,3 +44,26 @@ message UserAddr {
   google.protobuf.Timestamp date_created = 15;
   google.protobuf.Timestamp date_updated = 16;
 }
+
+// GOOGLE_MAPS__
+
+message Place {
+  string ref = 1;
+  double lat = 2;
+  double lng = 3;
+  string name = 4;
+  string cmna = 5;
+  string route = 6;
+  string street = 7;
+  string neighb = 8;
+  string address = 9;
+  string locality = 10;
+  string sublocal = 11;
+}
+
+message Prediction {
+  string ref = 1;
+  string desc = 2;
+  string title = 3;
+  string subtitle = 4;
+}

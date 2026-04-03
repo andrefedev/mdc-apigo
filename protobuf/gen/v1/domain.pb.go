@@ -354,6 +354,198 @@ func (x *UserAddr) GetDateUpdated() *timestamppb.Timestamp {
 	return nil
 }
 
+type Place struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	Lat           float64                `protobuf:"fixed64,2,opt,name=lat,proto3" json:"lat,omitempty"`
+	Lng           float64                `protobuf:"fixed64,3,opt,name=lng,proto3" json:"lng,omitempty"`
+	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Cmna          string                 `protobuf:"bytes,5,opt,name=cmna,proto3" json:"cmna,omitempty"`
+	Route         string                 `protobuf:"bytes,6,opt,name=route,proto3" json:"route,omitempty"`
+	Street        string                 `protobuf:"bytes,7,opt,name=street,proto3" json:"street,omitempty"`
+	Neighb        string                 `protobuf:"bytes,8,opt,name=neighb,proto3" json:"neighb,omitempty"`
+	Address       string                 `protobuf:"bytes,9,opt,name=address,proto3" json:"address,omitempty"`
+	Locality      string                 `protobuf:"bytes,10,opt,name=locality,proto3" json:"locality,omitempty"`
+	Sublocal      string                 `protobuf:"bytes,11,opt,name=sublocal,proto3" json:"sublocal,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Place) Reset() {
+	*x = Place{}
+	mi := &file_domain_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Place) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Place) ProtoMessage() {}
+
+func (x *Place) ProtoReflect() protoreflect.Message {
+	mi := &file_domain_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Place.ProtoReflect.Descriptor instead.
+func (*Place) Descriptor() ([]byte, []int) {
+	return file_domain_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Place) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+func (x *Place) GetLat() float64 {
+	if x != nil {
+		return x.Lat
+	}
+	return 0
+}
+
+func (x *Place) GetLng() float64 {
+	if x != nil {
+		return x.Lng
+	}
+	return 0
+}
+
+func (x *Place) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Place) GetCmna() string {
+	if x != nil {
+		return x.Cmna
+	}
+	return ""
+}
+
+func (x *Place) GetRoute() string {
+	if x != nil {
+		return x.Route
+	}
+	return ""
+}
+
+func (x *Place) GetStreet() string {
+	if x != nil {
+		return x.Street
+	}
+	return ""
+}
+
+func (x *Place) GetNeighb() string {
+	if x != nil {
+		return x.Neighb
+	}
+	return ""
+}
+
+func (x *Place) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *Place) GetLocality() string {
+	if x != nil {
+		return x.Locality
+	}
+	return ""
+}
+
+func (x *Place) GetSublocal() string {
+	if x != nil {
+		return x.Sublocal
+	}
+	return ""
+}
+
+type Prediction struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	Desc          string                 `protobuf:"bytes,2,opt,name=desc,proto3" json:"desc,omitempty"`
+	Title         string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Subtitle      string                 `protobuf:"bytes,4,opt,name=subtitle,proto3" json:"subtitle,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Prediction) Reset() {
+	*x = Prediction{}
+	mi := &file_domain_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Prediction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Prediction) ProtoMessage() {}
+
+func (x *Prediction) ProtoReflect() protoreflect.Message {
+	mi := &file_domain_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Prediction.ProtoReflect.Descriptor instead.
+func (*Prediction) Descriptor() ([]byte, []int) {
+	return file_domain_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Prediction) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+func (x *Prediction) GetDesc() string {
+	if x != nil {
+		return x.Desc
+	}
+	return ""
+}
+
+func (x *Prediction) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *Prediction) GetSubtitle() string {
+	if x != nil {
+		return x.Subtitle
+	}
+	return ""
+}
+
 var File_domain_proto protoreflect.FileDescriptor
 
 const file_domain_proto_rawDesc = "" +
@@ -394,7 +586,26 @@ const file_domain_proto_rawDesc = "" +
 	"\n" +
 	"is_default\x18\x0e \x01(\bR\tisDefault\x12=\n" +
 	"\fdate_created\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\x12=\n" +
-	"\fdate_updated\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\vdateUpdatedB/\n" +
+	"\fdate_updated\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\vdateUpdated\"\xfd\x01\n" +
+	"\x05Place\x12\x10\n" +
+	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x10\n" +
+	"\x03lat\x18\x02 \x01(\x01R\x03lat\x12\x10\n" +
+	"\x03lng\x18\x03 \x01(\x01R\x03lng\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12\x12\n" +
+	"\x04cmna\x18\x05 \x01(\tR\x04cmna\x12\x14\n" +
+	"\x05route\x18\x06 \x01(\tR\x05route\x12\x16\n" +
+	"\x06street\x18\a \x01(\tR\x06street\x12\x16\n" +
+	"\x06neighb\x18\b \x01(\tR\x06neighb\x12\x18\n" +
+	"\aaddress\x18\t \x01(\tR\aaddress\x12\x1a\n" +
+	"\blocality\x18\n" +
+	" \x01(\tR\blocality\x12\x1a\n" +
+	"\bsublocal\x18\v \x01(\tR\bsublocal\"d\n" +
+	"\n" +
+	"Prediction\x12\x10\n" +
+	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
+	"\x04desc\x18\x02 \x01(\tR\x04desc\x12\x14\n" +
+	"\x05title\x18\x03 \x01(\tR\x05title\x12\x1a\n" +
+	"\bsubtitle\x18\x04 \x01(\tR\bsubtitleB/\n" +
 	"\x15com.muydelcampo.apigoZ\x16apigo/protobuf/gen/v1;b\x06proto3"
 
 var (
@@ -409,20 +620,22 @@ func file_domain_proto_rawDescGZIP() []byte {
 	return file_domain_proto_rawDescData
 }
 
-var file_domain_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_domain_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_domain_proto_goTypes = []any{
 	(*Code)(nil),                  // 0: muydelcampo.Code
 	(*User)(nil),                  // 1: muydelcampo.User
 	(*UserAddr)(nil),              // 2: muydelcampo.UserAddr
-	(*timestamppb.Timestamp)(nil), // 3: google.protobuf.Timestamp
+	(*Place)(nil),                 // 3: muydelcampo.Place
+	(*Prediction)(nil),            // 4: muydelcampo.Prediction
+	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
 }
 var file_domain_proto_depIdxs = []int32{
-	3, // 0: muydelcampo.Code.date_created:type_name -> google.protobuf.Timestamp
-	3, // 1: muydelcampo.Code.date_expired:type_name -> google.protobuf.Timestamp
-	3, // 2: muydelcampo.User.last_login:type_name -> google.protobuf.Timestamp
-	3, // 3: muydelcampo.User.date_joined:type_name -> google.protobuf.Timestamp
-	3, // 4: muydelcampo.UserAddr.date_created:type_name -> google.protobuf.Timestamp
-	3, // 5: muydelcampo.UserAddr.date_updated:type_name -> google.protobuf.Timestamp
+	5, // 0: muydelcampo.Code.date_created:type_name -> google.protobuf.Timestamp
+	5, // 1: muydelcampo.Code.date_expired:type_name -> google.protobuf.Timestamp
+	5, // 2: muydelcampo.User.last_login:type_name -> google.protobuf.Timestamp
+	5, // 3: muydelcampo.User.date_joined:type_name -> google.protobuf.Timestamp
+	5, // 4: muydelcampo.UserAddr.date_created:type_name -> google.protobuf.Timestamp
+	5, // 5: muydelcampo.UserAddr.date_updated:type_name -> google.protobuf.Timestamp
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name
@@ -442,7 +655,7 @@ func file_domain_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_domain_proto_rawDesc), len(file_domain_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

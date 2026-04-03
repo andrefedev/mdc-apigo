@@ -2,36 +2,36 @@
 
 ## Objetivo
 
-Consolidar la arquitectura actual sin volver a dispersar el transporte dentro de las features.
+Consolidar la arquitectura actual del monolito sin volver a una separacion por feature que ya no aporta al proyecto.
 
 ## Direccion elegida
 
 - un solo `ApiService`
-- `api/*` como borde canonico
-- `internal/features/*` como nucleo por feature
-- interceptors y auth centralizados en el transporte
+- un solo nucleo en `internal/app`
+- un borde gRPC en `api/okgrpc`
+- bootstrap explicito en `cmd/server/main.go`
 
 ## Prioridad P0
 
-- mantener documentacion y codigo alineados
-- evitar nuevos handlers gRPC dentro de `internal/features/*`
-- evitar dividir protobuf en multiples services sin necesidad
+- mantener documentacion y codigo alineados con `internal/app`
+- evitar que nuevos cambios revivan `internal/features/*` como patron
+- mantener auth y errores del transporte centralizados en `api/okgrpc`
 
 ## Prioridad P1
 
-- terminar de mover restos de transporte legacy fuera de features
-- dejar auth del transporte en una sola estrategia
-- mantener el mapping gRPC en `api/okgrpc`
+- terminar de mover cualquier resto legacy fuera de estructuras viejas
+- estabilizar convenciones de `datax -> data -> repository`
+- mantener un unico criterio de autorizacion por metodo
 
 ## Prioridad P2
 
-- estabilizar nombres y consistencia del `ApiService`
-- reducir drift entre schema real y features
-- agregar tests focalizados del borde gRPC
+- estabilizar nombres del `ApiService`
+- reducir drift entre schema real y modelos de `internal/app`
+- agregar tests focalizados del borde gRPC y de `UseService`
 
 ## Criterio de exito
 
 - el borde vive en `api/*`
-- el dominio vive en `internal/features/*`
+- el nucleo vive en `internal/app`
 - el contrato externo sigue siendo un solo `ApiService`
-- no hay ambiguedad sobre donde va cada cambio nuevo
+- no hay ambiguedad sobre donde va un cambio nuevo

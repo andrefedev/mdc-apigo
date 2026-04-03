@@ -7,9 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"apigo/internal/app"
 	v1 "apigo/protobuf/gen/v1"
-
-	"apigo/internal/features/auth"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -50,16 +49,16 @@ func isPublicMethod(method string) bool {
 // # METHOD's #
 // ############
 
-func requireLogin(ctx context.Context) (*auth.Session, error) {
+func requireLogin(ctx context.Context) (*app.Session, error) {
 	session, ok := sessionFromContext(ctx)
 	if !ok || session == nil {
-		return nil, auth.WrapSessionRequired(nil)
+		return nil, app.WrapSessionRequired(nil)
 	}
 
 	return session, nil
 }
 
-func requireRootUser(ctx context.Context) (*auth.Session, error) {
+func requireRootUser(ctx context.Context) (*app.Session, error) {
 	session, err := requireLogin(ctx)
 	if err != nil {
 		return nil, err
@@ -73,14 +72,14 @@ func requireRootUser(ctx context.Context) (*auth.Session, error) {
 	return session, nil
 }
 
-func requireStaffUser(ctx context.Context) (*auth.Session, error) {
+func requireStaffUser(ctx context.Context) (*app.Session, error) {
 	session, err := requireLogin(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	if !session.IsEmployee() {
-		return nil, auth.WrapForbidden(nil)
+		return nil, app.WrapForbidden(nil)
 	}
 
 	return session, nil
@@ -102,7 +101,7 @@ func SessionUnaryInterceptor(srv *Server) grpc.UnaryServerInterceptor {
 			return handler(ctx, req)
 		}
 
-		session, err := srv.AuthService.SessionByIdToken(ctx, value)
+		session, err := srv.useservice.SessionByIdToken(ctx, value)
 		if err != nil {
 			return nil, err
 		}
@@ -119,10 +118,10 @@ func AuthorizeUnaryInterceptor(srv *Server) grpc.UnaryServerInterceptor {
 			if isPublicMethod(info.FullMethod) {
 				return handler(ctx, req)
 			}
-			return nil, auth.WrapSessionRequired(nil)
+			return nil, app.WrapSessionRequired(nil)
 		}
 
-		session, err := srv.AuthService.SessionByIdToken(ctx, idk)
+		session, err := srv.useservice.SessionByIdToken(ctx, idk)
 		if err != nil {
 			return nil, err
 		}

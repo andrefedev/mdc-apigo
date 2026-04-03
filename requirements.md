@@ -4,50 +4,64 @@
 
 Estas reglas son obligatorias para cambios nuevos.
 
-## 1. Transporte
+## 1. Nucleo unico
+
+- La logica interna del sistema vive en `internal/app`.
+- No se deben introducir nuevas carpetas `internal/features/*` como direccion arquitectonica principal.
+- Si un dominio nuevo aparece, primero debe evaluarse si realmente necesita salir de `internal/app`.
+
+## 2. Transporte
 
 - Todo codigo de transporte nuevo debe vivir en `api/*`.
-- Esto incluye gRPC, webhooks HTTP y futuros adapters externos.
-- `api/*` puede parsear requests, leer metadata, aplicar auth del transporte y mapear errores publicos.
+- Hoy el borde activo es `api/okgrpc`.
+- Si aparece webhook/HTTP, debe vivir tambien en `api/*`.
 
-## 2. Protobuf
+## 3. Protobuf
 
 - El contrato gRPC del proyecto se concentra en un unico `ApiService`.
-- No se deben crear multiples services protobuf sin una necesidad tecnica explicita.
-- Los mensajes se separan por responsabilidad en `api.proto`, `data.proto` y `domain.proto`.
+- No se deben crear multiples services protobuf sin necesidad tecnica explicita.
+- Los mensajes siguen separados por responsabilidad en `api.proto`, `data.proto` y `domain.proto`.
 
-## 3. Features
+## 4. Use service
 
-- La logica interna debe vivir en `internal/features/*`.
-- Cada feature puede contener dominio, services, repositorios, DTOs internos y errores semanticos.
-- Las features no deben recibir codigo nuevo de transporte.
+- La orquestacion principal de casos de uso vive en `internal/app/useservice.go`.
+- El borde no debe absorber logica de negocio compleja.
+- El repositorio no debe absorber reglas de caso de uso.
 
-## 4. Auth
+## 5. Data flow interno
 
-- La logica de sesion y autenticacion pertenece a `internal/features/auth`.
-- El transporte solo resuelve metadata, bearer token y autorizacion por metodo.
-- La expiracion, revocacion y semantica de auth no deben duplicarse en el borde.
+- El flujo recomendado es `input del transporte -> input interno -> data interna -> repository`.
+- `datax.go` representa inputs de entrada.
+- `data.go` representa data interna del caso de uso o persistencia.
+- La duplicacion entre `input` y `data` es aceptable cuando mejora claridad o desacopla el transporte del repositorio.
 
-## 5. Wiring
+## 6. Auth
+
+- La semantica de sesion y auth pertenece a `internal/app`.
+- El transporte solo resuelve bearer token, sesion y autorizacion por metodo.
+- La expiracion, revocacion y errores semanticos de auth no deben duplicarse fuera del nucleo.
+
+## 7. Errores
+
+- Los errores publicos del transporte se resuelven en `api/*`.
+- `internal/app` retorna errores del dominio o tecnicos con contexto.
+- No se debe usar `status.Error(...)` como convencion por defecto dentro de `internal/app`.
+
+## 8. Wiring
 
 - `cmd/server/main.go` es el punto principal de composicion.
-- El bootstrap debe seguir siendo explicito.
+- El bootstrap debe seguir siendo explicito y legible.
 
-## 6. Errores
+## 9. Infraestructura
 
-- Los errores publicos del transporte se resuelven en el borde.
-- Los services internos retornan errores del dominio o tecnicos con contexto.
-- No se debe introducir `status.Error(...)` como convencion por defecto dentro de features nuevas.
+- Clientes externos y acceso a DB compartido viven en `internal/modules/*`.
+- Utilidades transversales viven en `internal/platforms/*`.
 
-## 7. Webhooks
-
-- Los webhooks se consideran transporte.
-- No deben usarse para reintroducir handlers dentro de features.
-
-## 8. No regresion
+## 10. No regresion
 
 No se debe volver a una estructura donde:
 
-- cada feature define su propio server gRPC
+- el nucleo se fragmenta por feature sin una necesidad real
+- cada dominio define su propio server gRPC
 - el contrato protobuf se fragmenta por inercia
-- handlers y adapters vuelven a vivir dentro de `internal/features/*`
+- handlers y adapters vuelven a dispersarse dentro del nucleo

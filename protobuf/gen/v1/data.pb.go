@@ -758,6 +758,294 @@ func (x *UserListAllRes) GetUsers() []*User {
 	return nil
 }
 
+type PlaceDetailReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	Token         string                 `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PlaceDetailReq) Reset() {
+	*x = PlaceDetailReq{}
+	mi := &file_data_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PlaceDetailReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlaceDetailReq) ProtoMessage() {}
+
+func (x *PlaceDetailReq) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlaceDetailReq.ProtoReflect.Descriptor instead.
+func (*PlaceDetailReq) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *PlaceDetailReq) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+func (x *PlaceDetailReq) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+type PlaceDetailRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Result        *Place                 `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PlaceDetailRes) Reset() {
+	*x = PlaceDetailRes{}
+	mi := &file_data_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PlaceDetailRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlaceDetailRes) ProtoMessage() {}
+
+func (x *PlaceDetailRes) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlaceDetailRes.ProtoReflect.Descriptor instead.
+func (*PlaceDetailRes) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *PlaceDetailRes) GetResult() *Place {
+	if x != nil {
+		return x.Result
+	}
+	return nil
+}
+
+type ReverseGeocodeReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Lat           float64                `protobuf:"fixed64,1,opt,name=lat,proto3" json:"lat,omitempty"`
+	Lng           float64                `protobuf:"fixed64,2,opt,name=lng,proto3" json:"lng,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReverseGeocodeReq) Reset() {
+	*x = ReverseGeocodeReq{}
+	mi := &file_data_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReverseGeocodeReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReverseGeocodeReq) ProtoMessage() {}
+
+func (x *ReverseGeocodeReq) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReverseGeocodeReq.ProtoReflect.Descriptor instead.
+func (*ReverseGeocodeReq) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *ReverseGeocodeReq) GetLat() float64 {
+	if x != nil {
+		return x.Lat
+	}
+	return 0
+}
+
+func (x *ReverseGeocodeReq) GetLng() float64 {
+	if x != nil {
+		return x.Lng
+	}
+	return 0
+}
+
+type ReverseGeocodeRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Result        *Place                 `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReverseGeocodeRes) Reset() {
+	*x = ReverseGeocodeRes{}
+	mi := &file_data_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReverseGeocodeRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReverseGeocodeRes) ProtoMessage() {}
+
+func (x *ReverseGeocodeRes) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReverseGeocodeRes.ProtoReflect.Descriptor instead.
+func (*ReverseGeocodeRes) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ReverseGeocodeRes) GetResult() *Place {
+	if x != nil {
+		return x.Result
+	}
+	return nil
+}
+
+type PlaceAutocompleteReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PlaceAutocompleteReq) Reset() {
+	*x = PlaceAutocompleteReq{}
+	mi := &file_data_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PlaceAutocompleteReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlaceAutocompleteReq) ProtoMessage() {}
+
+func (x *PlaceAutocompleteReq) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlaceAutocompleteReq.ProtoReflect.Descriptor instead.
+func (*PlaceAutocompleteReq) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *PlaceAutocompleteReq) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+type PlaceAutocompleteRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Results       []*Prediction          `protobuf:"bytes,2,rep,name=results,proto3" json:"results,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PlaceAutocompleteRes) Reset() {
+	*x = PlaceAutocompleteRes{}
+	mi := &file_data_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PlaceAutocompleteRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlaceAutocompleteRes) ProtoMessage() {}
+
+func (x *PlaceAutocompleteRes) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlaceAutocompleteRes.ProtoReflect.Descriptor instead.
+func (*PlaceAutocompleteRes) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *PlaceAutocompleteRes) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *PlaceAutocompleteRes) GetResults() []*Prediction {
+	if x != nil {
+		return x.Results
+	}
+	return nil
+}
+
 type UserCreateReq_Payload struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -771,7 +1059,7 @@ type UserCreateReq_Payload struct {
 
 func (x *UserCreateReq_Payload) Reset() {
 	*x = UserCreateReq_Payload{}
-	mi := &file_data_proto_msgTypes[16]
+	mi := &file_data_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -783,7 +1071,7 @@ func (x *UserCreateReq_Payload) String() string {
 func (*UserCreateReq_Payload) ProtoMessage() {}
 
 func (x *UserCreateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[16]
+	mi := &file_data_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -847,7 +1135,7 @@ type UserUpdateReq_Payload struct {
 
 func (x *UserUpdateReq_Payload) Reset() {
 	*x = UserUpdateReq_Payload{}
-	mi := &file_data_proto_msgTypes[17]
+	mi := &file_data_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -859,7 +1147,7 @@ func (x *UserUpdateReq_Payload) String() string {
 func (*UserUpdateReq_Payload) ProtoMessage() {}
 
 func (x *UserUpdateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[17]
+	mi := &file_data_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -922,7 +1210,7 @@ type UserListAllReq_Filter struct {
 
 func (x *UserListAllReq_Filter) Reset() {
 	*x = UserListAllReq_Filter{}
-	mi := &file_data_proto_msgTypes[18]
+	mi := &file_data_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -934,7 +1222,7 @@ func (x *UserListAllReq_Filter) String() string {
 func (*UserListAllReq_Filter) ProtoMessage() {}
 
 func (x *UserListAllReq_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[18]
+	mi := &file_data_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -988,7 +1276,7 @@ type UserListAllReq_Paging struct {
 
 func (x *UserListAllReq_Paging) Reset() {
 	*x = UserListAllReq_Paging{}
-	mi := &file_data_proto_msgTypes[19]
+	mi := &file_data_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1000,7 +1288,7 @@ func (x *UserListAllReq_Paging) String() string {
 func (*UserListAllReq_Paging) ProtoMessage() {}
 
 func (x *UserListAllReq_Paging) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[19]
+	mi := &file_data_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1099,7 +1387,22 @@ const file_data_proto_rawDesc = "" +
 	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x02 \x01(\x05R\x06offset\"9\n" +
 	"\x0eUserListAllRes\x12'\n" +
-	"\x05users\x18\x01 \x03(\v2\x11.muydelcampo.UserR\x05usersB/\n" +
+	"\x05users\x18\x01 \x03(\v2\x11.muydelcampo.UserR\x05users\"8\n" +
+	"\x0ePlaceDetailReq\x12\x10\n" +
+	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x14\n" +
+	"\x05token\x18\x02 \x01(\tR\x05token\"<\n" +
+	"\x0ePlaceDetailRes\x12*\n" +
+	"\x06result\x18\x01 \x01(\v2\x12.muydelcampo.PlaceR\x06result\"7\n" +
+	"\x11ReverseGeocodeReq\x12\x10\n" +
+	"\x03lat\x18\x01 \x01(\x01R\x03lat\x12\x10\n" +
+	"\x03lng\x18\x02 \x01(\x01R\x03lng\"?\n" +
+	"\x11ReverseGeocodeRes\x12*\n" +
+	"\x06result\x18\x01 \x01(\v2\x12.muydelcampo.PlaceR\x06result\",\n" +
+	"\x14PlaceAutocompleteReq\x12\x14\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\"_\n" +
+	"\x14PlaceAutocompleteRes\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x121\n" +
+	"\aresults\x18\x02 \x03(\v2\x17.muydelcampo.PredictionR\aresultsB/\n" +
 	"\x15com.muydelcampo.apigoZ\x16apigo/protobuf/gen/v1;b\x06proto3"
 
 var (
@@ -1114,7 +1417,7 @@ func file_data_proto_rawDescGZIP() []byte {
 	return file_data_proto_rawDescData
 }
 
-var file_data_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_data_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_data_proto_goTypes = []any{
 	(*CodeReq)(nil),               // 0: muydelcampo.CodeReq
 	(*CodeRes)(nil),               // 1: muydelcampo.CodeRes
@@ -1132,31 +1435,42 @@ var file_data_proto_goTypes = []any{
 	(*UserUpdateRes)(nil),         // 13: muydelcampo.UserUpdateRes
 	(*UserListAllReq)(nil),        // 14: muydelcampo.UserListAllReq
 	(*UserListAllRes)(nil),        // 15: muydelcampo.UserListAllRes
-	(*UserCreateReq_Payload)(nil), // 16: muydelcampo.UserCreateReq.Payload
-	(*UserUpdateReq_Payload)(nil), // 17: muydelcampo.UserUpdateReq.Payload
-	(*UserListAllReq_Filter)(nil), // 18: muydelcampo.UserListAllReq.Filter
-	(*UserListAllReq_Paging)(nil), // 19: muydelcampo.UserListAllReq.Paging
-	(*Code)(nil),                  // 20: muydelcampo.Code
-	(*User)(nil),                  // 21: muydelcampo.User
-	(*fieldmaskpb.FieldMask)(nil), // 22: google.protobuf.FieldMask
+	(*PlaceDetailReq)(nil),        // 16: muydelcampo.PlaceDetailReq
+	(*PlaceDetailRes)(nil),        // 17: muydelcampo.PlaceDetailRes
+	(*ReverseGeocodeReq)(nil),     // 18: muydelcampo.ReverseGeocodeReq
+	(*ReverseGeocodeRes)(nil),     // 19: muydelcampo.ReverseGeocodeRes
+	(*PlaceAutocompleteReq)(nil),  // 20: muydelcampo.PlaceAutocompleteReq
+	(*PlaceAutocompleteRes)(nil),  // 21: muydelcampo.PlaceAutocompleteRes
+	(*UserCreateReq_Payload)(nil), // 22: muydelcampo.UserCreateReq.Payload
+	(*UserUpdateReq_Payload)(nil), // 23: muydelcampo.UserUpdateReq.Payload
+	(*UserListAllReq_Filter)(nil), // 24: muydelcampo.UserListAllReq.Filter
+	(*UserListAllReq_Paging)(nil), // 25: muydelcampo.UserListAllReq.Paging
+	(*Code)(nil),                  // 26: muydelcampo.Code
+	(*User)(nil),                  // 27: muydelcampo.User
+	(*fieldmaskpb.FieldMask)(nil), // 28: google.protobuf.FieldMask
+	(*Place)(nil),                 // 29: muydelcampo.Place
+	(*Prediction)(nil),            // 30: muydelcampo.Prediction
 }
 var file_data_proto_depIdxs = []int32{
-	20, // 0: muydelcampo.CodeDetailRes.code:type_name -> muydelcampo.Code
-	21, // 1: muydelcampo.UsermeRes.user:type_name -> muydelcampo.User
-	21, // 2: muydelcampo.UserDetailRes.user:type_name -> muydelcampo.User
-	16, // 3: muydelcampo.UserCreateReq.payload:type_name -> muydelcampo.UserCreateReq.Payload
-	21, // 4: muydelcampo.UserCreateRes.user:type_name -> muydelcampo.User
-	17, // 5: muydelcampo.UserUpdateReq.payload:type_name -> muydelcampo.UserUpdateReq.Payload
-	22, // 6: muydelcampo.UserUpdateReq.updateMask:type_name -> google.protobuf.FieldMask
-	21, // 7: muydelcampo.UserUpdateRes.user:type_name -> muydelcampo.User
-	18, // 8: muydelcampo.UserListAllReq.filter:type_name -> muydelcampo.UserListAllReq.Filter
-	19, // 9: muydelcampo.UserListAllReq.paging:type_name -> muydelcampo.UserListAllReq.Paging
-	21, // 10: muydelcampo.UserListAllRes.users:type_name -> muydelcampo.User
-	11, // [11:11] is the sub-list for method output_type
-	11, // [11:11] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	26, // 0: muydelcampo.CodeDetailRes.code:type_name -> muydelcampo.Code
+	27, // 1: muydelcampo.UsermeRes.user:type_name -> muydelcampo.User
+	27, // 2: muydelcampo.UserDetailRes.user:type_name -> muydelcampo.User
+	22, // 3: muydelcampo.UserCreateReq.payload:type_name -> muydelcampo.UserCreateReq.Payload
+	27, // 4: muydelcampo.UserCreateRes.user:type_name -> muydelcampo.User
+	23, // 5: muydelcampo.UserUpdateReq.payload:type_name -> muydelcampo.UserUpdateReq.Payload
+	28, // 6: muydelcampo.UserUpdateReq.updateMask:type_name -> google.protobuf.FieldMask
+	27, // 7: muydelcampo.UserUpdateRes.user:type_name -> muydelcampo.User
+	24, // 8: muydelcampo.UserListAllReq.filter:type_name -> muydelcampo.UserListAllReq.Filter
+	25, // 9: muydelcampo.UserListAllReq.paging:type_name -> muydelcampo.UserListAllReq.Paging
+	27, // 10: muydelcampo.UserListAllRes.users:type_name -> muydelcampo.User
+	29, // 11: muydelcampo.PlaceDetailRes.result:type_name -> muydelcampo.Place
+	29, // 12: muydelcampo.ReverseGeocodeRes.result:type_name -> muydelcampo.Place
+	30, // 13: muydelcampo.PlaceAutocompleteRes.results:type_name -> muydelcampo.Prediction
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_data_proto_init() }
@@ -1165,14 +1479,14 @@ func file_data_proto_init() {
 		return
 	}
 	file_domain_proto_init()
-	file_data_proto_msgTypes[18].OneofWrappers = []any{}
+	file_data_proto_msgTypes[24].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_data_proto_rawDesc), len(file_data_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   20,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

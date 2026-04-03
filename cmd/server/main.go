@@ -3,7 +3,7 @@ package main
 import (
 	"apigo/api/okgrpc"
 	"apigo/internal/app"
-	"apigo/internal/features/users"
+	"apigo/internal/modules/gmaps"
 	"apigo/internal/modules/whatsapp/messages"
 	"context"
 	"log/slog"
@@ -14,7 +14,6 @@ import (
 
 	"google.golang.org/grpc"
 
-	"apigo/internal/features/auth"
 	"apigo/internal/modules/postgres"
 	"apigo/internal/modules/whatsapp"
 	"apigo/internal/platforms/confx"
@@ -34,7 +33,6 @@ func main() {
 	// ############
 	// # DATABASE #
 	// ############
-
 	ctx := context.Background()
 	pool, err := postgres.Open(ctx, cfg.PgDatabaseUrl)
 	if err != nil {
@@ -42,35 +40,51 @@ func main() {
 		os.Exit(1)
 	}
 	defer pool.Close()
-
 	pgdb := postgres.NewPgdb(pool)
-
 	// ################
 	// # END_DATABASE #
 	// ################
+
+	// ############
+	// # WHATSAPP #
+	// ############
 	waba := whatsapp.NewClient(
 		whatsapp.Config{
 			ApiToken: cfg.WhatsAppToken,
 			ApiPhone: cfg.WhatsAppPhone,
 		},
 	)
+	messageservice := messages.NewService(waba)
+	// ################
+	// # END WHATSAPP #
+	// ################
 
+	// ###############
+	// # GOOGLE_MAPS #
+	// ###############
+
+	m := gmaps.NewMapService(gmaps.Config{})
+	// ###################
+	// # END_GOOGLE_MAPS #
+	// ###################
+
+	// ################
+	// # APP SERVICES #
+	// ################
 	repo := app.NewRepository(pgdb)
-	service := app.NewService(app.ServiceDeps{
+	useservice := app.NewUseService(app.UseServiceDeps{
 		Repository:     repo,
-		MessageService: messages.NewService(waba),
+		MessageService: messageservice,
 	})
+	// ####################
+	// # END APP SERVICES #
+	// ####################
 
 	serverx := okgrpc.NewServer(
 		okgrpc.ServerDeps{
-			Repository: repo,
-			Service:    service,
-			MessageC: whatsapp.NewClient(
-				whatsapp.Config{
-					ApiToken: cfg.WhatsAppToken,
-					ApiPhone: cfg.WhatsAppPhone,
-				},
-			),
+			Repository:     repo,
+			UseService:     useservice,
+			MessageService: messageservice,
 		},
 	)
 

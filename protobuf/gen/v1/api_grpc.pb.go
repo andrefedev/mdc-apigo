@@ -19,14 +19,17 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ApiService_Code_FullMethodName        = "/muydelcampo.ApiService/Code"
-	ApiService_CodeDetail_FullMethodName  = "/muydelcampo.ApiService/CodeDetail"
-	ApiService_CodeVerify_FullMethodName  = "/muydelcampo.ApiService/CodeVerify"
-	ApiService_Userme_FullMethodName      = "/muydelcampo.ApiService/Userme"
-	ApiService_UserDetail_FullMethodName  = "/muydelcampo.ApiService/UserDetail"
-	ApiService_UserCreate_FullMethodName  = "/muydelcampo.ApiService/UserCreate"
-	ApiService_UserUpdate_FullMethodName  = "/muydelcampo.ApiService/UserUpdate"
-	ApiService_UserListAll_FullMethodName = "/muydelcampo.ApiService/UserListAll"
+	ApiService_Code_FullMethodName              = "/muydelcampo.ApiService/Code"
+	ApiService_CodeDetail_FullMethodName        = "/muydelcampo.ApiService/CodeDetail"
+	ApiService_CodeVerify_FullMethodName        = "/muydelcampo.ApiService/CodeVerify"
+	ApiService_Userme_FullMethodName            = "/muydelcampo.ApiService/Userme"
+	ApiService_UserDetail_FullMethodName        = "/muydelcampo.ApiService/UserDetail"
+	ApiService_UserCreate_FullMethodName        = "/muydelcampo.ApiService/UserCreate"
+	ApiService_UserUpdate_FullMethodName        = "/muydelcampo.ApiService/UserUpdate"
+	ApiService_UserListAll_FullMethodName       = "/muydelcampo.ApiService/UserListAll"
+	ApiService_PlaceDetail_FullMethodName       = "/muydelcampo.ApiService/PlaceDetail"
+	ApiService_ReverseGeocode_FullMethodName    = "/muydelcampo.ApiService/ReverseGeocode"
+	ApiService_PlaceAutocomplete_FullMethodName = "/muydelcampo.ApiService/PlaceAutocomplete"
 )
 
 // ApiServiceClient is the client API for ApiService service.
@@ -43,6 +46,10 @@ type ApiServiceClient interface {
 	UserCreate(ctx context.Context, in *UserCreateReq, opts ...grpc.CallOption) (*UserCreateRes, error)
 	UserUpdate(ctx context.Context, in *UserUpdateReq, opts ...grpc.CallOption) (*UserUpdateRes, error)
 	UserListAll(ctx context.Context, in *UserListAllReq, opts ...grpc.CallOption) (*UserListAllRes, error)
+	// GOOGLE_MAPS__
+	PlaceDetail(ctx context.Context, in *PlaceDetailReq, opts ...grpc.CallOption) (*PlaceDetailRes, error)
+	ReverseGeocode(ctx context.Context, in *ReverseGeocodeReq, opts ...grpc.CallOption) (*ReverseGeocodeRes, error)
+	PlaceAutocomplete(ctx context.Context, in *PlaceAutocompleteReq, opts ...grpc.CallOption) (*PlaceAutocompleteRes, error)
 }
 
 type apiServiceClient struct {
@@ -133,6 +140,36 @@ func (c *apiServiceClient) UserListAll(ctx context.Context, in *UserListAllReq, 
 	return out, nil
 }
 
+func (c *apiServiceClient) PlaceDetail(ctx context.Context, in *PlaceDetailReq, opts ...grpc.CallOption) (*PlaceDetailRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlaceDetailRes)
+	err := c.cc.Invoke(ctx, ApiService_PlaceDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiServiceClient) ReverseGeocode(ctx context.Context, in *ReverseGeocodeReq, opts ...grpc.CallOption) (*ReverseGeocodeRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReverseGeocodeRes)
+	err := c.cc.Invoke(ctx, ApiService_ReverseGeocode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiServiceClient) PlaceAutocomplete(ctx context.Context, in *PlaceAutocompleteReq, opts ...grpc.CallOption) (*PlaceAutocompleteRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlaceAutocompleteRes)
+	err := c.cc.Invoke(ctx, ApiService_PlaceAutocomplete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ApiServiceServer is the server API for ApiService service.
 // All implementations must embed UnimplementedApiServiceServer
 // for forward compatibility.
@@ -147,6 +184,10 @@ type ApiServiceServer interface {
 	UserCreate(context.Context, *UserCreateReq) (*UserCreateRes, error)
 	UserUpdate(context.Context, *UserUpdateReq) (*UserUpdateRes, error)
 	UserListAll(context.Context, *UserListAllReq) (*UserListAllRes, error)
+	// GOOGLE_MAPS__
+	PlaceDetail(context.Context, *PlaceDetailReq) (*PlaceDetailRes, error)
+	ReverseGeocode(context.Context, *ReverseGeocodeReq) (*ReverseGeocodeRes, error)
+	PlaceAutocomplete(context.Context, *PlaceAutocompleteReq) (*PlaceAutocompleteRes, error)
 	mustEmbedUnimplementedApiServiceServer()
 }
 
@@ -180,6 +221,15 @@ func (UnimplementedApiServiceServer) UserUpdate(context.Context, *UserUpdateReq)
 }
 func (UnimplementedApiServiceServer) UserListAll(context.Context, *UserListAllReq) (*UserListAllRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method UserListAll not implemented")
+}
+func (UnimplementedApiServiceServer) PlaceDetail(context.Context, *PlaceDetailReq) (*PlaceDetailRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method PlaceDetail not implemented")
+}
+func (UnimplementedApiServiceServer) ReverseGeocode(context.Context, *ReverseGeocodeReq) (*ReverseGeocodeRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReverseGeocode not implemented")
+}
+func (UnimplementedApiServiceServer) PlaceAutocomplete(context.Context, *PlaceAutocompleteReq) (*PlaceAutocompleteRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method PlaceAutocomplete not implemented")
 }
 func (UnimplementedApiServiceServer) mustEmbedUnimplementedApiServiceServer() {}
 func (UnimplementedApiServiceServer) testEmbeddedByValue()                    {}
@@ -346,6 +396,60 @@ func _ApiService_UserListAll_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ApiService_PlaceDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlaceDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).PlaceDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_PlaceDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).PlaceDetail(ctx, req.(*PlaceDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiService_ReverseGeocode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReverseGeocodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).ReverseGeocode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_ReverseGeocode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).ReverseGeocode(ctx, req.(*ReverseGeocodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiService_PlaceAutocomplete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlaceAutocompleteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).PlaceAutocomplete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_PlaceAutocomplete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).PlaceAutocomplete(ctx, req.(*PlaceAutocompleteReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ApiService_ServiceDesc is the grpc.ServiceDesc for ApiService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -384,6 +488,18 @@ var ApiService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserListAll",
 			Handler:    _ApiService_UserListAll_Handler,
+		},
+		{
+			MethodName: "PlaceDetail",
+			Handler:    _ApiService_PlaceDetail_Handler,
+		},
+		{
+			MethodName: "ReverseGeocode",
+			Handler:    _ApiService_ReverseGeocode_Handler,
+		},
+		{
+			MethodName: "PlaceAutocomplete",
+			Handler:    _ApiService_PlaceAutocomplete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
