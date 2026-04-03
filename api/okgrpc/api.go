@@ -1,11 +1,11 @@
 package okgrpc
 
 import (
+	"apigo/internal/app"
 	"apigo/internal/features/auth"
 	"apigo/internal/features/users"
-	"apigo/internal/modules/whatsapp"
 	"apigo/internal/modules/whatsapp/messages"
-	"apigo/internal/platforms/configx"
+	"apigo/internal/platforms/confx"
 	v1 "apigo/protobuf/gen/v1"
 )
 
@@ -14,20 +14,21 @@ type Server struct {
 	// repository *repository.Repository // REPOSITORY
 	v1.UnsafeApiServiceServer
 
-	AuthService *auth.Service
-	UserService *users.Service
+	Repository     *app.Repository
+	UseService     *app.UseService
+	MessageService *messages.Service
 	// ServerDeps
 }
 
 type ServerDeps struct {
-	Config         configx.Config
-	WhatsAppClient *whatsapp.Client
-	AuthRepository *auth.Repository
-	UserRepository *users.Repository
+	Ser        confx.Config
+	WabaClient *waba.Client
+	Repository app.Repository
 }
 
 func NewServer(deps ServerDeps) *Server {
 	return &Server{
+		Service: deps.AppService,
 		AuthService: auth.NewService(
 			auth.ServiceDeps{
 				Repository:     deps.AuthRepository,

@@ -1,25 +1,6 @@
-package auth
+package app
 
-import (
-	"errors"
-)
-
-var (
-	ErrInvalidCode  = errors.New("auth invalid code")
-	ErrInvalidPhone = errors.New("invalid phone number")
-
-	ErrCodeExpired  = errors.New("auth code expired")
-	ErrCodeNotFound = errors.New("auth code not found")
-
-	ErrUserNotFound = errors.New("auth user not found")
-
-	ErrSessionNotFound = errors.New("auth session not found")
-
-	ErrSessionExpired  = errors.New("auth session expired")
-	ErrSessionRevoked  = errors.New("auth session revoked")
-	ErrSessionRequired = errors.New("auth session required")
-	ErrForbidden       = errors.New("auth forbidden")
-)
+import "errors"
 
 func WrapInvalidCode(cause error) error {
 	if cause == nil {
@@ -82,4 +63,26 @@ func WrapForbidden(cause error) error {
 		return ErrForbidden
 	}
 	return errors.Join(ErrForbidden, cause)
+}
+
+func WrapLoginRequired(cause error) error {
+	if cause == nil {
+		return ErrLoginRequired
+	}
+	return errors.Join(ErrLoginRequired, cause)
+}
+
+func WrapInvalidName(cause error) error {
+	if cause == nil {
+		return ErrInvalidName
+	}
+	return errors.Join(ErrInvalidName, cause)
+}
+
+func WrapInvalidPhone(cause error) error {
+	if cause == nil {
+		return ErrInvalidPhone
+	}
+
+	return errors.Join(ErrInvalidPhone, cause)
 }

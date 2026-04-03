@@ -2,7 +2,9 @@ package main
 
 import (
 	"apigo/api/okgrpc"
+	"apigo/internal/app"
 	"apigo/internal/features/users"
+	"apigo/internal/modules/whatsapp/messages"
 	"context"
 	"log/slog"
 	"net"
@@ -15,15 +17,15 @@ import (
 	"apigo/internal/features/auth"
 	"apigo/internal/modules/postgres"
 	"apigo/internal/modules/whatsapp"
-	"apigo/internal/platforms/configx"
+	"apigo/internal/platforms/confx"
 	"apigo/internal/platforms/loggerx"
 	v1 "apigo/protobuf/gen/v1"
 )
 
 func main() {
-	cfg, err := configx.Load()
+	cfg, err := confx.Load()
 	if err != nil {
-		slog.Error("grpc server main: load configx", "err", err)
+		slog.Error("grpc server main: load confx", "err", err)
 		os.Exit(1)
 	}
 
@@ -46,12 +48,24 @@ func main() {
 	// ################
 	// # END_DATABASE #
 	// ################
+	waba := whatsapp.NewClient(
+		whatsapp.Config{
+			ApiToken: cfg.WhatsAppToken,
+			ApiPhone: cfg.WhatsAppPhone,
+		},
+	)
+
+	repo := app.NewRepository(pgdb)
+	service := app.NewService(app.ServiceDeps{
+		Repository:     repo,
+		MessageService: messages.NewService(waba),
+	})
 
 	serverx := okgrpc.NewServer(
 		okgrpc.ServerDeps{
-			AuthRepository: auth.NewRepository(pgdb),
-			UserRepository: users.NewRepository(pgdb),
-			WhatsAppClient: whatsapp.NewClient(
+			Repository: repo,
+			Service:    service,
+			MessageC: whatsapp.NewClient(
 				whatsapp.Config{
 					ApiToken: cfg.WhatsAppToken,
 					ApiPhone: cfg.WhatsAppPhone,
