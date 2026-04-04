@@ -1,6 +1,7 @@
 package app
 
 import (
+	"apigo/internal/modules/gmaps"
 	"apigo/internal/modules/whatsapp/messages"
 	"apigo/internal/platforms/cryptox"
 	"context"
@@ -10,6 +11,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"googlemaps.github.io/maps"
 )
 
 type UseService struct {
@@ -18,6 +20,7 @@ type UseService struct {
 
 type UseServiceDeps struct {
 	Repository     *Repository
+	GoogleMapx     *gmaps.Client
 	MessageService *messages.Service
 }
 
@@ -295,4 +298,120 @@ func (s *UseService) UserListAll(ctx context.Context, filter *UserFilterInput, p
 	}
 
 	return users, nil
+}
+
+// USER_ADDR__
+
+func (s *UseService) UserAddrDetail(ctx context.Context, ref string) (*UserAddr, error) {
+	const op = "App.UseService.UserAddrDetail"
+
+	if err := uuid.Validate(ref); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.UserAddrSelect(ctx, ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) UserAddrListAll(ctx context.Context, uid string) ([]*UserAddr, error) {
+	const op = "App.UseService.UserAddrListAll"
+
+	if err := uuid.Validate(uid); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.UserAddrSelectAll(ctx, uid)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+// GOOGLE_MAPS__
+
+func (s *UseService) PlaceDetail(ctx context.Context, input *PlaceDetailInput) (*gmaps.Place, error) {
+	const op = "App.UseService.PlaceDetail"
+
+	if input == nil {
+		return nil, fmt.Errorf("%s: %w", op, WrapMapxPlaceRefRequired(nil))
+	}
+
+	if err := input.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	data := NewPlaceDetailData(input)
+	if err := data.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	if s.deps.GoogleMapx == nil {
+		return nil, fmt.Errorf("%s: %w", op, WrapMapxUnavailable(nil))
+	}
+
+	token, err := uuid.Parse(data.Token)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, WrapMapxPlaceTokenInvalid(err))
+	}
+
+	result, err := s.deps.GoogleMapx.PlaceDetails(ctx, data.Ref, maps.PlaceAutocompleteSessionToken(token))
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) ReverseGeocode(ctx context.Context, input *ReverseGeocodeInput) (*gmaps.Place, error) {
+	const op = "App.UseService.ReverseGeocode"
+
+	if input == nil {
+		return nil, fmt.Errorf("%s: %w", op, WrapMapxCoordinatesInvalid(nil))
+	}
+	if err := input.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	data := NewReverseGeocodeData(input)
+	if err := data.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.GoogleMapx.ReverseGeocode(ctx, data.Lat, data.Lng)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) PlaceAutocomplete(ctx context.Context, input *PlaceAutocompleteInput) ([]*gmaps.Prediction, string, error) {
+	const op = "App.UseService.PlaceAutocomplete"
+
+	if input == nil {
+		return nil, "", fmt.Errorf("%s: %w", op, WrapMapxQueryRequired(nil))
+	}
+	if err := input.Validate(); err != nil {
+		return nil, "", fmt.Errorf("%s: %w", op, err)
+	}
+	data := NewPlaceAutocompleteData(input)
+	if err := data.Validate(); err != nil {
+		return nil, "", fmt.Errorf("%s: %w", op, err)
+	}
+	if s.deps.GoogleMapx == nil {
+		return nil, "", fmt.Errorf("%s: %w", op, WrapMapxUnavailable(nil))
+	}
+
+	token := gmaps.NewSessionToken()
+
+	results, err := s.deps.GoogleMapx.Autocomplete(ctx, data.Query, token)
+	if err != nil {
+		return nil, "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	return results, uuid.UUID(token).String(), nil
 }

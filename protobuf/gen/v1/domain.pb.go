@@ -354,6 +354,590 @@ func (x *UserAddr) GetDateUpdated() *timestamppb.Timestamp {
 	return nil
 }
 
+type Genre struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Descr         *string                `protobuf:"bytes,3,opt,name=descr,proto3,oneof" json:"descr,omitempty"`
+	Imurl         *string                `protobuf:"bytes,4,opt,name=imurl,proto3,oneof" json:"imurl,omitempty"`
+	Display       int32                  `protobuf:"varint,5,opt,name=display,proto3" json:"display,omitempty"`
+	IsPublic      bool                   `protobuf:"varint,6,opt,name=is_public,json=isPublic,proto3" json:"is_public,omitempty"`
+	DateCreated   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=date_created,json=dateCreated,proto3" json:"date_created,omitempty"`
+	ProductCount  int32                  `protobuf:"varint,8,opt,name=product_count,json=productCount,proto3" json:"product_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Genre) Reset() {
+	*x = Genre{}
+	mi := &file_domain_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Genre) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Genre) ProtoMessage() {}
+
+func (x *Genre) ProtoReflect() protoreflect.Message {
+	mi := &file_domain_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Genre.ProtoReflect.Descriptor instead.
+func (*Genre) Descriptor() ([]byte, []int) {
+	return file_domain_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Genre) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+func (x *Genre) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Genre) GetDescr() string {
+	if x != nil && x.Descr != nil {
+		return *x.Descr
+	}
+	return ""
+}
+
+func (x *Genre) GetImurl() string {
+	if x != nil && x.Imurl != nil {
+		return *x.Imurl
+	}
+	return ""
+}
+
+func (x *Genre) GetDisplay() int32 {
+	if x != nil {
+		return x.Display
+	}
+	return 0
+}
+
+func (x *Genre) GetIsPublic() bool {
+	if x != nil {
+		return x.IsPublic
+	}
+	return false
+}
+
+func (x *Genre) GetDateCreated() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DateCreated
+	}
+	return nil
+}
+
+func (x *Genre) GetProductCount() int32 {
+	if x != nil {
+		return x.ProductCount
+	}
+	return 0
+}
+
+type Product struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	Upc           *string                `protobuf:"bytes,2,opt,name=upc,proto3,oneof" json:"upc,omitempty"`
+	Code          int32                  `protobuf:"varint,3,opt,name=code,proto3" json:"code,omitempty"`
+	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Genre         *Genre                 `protobuf:"bytes,5,opt,name=genre,proto3" json:"genre,omitempty"`
+	Descr         *string                `protobuf:"bytes,6,opt,name=descr,proto3,oneof" json:"descr,omitempty"`
+	Imurl         *string                `protobuf:"bytes,7,opt,name=imurl,proto3,oneof" json:"imurl,omitempty"`
+	Display       int32                  `protobuf:"varint,8,opt,name=display,proto3" json:"display,omitempty"`
+	Weight        int32                  `protobuf:"varint,9,opt,name=weight,proto3" json:"weight,omitempty"`
+	Unitype       string                 `protobuf:"bytes,10,opt,name=unitype,proto3" json:"unitype,omitempty"`
+	Quantity      int32                  `protobuf:"varint,11,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	IsActive      bool                   `protobuf:"varint,12,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	IsPublic      bool                   `protobuf:"varint,13,opt,name=is_public,json=isPublic,proto3" json:"is_public,omitempty"`
+	CostPrice     int32                  `protobuf:"varint,15,opt,name=cost_price,json=costPrice,proto3" json:"cost_price,omitempty"`
+	BasePrice     int32                  `protobuf:"varint,16,opt,name=base_price,json=basePrice,proto3" json:"base_price,omitempty"`
+	NumInStock    int32                  `protobuf:"varint,18,opt,name=num_in_stock,json=numInStock,proto3" json:"num_in_stock,omitempty"`
+	NumInAlloc    int32                  `protobuf:"varint,19,opt,name=num_in_alloc,json=numInAlloc,proto3" json:"num_in_alloc,omitempty"`
+	DateCreated   *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=date_created,json=dateCreated,proto3" json:"date_created,omitempty"`
+	DateUpdated   *timestamppb.Timestamp `protobuf:"bytes,21,opt,name=date_updated,json=dateUpdated,proto3" json:"date_updated,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Product) Reset() {
+	*x = Product{}
+	mi := &file_domain_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Product) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Product) ProtoMessage() {}
+
+func (x *Product) ProtoReflect() protoreflect.Message {
+	mi := &file_domain_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Product.ProtoReflect.Descriptor instead.
+func (*Product) Descriptor() ([]byte, []int) {
+	return file_domain_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Product) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+func (x *Product) GetUpc() string {
+	if x != nil && x.Upc != nil {
+		return *x.Upc
+	}
+	return ""
+}
+
+func (x *Product) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *Product) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Product) GetGenre() *Genre {
+	if x != nil {
+		return x.Genre
+	}
+	return nil
+}
+
+func (x *Product) GetDescr() string {
+	if x != nil && x.Descr != nil {
+		return *x.Descr
+	}
+	return ""
+}
+
+func (x *Product) GetImurl() string {
+	if x != nil && x.Imurl != nil {
+		return *x.Imurl
+	}
+	return ""
+}
+
+func (x *Product) GetDisplay() int32 {
+	if x != nil {
+		return x.Display
+	}
+	return 0
+}
+
+func (x *Product) GetWeight() int32 {
+	if x != nil {
+		return x.Weight
+	}
+	return 0
+}
+
+func (x *Product) GetUnitype() string {
+	if x != nil {
+		return x.Unitype
+	}
+	return ""
+}
+
+func (x *Product) GetQuantity() int32 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *Product) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
+}
+
+func (x *Product) GetIsPublic() bool {
+	if x != nil {
+		return x.IsPublic
+	}
+	return false
+}
+
+func (x *Product) GetCostPrice() int32 {
+	if x != nil {
+		return x.CostPrice
+	}
+	return 0
+}
+
+func (x *Product) GetBasePrice() int32 {
+	if x != nil {
+		return x.BasePrice
+	}
+	return 0
+}
+
+func (x *Product) GetNumInStock() int32 {
+	if x != nil {
+		return x.NumInStock
+	}
+	return 0
+}
+
+func (x *Product) GetNumInAlloc() int32 {
+	if x != nil {
+		return x.NumInAlloc
+	}
+	return 0
+}
+
+func (x *Product) GetDateCreated() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DateCreated
+	}
+	return nil
+}
+
+func (x *Product) GetDateUpdated() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DateUpdated
+	}
+	return nil
+}
+
+type Order struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Ref   string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	// cesta
+	// usuario
+	// owner creador
+	// dirección de envío
+	User          *User                  `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
+	Addr          *UserAddr              `protobuf:"bytes,3,opt,name=addr,proto3" json:"addr,omitempty"` // DeliverySlot slot = 4;
+	Number        int32                  `protobuf:"varint,5,opt,name=number,proto3" json:"number,omitempty"`
+	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"` // es un enum
+	BasePrice     int32                  `protobuf:"varint,7,opt,name=base_price,json=basePrice,proto3" json:"base_price,omitempty"`
+	OfferPrice    int32                  `protobuf:"varint,8,opt,name=offer_price,json=offerPrice,proto3" json:"offer_price,omitempty"`
+	TotalPrice    int32                  `protobuf:"varint,9,opt,name=total_price,json=totalPrice,proto3" json:"total_price,omitempty"`
+	DateCreated   *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=date_created,json=dateCreated,proto3" json:"date_created,omitempty"`
+	DateUpdated   *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=date_updated,json=dateUpdated,proto3" json:"date_updated,omitempty"`
+	PaymentStatus string                 `protobuf:"bytes,12,opt,name=payment_status,json=paymentStatus,proto3" json:"payment_status,omitempty"` // es un enum...
+	PaymentMethod string                 `protobuf:"bytes,13,opt,name=payment_method,json=paymentMethod,proto3" json:"payment_method,omitempty"` // es un enum...
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Order) Reset() {
+	*x = Order{}
+	mi := &file_domain_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Order) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Order) ProtoMessage() {}
+
+func (x *Order) ProtoReflect() protoreflect.Message {
+	mi := &file_domain_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Order.ProtoReflect.Descriptor instead.
+func (*Order) Descriptor() ([]byte, []int) {
+	return file_domain_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *Order) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+func (x *Order) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *Order) GetAddr() *UserAddr {
+	if x != nil {
+		return x.Addr
+	}
+	return nil
+}
+
+func (x *Order) GetNumber() int32 {
+	if x != nil {
+		return x.Number
+	}
+	return 0
+}
+
+func (x *Order) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *Order) GetBasePrice() int32 {
+	if x != nil {
+		return x.BasePrice
+	}
+	return 0
+}
+
+func (x *Order) GetOfferPrice() int32 {
+	if x != nil {
+		return x.OfferPrice
+	}
+	return 0
+}
+
+func (x *Order) GetTotalPrice() int32 {
+	if x != nil {
+		return x.TotalPrice
+	}
+	return 0
+}
+
+func (x *Order) GetDateCreated() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DateCreated
+	}
+	return nil
+}
+
+func (x *Order) GetDateUpdated() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DateUpdated
+	}
+	return nil
+}
+
+func (x *Order) GetPaymentStatus() string {
+	if x != nil {
+		return x.PaymentStatus
+	}
+	return ""
+}
+
+func (x *Order) GetPaymentMethod() string {
+	if x != nil {
+		return x.PaymentMethod
+	}
+	return ""
+}
+
+type OrderNote struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	Note          string                 `protobuf:"bytes,2,opt,name=note,proto3" json:"note,omitempty"`
+	DateCreated   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=date_created,json=dateCreated,proto3" json:"date_created,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderNote) Reset() {
+	*x = OrderNote{}
+	mi := &file_domain_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderNote) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderNote) ProtoMessage() {}
+
+func (x *OrderNote) ProtoReflect() protoreflect.Message {
+	mi := &file_domain_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderNote.ProtoReflect.Descriptor instead.
+func (*OrderNote) Descriptor() ([]byte, []int) {
+	return file_domain_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *OrderNote) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+func (x *OrderNote) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+func (x *OrderNote) GetDateCreated() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DateCreated
+	}
+	return nil
+}
+
+type OrderLine struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	Item          *Product               `protobuf:"bytes,2,opt,name=item,proto3" json:"item,omitempty"`
+	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	Quantity      int32                  `protobuf:"varint,4,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	CostPrice     int32                  `protobuf:"varint,5,opt,name=cost_price,json=costPrice,proto3" json:"cost_price,omitempty"`
+	BasePrice     int32                  `protobuf:"varint,6,opt,name=base_price,json=basePrice,proto3" json:"base_price,omitempty"`
+	OfferPrice    int32                  `protobuf:"varint,7,opt,name=offer_price,json=offerPrice,proto3" json:"offer_price,omitempty"`
+	TotalPrice    int32                  `protobuf:"varint,8,opt,name=total_price,json=totalPrice,proto3" json:"total_price,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderLine) Reset() {
+	*x = OrderLine{}
+	mi := &file_domain_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderLine) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderLine) ProtoMessage() {}
+
+func (x *OrderLine) ProtoReflect() protoreflect.Message {
+	mi := &file_domain_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderLine.ProtoReflect.Descriptor instead.
+func (*OrderLine) Descriptor() ([]byte, []int) {
+	return file_domain_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *OrderLine) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+func (x *OrderLine) GetItem() *Product {
+	if x != nil {
+		return x.Item
+	}
+	return nil
+}
+
+func (x *OrderLine) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *OrderLine) GetQuantity() int32 {
+	if x != nil {
+		return x.Quantity
+	}
+	return 0
+}
+
+func (x *OrderLine) GetCostPrice() int32 {
+	if x != nil {
+		return x.CostPrice
+	}
+	return 0
+}
+
+func (x *OrderLine) GetBasePrice() int32 {
+	if x != nil {
+		return x.BasePrice
+	}
+	return 0
+}
+
+func (x *OrderLine) GetOfferPrice() int32 {
+	if x != nil {
+		return x.OfferPrice
+	}
+	return 0
+}
+
+func (x *OrderLine) GetTotalPrice() int32 {
+	if x != nil {
+		return x.TotalPrice
+	}
+	return 0
+}
+
 type Place struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
@@ -367,13 +951,15 @@ type Place struct {
 	Address       string                 `protobuf:"bytes,9,opt,name=address,proto3" json:"address,omitempty"`
 	Locality      string                 `protobuf:"bytes,10,opt,name=locality,proto3" json:"locality,omitempty"`
 	Sublocal      string                 `protobuf:"bytes,11,opt,name=sublocal,proto3" json:"sublocal,omitempty"`
+	Approximate   bool                   `protobuf:"varint,12,opt,name=approximate,proto3" json:"approximate,omitempty"`
+	InCoverage    bool                   `protobuf:"varint,13,opt,name=in_coverage,json=inCoverage,proto3" json:"in_coverage,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Place) Reset() {
 	*x = Place{}
-	mi := &file_domain_proto_msgTypes[3]
+	mi := &file_domain_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -385,7 +971,7 @@ func (x *Place) String() string {
 func (*Place) ProtoMessage() {}
 
 func (x *Place) ProtoReflect() protoreflect.Message {
-	mi := &file_domain_proto_msgTypes[3]
+	mi := &file_domain_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -398,7 +984,7 @@ func (x *Place) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Place.ProtoReflect.Descriptor instead.
 func (*Place) Descriptor() ([]byte, []int) {
-	return file_domain_proto_rawDescGZIP(), []int{3}
+	return file_domain_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *Place) GetRef() string {
@@ -478,19 +1064,34 @@ func (x *Place) GetSublocal() string {
 	return ""
 }
 
+func (x *Place) GetApproximate() bool {
+	if x != nil {
+		return x.Approximate
+	}
+	return false
+}
+
+func (x *Place) GetInCoverage() bool {
+	if x != nil {
+		return x.InCoverage
+	}
+	return false
+}
+
 type Prediction struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
-	Desc          string                 `protobuf:"bytes,2,opt,name=desc,proto3" json:"desc,omitempty"`
-	Title         string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
-	Subtitle      string                 `protobuf:"bytes,4,opt,name=subtitle,proto3" json:"subtitle,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Ref            string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	Desc           string                 `protobuf:"bytes,2,opt,name=desc,proto3" json:"desc,omitempty"`
+	Title          string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Subtitle       string                 `protobuf:"bytes,4,opt,name=subtitle,proto3" json:"subtitle,omitempty"`
+	DistanceMeters int32                  `protobuf:"varint,5,opt,name=distance_meters,json=distanceMeters,proto3" json:"distance_meters,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Prediction) Reset() {
 	*x = Prediction{}
-	mi := &file_domain_proto_msgTypes[4]
+	mi := &file_domain_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -502,7 +1103,7 @@ func (x *Prediction) String() string {
 func (*Prediction) ProtoMessage() {}
 
 func (x *Prediction) ProtoReflect() protoreflect.Message {
-	mi := &file_domain_proto_msgTypes[4]
+	mi := &file_domain_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -515,7 +1116,7 @@ func (x *Prediction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Prediction.ProtoReflect.Descriptor instead.
 func (*Prediction) Descriptor() ([]byte, []int) {
-	return file_domain_proto_rawDescGZIP(), []int{4}
+	return file_domain_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Prediction) GetRef() string {
@@ -544,6 +1145,13 @@ func (x *Prediction) GetSubtitle() string {
 		return x.Subtitle
 	}
 	return ""
+}
+
+func (x *Prediction) GetDistanceMeters() int32 {
+	if x != nil {
+		return x.DistanceMeters
+	}
+	return 0
 }
 
 var File_domain_proto protoreflect.FileDescriptor
@@ -586,7 +1194,80 @@ const file_domain_proto_rawDesc = "" +
 	"\n" +
 	"is_default\x18\x0e \x01(\bR\tisDefault\x12=\n" +
 	"\fdate_created\x18\x0f \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\x12=\n" +
-	"\fdate_updated\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\vdateUpdated\"\xfd\x01\n" +
+	"\fdate_updated\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\vdateUpdated\"\x92\x02\n" +
+	"\x05Genre\x12\x10\n" +
+	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x19\n" +
+	"\x05descr\x18\x03 \x01(\tH\x00R\x05descr\x88\x01\x01\x12\x19\n" +
+	"\x05imurl\x18\x04 \x01(\tH\x01R\x05imurl\x88\x01\x01\x12\x18\n" +
+	"\adisplay\x18\x05 \x01(\x05R\adisplay\x12\x1b\n" +
+	"\tis_public\x18\x06 \x01(\bR\bisPublic\x12=\n" +
+	"\fdate_created\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\x12#\n" +
+	"\rproduct_count\x18\b \x01(\x05R\fproductCountB\b\n" +
+	"\x06_descrB\b\n" +
+	"\x06_imurl\"\xf8\x04\n" +
+	"\aProduct\x12\x10\n" +
+	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x15\n" +
+	"\x03upc\x18\x02 \x01(\tH\x00R\x03upc\x88\x01\x01\x12\x12\n" +
+	"\x04code\x18\x03 \x01(\x05R\x04code\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12(\n" +
+	"\x05genre\x18\x05 \x01(\v2\x12.muydelcampo.GenreR\x05genre\x12\x19\n" +
+	"\x05descr\x18\x06 \x01(\tH\x01R\x05descr\x88\x01\x01\x12\x19\n" +
+	"\x05imurl\x18\a \x01(\tH\x02R\x05imurl\x88\x01\x01\x12\x18\n" +
+	"\adisplay\x18\b \x01(\x05R\adisplay\x12\x16\n" +
+	"\x06weight\x18\t \x01(\x05R\x06weight\x12\x18\n" +
+	"\aunitype\x18\n" +
+	" \x01(\tR\aunitype\x12\x1a\n" +
+	"\bquantity\x18\v \x01(\x05R\bquantity\x12\x1b\n" +
+	"\tis_active\x18\f \x01(\bR\bisActive\x12\x1b\n" +
+	"\tis_public\x18\r \x01(\bR\bisPublic\x12\x1d\n" +
+	"\n" +
+	"cost_price\x18\x0f \x01(\x05R\tcostPrice\x12\x1d\n" +
+	"\n" +
+	"base_price\x18\x10 \x01(\x05R\tbasePrice\x12 \n" +
+	"\fnum_in_stock\x18\x12 \x01(\x05R\n" +
+	"numInStock\x12 \n" +
+	"\fnum_in_alloc\x18\x13 \x01(\x05R\n" +
+	"numInAlloc\x12=\n" +
+	"\fdate_created\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\x12=\n" +
+	"\fdate_updated\x18\x15 \x01(\v2\x1a.google.protobuf.TimestampR\vdateUpdatedB\x06\n" +
+	"\x04_upcB\b\n" +
+	"\x06_descrB\b\n" +
+	"\x06_imurl\"\xc8\x03\n" +
+	"\x05Order\x12\x10\n" +
+	"\x03ref\x18\x01 \x01(\tR\x03ref\x12%\n" +
+	"\x04user\x18\x02 \x01(\v2\x11.muydelcampo.UserR\x04user\x12)\n" +
+	"\x04addr\x18\x03 \x01(\v2\x15.muydelcampo.UserAddrR\x04addr\x12\x16\n" +
+	"\x06number\x18\x05 \x01(\x05R\x06number\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\tR\x06status\x12\x1d\n" +
+	"\n" +
+	"base_price\x18\a \x01(\x05R\tbasePrice\x12\x1f\n" +
+	"\voffer_price\x18\b \x01(\x05R\n" +
+	"offerPrice\x12\x1f\n" +
+	"\vtotal_price\x18\t \x01(\x05R\n" +
+	"totalPrice\x12=\n" +
+	"\fdate_created\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\x12=\n" +
+	"\fdate_updated\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\vdateUpdated\x12%\n" +
+	"\x0epayment_status\x18\f \x01(\tR\rpaymentStatus\x12%\n" +
+	"\x0epayment_method\x18\r \x01(\tR\rpaymentMethod\"p\n" +
+	"\tOrderNote\x12\x10\n" +
+	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
+	"\x04note\x18\x02 \x01(\tR\x04note\x12=\n" +
+	"\fdate_created\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\"\xfb\x01\n" +
+	"\tOrderLine\x12\x10\n" +
+	"\x03ref\x18\x01 \x01(\tR\x03ref\x12(\n" +
+	"\x04item\x18\x02 \x01(\v2\x14.muydelcampo.ProductR\x04item\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status\x12\x1a\n" +
+	"\bquantity\x18\x04 \x01(\x05R\bquantity\x12\x1d\n" +
+	"\n" +
+	"cost_price\x18\x05 \x01(\x05R\tcostPrice\x12\x1d\n" +
+	"\n" +
+	"base_price\x18\x06 \x01(\x05R\tbasePrice\x12\x1f\n" +
+	"\voffer_price\x18\a \x01(\x05R\n" +
+	"offerPrice\x12\x1f\n" +
+	"\vtotal_price\x18\b \x01(\x05R\n" +
+	"totalPrice\"\xc0\x02\n" +
 	"\x05Place\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x10\n" +
 	"\x03lat\x18\x02 \x01(\x01R\x03lat\x12\x10\n" +
@@ -599,13 +1280,17 @@ const file_domain_proto_rawDesc = "" +
 	"\aaddress\x18\t \x01(\tR\aaddress\x12\x1a\n" +
 	"\blocality\x18\n" +
 	" \x01(\tR\blocality\x12\x1a\n" +
-	"\bsublocal\x18\v \x01(\tR\bsublocal\"d\n" +
+	"\bsublocal\x18\v \x01(\tR\bsublocal\x12 \n" +
+	"\vapproximate\x18\f \x01(\bR\vapproximate\x12\x1f\n" +
+	"\vin_coverage\x18\r \x01(\bR\n" +
+	"inCoverage\"\x8d\x01\n" +
 	"\n" +
 	"Prediction\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
 	"\x04desc\x18\x02 \x01(\tR\x04desc\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12\x1a\n" +
-	"\bsubtitle\x18\x04 \x01(\tR\bsubtitleB/\n" +
+	"\bsubtitle\x18\x04 \x01(\tR\bsubtitle\x12'\n" +
+	"\x0fdistance_meters\x18\x05 \x01(\x05R\x0edistanceMetersB/\n" +
 	"\x15com.muydelcampo.apigoZ\x16apigo/protobuf/gen/v1;b\x06proto3"
 
 var (
@@ -620,27 +1305,42 @@ func file_domain_proto_rawDescGZIP() []byte {
 	return file_domain_proto_rawDescData
 }
 
-var file_domain_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_domain_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_domain_proto_goTypes = []any{
 	(*Code)(nil),                  // 0: muydelcampo.Code
 	(*User)(nil),                  // 1: muydelcampo.User
 	(*UserAddr)(nil),              // 2: muydelcampo.UserAddr
-	(*Place)(nil),                 // 3: muydelcampo.Place
-	(*Prediction)(nil),            // 4: muydelcampo.Prediction
-	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
+	(*Genre)(nil),                 // 3: muydelcampo.Genre
+	(*Product)(nil),               // 4: muydelcampo.Product
+	(*Order)(nil),                 // 5: muydelcampo.Order
+	(*OrderNote)(nil),             // 6: muydelcampo.OrderNote
+	(*OrderLine)(nil),             // 7: muydelcampo.OrderLine
+	(*Place)(nil),                 // 8: muydelcampo.Place
+	(*Prediction)(nil),            // 9: muydelcampo.Prediction
+	(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
 }
 var file_domain_proto_depIdxs = []int32{
-	5, // 0: muydelcampo.Code.date_created:type_name -> google.protobuf.Timestamp
-	5, // 1: muydelcampo.Code.date_expired:type_name -> google.protobuf.Timestamp
-	5, // 2: muydelcampo.User.last_login:type_name -> google.protobuf.Timestamp
-	5, // 3: muydelcampo.User.date_joined:type_name -> google.protobuf.Timestamp
-	5, // 4: muydelcampo.UserAddr.date_created:type_name -> google.protobuf.Timestamp
-	5, // 5: muydelcampo.UserAddr.date_updated:type_name -> google.protobuf.Timestamp
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	10, // 0: muydelcampo.Code.date_created:type_name -> google.protobuf.Timestamp
+	10, // 1: muydelcampo.Code.date_expired:type_name -> google.protobuf.Timestamp
+	10, // 2: muydelcampo.User.last_login:type_name -> google.protobuf.Timestamp
+	10, // 3: muydelcampo.User.date_joined:type_name -> google.protobuf.Timestamp
+	10, // 4: muydelcampo.UserAddr.date_created:type_name -> google.protobuf.Timestamp
+	10, // 5: muydelcampo.UserAddr.date_updated:type_name -> google.protobuf.Timestamp
+	10, // 6: muydelcampo.Genre.date_created:type_name -> google.protobuf.Timestamp
+	3,  // 7: muydelcampo.Product.genre:type_name -> muydelcampo.Genre
+	10, // 8: muydelcampo.Product.date_created:type_name -> google.protobuf.Timestamp
+	10, // 9: muydelcampo.Product.date_updated:type_name -> google.protobuf.Timestamp
+	1,  // 10: muydelcampo.Order.user:type_name -> muydelcampo.User
+	2,  // 11: muydelcampo.Order.addr:type_name -> muydelcampo.UserAddr
+	10, // 12: muydelcampo.Order.date_created:type_name -> google.protobuf.Timestamp
+	10, // 13: muydelcampo.Order.date_updated:type_name -> google.protobuf.Timestamp
+	10, // 14: muydelcampo.OrderNote.date_created:type_name -> google.protobuf.Timestamp
+	4,  // 15: muydelcampo.OrderLine.item:type_name -> muydelcampo.Product
+	16, // [16:16] is the sub-list for method output_type
+	16, // [16:16] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_domain_proto_init() }
@@ -649,13 +1349,15 @@ func file_domain_proto_init() {
 		return
 	}
 	file_domain_proto_msgTypes[1].OneofWrappers = []any{}
+	file_domain_proto_msgTypes[3].OneofWrappers = []any{}
+	file_domain_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_domain_proto_rawDesc), len(file_domain_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

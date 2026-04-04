@@ -1,41 +1,60 @@
 package gmaps
 
-type Place2 struct {
-	Ref              string   `json:"ref"`
-	Query            string   `json:"query,omitempty"`
-	Source           string   `json:"source"`
-	Name             string   `json:"name,omitempty"`
-	Address          string   `json:"address"`
-	AddressLine      string   `json:"addressLine,omitempty"`
-	Route            string   `json:"route,omitempty"`
-	StreetNumber     string   `json:"streetNumber,omitempty"`
-	Premise          string   `json:"premise,omitempty"`
-	Subpremise       string   `json:"subpremise,omitempty"`
-	Neighborhood     string   `json:"neighborhood,omitempty"`
-	Sublocality      string   `json:"sublocality,omitempty"`
-	Commune          string   `json:"commune,omitempty"`
-	Locality         string   `json:"locality,omitempty"`
-	AdministrativeL1 string   `json:"administrativeL1,omitempty"`
-	AdministrativeL2 string   `json:"administrativeL2,omitempty"`
-	Country          string   `json:"country,omitempty"`
-	CountryCode      string   `json:"countryCode,omitempty"`
-	PostalCode       string   `json:"postalCode,omitempty"`
-	PlusCodeGlobal   string   `json:"plusCodeGlobal,omitempty"`
-	PlusCodeCompound string   `json:"plusCodeCompound,omitempty"`
-	Lat              float64  `json:"lat"`
-	Lng              float64  `json:"lng"`
-	ResultTypes      []string `json:"resultTypes,omitempty"`
-	LocationType     string   `json:"locationType,omitempty"`
-	PartialMatch     bool     `json:"partialMatch"`
-	Approximate      bool     `json:"approximate"`
-	InCoverage       bool     `json:"inCoverage"`
+import v1 "apigo/protobuf/gen/v1"
+
+type Place struct {
+	Ref         string  `json:"ref"`
+	Lat         float64 `json:"lat"`
+	Lng         float64 `json:"lng"`
+	Name        string  `json:"name,omitempty"`
+	Cmna        string  `json:"cmna,omitempty"`
+	Route       string  `json:"route,omitempty"`
+	Street      string  `json:"street,omitempty"`
+	Neighb      string  `json:"neighb,omitempty"`
+	Address     string  `json:"address,omitempty"`
+	Locality    string  `json:"locality,omitempty"`
+	Sublocal    string  `json:"sublocal,omitempty"`
+	Approximate bool    `json:"approximate"`
+	InCoverage  bool    `json:"inCoverage"`
 }
 
-type Prediction2 struct {
-	Ref            string   `json:"ref"`
-	Desc           string   `json:"desc"`
-	Title          string   `json:"title"`
-	Subtitle       string   `json:"subtitle"`
-	DistanceMeters int      `json:"distanceMeters,omitempty"`
-	Types          []string `json:"types,omitempty"`
+func (p *Place) ToProto() *v1.Place {
+	if p == nil {
+		return nil
+	}
+
+	return &v1.Place{
+		Ref:      p.Ref,
+		Lat:      p.Lat,
+		Lng:      p.Lng,
+		Name:     p.Name,
+		Cmna:     p.Cmna,
+		Route:    p.Route,
+		Street:   p.Street,
+		Neighb:   p.Neighb,
+		Address:  p.Address,
+		Locality: p.Locality,
+		Sublocal: p.Sublocal,
+	}
+}
+
+type Prediction struct {
+	Ref            string `json:"ref"`
+	Desc           string `json:"desc"`
+	Title          string `json:"title"`
+	Subtitle       string `json:"subtitle"`
+	DistanceMeters int    `json:"distanceMeters,omitempty"`
+}
+
+func (p *Prediction) ToProto() *v1.Prediction {
+	if p == nil {
+		return nil
+	}
+
+	return &v1.Prediction{
+		Ref:      p.Ref,
+		Desc:     p.Desc,
+		Title:    p.Title,
+		Subtitle: p.Subtitle,
+	}
 }

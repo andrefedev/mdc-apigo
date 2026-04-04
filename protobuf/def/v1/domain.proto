@@ -45,6 +45,85 @@ message UserAddr {
   google.protobuf.Timestamp date_updated = 16;
 }
 
+// CATLG__
+
+message Genre {
+  string ref = 1;
+  string name = 2;
+  optional string descr = 3;
+  optional string imurl = 4;
+  int32 display = 5;
+  bool is_public = 6;
+  google.protobuf.Timestamp date_created = 7;
+  int32 product_count = 8;
+}
+
+message Product {
+  string ref = 1;
+  optional string upc = 2;
+  int32 code = 3;
+  string name = 4;
+  Genre genre = 5;
+  optional string descr = 6;
+  optional string imurl = 7;
+  int32 display = 8;
+
+  int32 weight = 9;
+  string unitype = 10;
+  int32 quantity = 11;
+
+  bool is_active = 12;
+  bool is_public = 13;
+  int32 cost_price = 15;
+  int32 base_price = 16;
+  int32 num_in_stock = 18;
+  int32 num_in_alloc = 19;
+
+  google.protobuf.Timestamp date_created = 20;
+  google.protobuf.Timestamp date_updated = 21;
+}
+
+// SALES__
+
+message Order {
+  string ref = 1;
+  // cesta
+  // usuario
+  // owner creador
+  // dirección de envío
+  User user = 2;
+  UserAddr addr = 3;
+  // DeliverySlot slot = 4;
+
+  int32 number = 5;
+  string status = 6; // es un enum
+  int32 base_price = 7;
+  int32 offer_price = 8;
+  int32 total_price = 9;
+  google.protobuf.Timestamp date_created = 10;
+  google.protobuf.Timestamp date_updated = 11;
+
+  string payment_status = 12; // es un enum...
+  string payment_method = 13; // es un enum...
+}
+
+message OrderNote {
+  string ref = 1;
+  string note = 2;
+  google.protobuf.Timestamp date_created = 3;
+}
+
+message OrderLine {
+  string ref = 1;
+  Product item = 2;
+  string status = 3;
+  int32 quantity = 4;
+  int32 cost_price = 5;
+  int32 base_price = 6;
+  int32 offer_price = 7;
+  int32 total_price = 8;
+}
+
 // GOOGLE_MAPS__
 
 message Place {
@@ -59,6 +138,8 @@ message Place {
   string address = 9;
   string locality = 10;
   string sublocal = 11;
+  bool approximate = 12;
+  bool in_coverage = 13;
 }
 
 message Prediction {
@@ -66,4 +147,5 @@ message Prediction {
   string desc = 2;
   string title = 3;
   string subtitle = 4;
+  int32 distance_meters = 5;
 }

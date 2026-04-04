@@ -21,6 +21,13 @@ service ApiService {
   rpc UserUpdate(UserUpdateReq) returns (UserUpdateRes);
   rpc UserListAll(UserListAllReq) returns (UserListAllRes);
 
+  // USER_ADDR__
+  rpc UserAddrDetail(UserAddrDetailReq) returns (UserAddrDetailRes);
+  // rpc UserAddrCreate(UserAddrCreateReq) returns (UserAddrCreateRes);
+  // rpc UserAddrUpdate(UserAddrUpdateReq) returns (UserAddrUpdateRes);
+  // rpc UserAddrDelete(UserAddrDeleteReq) returns (UserAddrDeleteRes);
+  rpc UserAddrListAll(UserAddrListAllReq) returns (UserAddrListAllRes);
+
   // GOOGLE_MAPS__
   rpc PlaceDetail(PlaceDetailReq) returns (PlaceDetailRes);
   rpc ReverseGeocode(ReverseGeocodeReq) returns (ReverseGeocodeRes);

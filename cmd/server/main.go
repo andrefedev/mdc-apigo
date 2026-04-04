@@ -1,10 +1,6 @@
 package main
 
 import (
-	"apigo/api/okgrpc"
-	"apigo/internal/app"
-	"apigo/internal/modules/gmaps"
-	"apigo/internal/modules/whatsapp/messages"
 	"context"
 	"log/slog"
 	"net"
@@ -14,8 +10,12 @@ import (
 
 	"google.golang.org/grpc"
 
+	"apigo/api/okgrpc"
+	"apigo/internal/app"
+	"apigo/internal/modules/gmaps"
 	"apigo/internal/modules/postgres"
 	"apigo/internal/modules/whatsapp"
+	"apigo/internal/modules/whatsapp/messages"
 	"apigo/internal/platforms/confx"
 	"apigo/internal/platforms/loggerx"
 	v1 "apigo/protobuf/gen/v1"
@@ -62,8 +62,11 @@ func main() {
 	// ###############
 	// # GOOGLE_MAPS #
 	// ###############
-
-	m := gmaps.NewMapService(gmaps.Config{})
+	mapx, err := gmaps.NewClient(cfg.GoogleMapsApiKey)
+	if err != nil {
+		slog.Error("grpc server main: maps client", "err", err)
+		os.Exit(1)
+	}
 	// ###################
 	// # END_GOOGLE_MAPS #
 	// ###################
@@ -74,6 +77,7 @@ func main() {
 	repo := app.NewRepository(pgdb)
 	useservice := app.NewUseService(app.UseServiceDeps{
 		Repository:     repo,
+		GoogleMapx:     mapx,
 		MessageService: messageservice,
 	})
 	// ####################

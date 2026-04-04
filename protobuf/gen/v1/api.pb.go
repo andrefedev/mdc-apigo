@@ -25,7 +25,7 @@ var File_api_proto protoreflect.FileDescriptor
 const file_api_proto_rawDesc = "" +
 	"\n" +
 	"\tapi.proto\x12\vmuydelcampo\x1a\n" +
-	"data.proto2\x97\x06\n" +
+	"data.proto2\xbe\a\n" +
 	"\n" +
 	"ApiService\x122\n" +
 	"\x04Code\x12\x14.muydelcampo.CodeReq\x1a\x14.muydelcampo.CodeRes\x12D\n" +
@@ -40,7 +40,9 @@ const file_api_proto_rawDesc = "" +
 	"UserCreate\x12\x1a.muydelcampo.UserCreateReq\x1a\x1a.muydelcampo.UserCreateRes\x12D\n" +
 	"\n" +
 	"UserUpdate\x12\x1a.muydelcampo.UserUpdateReq\x1a\x1a.muydelcampo.UserUpdateRes\x12G\n" +
-	"\vUserListAll\x12\x1b.muydelcampo.UserListAllReq\x1a\x1b.muydelcampo.UserListAllRes\x12G\n" +
+	"\vUserListAll\x12\x1b.muydelcampo.UserListAllReq\x1a\x1b.muydelcampo.UserListAllRes\x12P\n" +
+	"\x0eUserAddrDetail\x12\x1e.muydelcampo.UserAddrDetailReq\x1a\x1e.muydelcampo.UserAddrDetailRes\x12S\n" +
+	"\x0fUserAddrListAll\x12\x1f.muydelcampo.UserAddrListAllReq\x1a\x1f.muydelcampo.UserAddrListAllRes\x12G\n" +
 	"\vPlaceDetail\x12\x1b.muydelcampo.PlaceDetailReq\x1a\x1b.muydelcampo.PlaceDetailRes\x12P\n" +
 	"\x0eReverseGeocode\x12\x1e.muydelcampo.ReverseGeocodeReq\x1a\x1e.muydelcampo.ReverseGeocodeRes\x12Y\n" +
 	"\x11PlaceAutocomplete\x12!.muydelcampo.PlaceAutocompleteReq\x1a!.muydelcampo.PlaceAutocompleteResB\x18Z\x16apigo/protobuf/gen/v1;b\x06proto3"
@@ -54,20 +56,24 @@ var file_api_proto_goTypes = []any{
 	(*UserCreateReq)(nil),        // 5: muydelcampo.UserCreateReq
 	(*UserUpdateReq)(nil),        // 6: muydelcampo.UserUpdateReq
 	(*UserListAllReq)(nil),       // 7: muydelcampo.UserListAllReq
-	(*PlaceDetailReq)(nil),       // 8: muydelcampo.PlaceDetailReq
-	(*ReverseGeocodeReq)(nil),    // 9: muydelcampo.ReverseGeocodeReq
-	(*PlaceAutocompleteReq)(nil), // 10: muydelcampo.PlaceAutocompleteReq
-	(*CodeRes)(nil),              // 11: muydelcampo.CodeRes
-	(*CodeDetailRes)(nil),        // 12: muydelcampo.CodeDetailRes
-	(*CodeVerifyRes)(nil),        // 13: muydelcampo.CodeVerifyRes
-	(*UsermeRes)(nil),            // 14: muydelcampo.UsermeRes
-	(*UserDetailRes)(nil),        // 15: muydelcampo.UserDetailRes
-	(*UserCreateRes)(nil),        // 16: muydelcampo.UserCreateRes
-	(*UserUpdateRes)(nil),        // 17: muydelcampo.UserUpdateRes
-	(*UserListAllRes)(nil),       // 18: muydelcampo.UserListAllRes
-	(*PlaceDetailRes)(nil),       // 19: muydelcampo.PlaceDetailRes
-	(*ReverseGeocodeRes)(nil),    // 20: muydelcampo.ReverseGeocodeRes
-	(*PlaceAutocompleteRes)(nil), // 21: muydelcampo.PlaceAutocompleteRes
+	(*UserAddrDetailReq)(nil),    // 8: muydelcampo.UserAddrDetailReq
+	(*UserAddrListAllReq)(nil),   // 9: muydelcampo.UserAddrListAllReq
+	(*PlaceDetailReq)(nil),       // 10: muydelcampo.PlaceDetailReq
+	(*ReverseGeocodeReq)(nil),    // 11: muydelcampo.ReverseGeocodeReq
+	(*PlaceAutocompleteReq)(nil), // 12: muydelcampo.PlaceAutocompleteReq
+	(*CodeRes)(nil),              // 13: muydelcampo.CodeRes
+	(*CodeDetailRes)(nil),        // 14: muydelcampo.CodeDetailRes
+	(*CodeVerifyRes)(nil),        // 15: muydelcampo.CodeVerifyRes
+	(*UsermeRes)(nil),            // 16: muydelcampo.UsermeRes
+	(*UserDetailRes)(nil),        // 17: muydelcampo.UserDetailRes
+	(*UserCreateRes)(nil),        // 18: muydelcampo.UserCreateRes
+	(*UserUpdateRes)(nil),        // 19: muydelcampo.UserUpdateRes
+	(*UserListAllRes)(nil),       // 20: muydelcampo.UserListAllRes
+	(*UserAddrDetailRes)(nil),    // 21: muydelcampo.UserAddrDetailRes
+	(*UserAddrListAllRes)(nil),   // 22: muydelcampo.UserAddrListAllRes
+	(*PlaceDetailRes)(nil),       // 23: muydelcampo.PlaceDetailRes
+	(*ReverseGeocodeRes)(nil),    // 24: muydelcampo.ReverseGeocodeRes
+	(*PlaceAutocompleteRes)(nil), // 25: muydelcampo.PlaceAutocompleteRes
 }
 var file_api_proto_depIdxs = []int32{
 	0,  // 0: muydelcampo.ApiService.Code:input_type -> muydelcampo.CodeReq
@@ -78,22 +84,26 @@ var file_api_proto_depIdxs = []int32{
 	5,  // 5: muydelcampo.ApiService.UserCreate:input_type -> muydelcampo.UserCreateReq
 	6,  // 6: muydelcampo.ApiService.UserUpdate:input_type -> muydelcampo.UserUpdateReq
 	7,  // 7: muydelcampo.ApiService.UserListAll:input_type -> muydelcampo.UserListAllReq
-	8,  // 8: muydelcampo.ApiService.PlaceDetail:input_type -> muydelcampo.PlaceDetailReq
-	9,  // 9: muydelcampo.ApiService.ReverseGeocode:input_type -> muydelcampo.ReverseGeocodeReq
-	10, // 10: muydelcampo.ApiService.PlaceAutocomplete:input_type -> muydelcampo.PlaceAutocompleteReq
-	11, // 11: muydelcampo.ApiService.Code:output_type -> muydelcampo.CodeRes
-	12, // 12: muydelcampo.ApiService.CodeDetail:output_type -> muydelcampo.CodeDetailRes
-	13, // 13: muydelcampo.ApiService.CodeVerify:output_type -> muydelcampo.CodeVerifyRes
-	14, // 14: muydelcampo.ApiService.Userme:output_type -> muydelcampo.UsermeRes
-	15, // 15: muydelcampo.ApiService.UserDetail:output_type -> muydelcampo.UserDetailRes
-	16, // 16: muydelcampo.ApiService.UserCreate:output_type -> muydelcampo.UserCreateRes
-	17, // 17: muydelcampo.ApiService.UserUpdate:output_type -> muydelcampo.UserUpdateRes
-	18, // 18: muydelcampo.ApiService.UserListAll:output_type -> muydelcampo.UserListAllRes
-	19, // 19: muydelcampo.ApiService.PlaceDetail:output_type -> muydelcampo.PlaceDetailRes
-	20, // 20: muydelcampo.ApiService.ReverseGeocode:output_type -> muydelcampo.ReverseGeocodeRes
-	21, // 21: muydelcampo.ApiService.PlaceAutocomplete:output_type -> muydelcampo.PlaceAutocompleteRes
-	11, // [11:22] is the sub-list for method output_type
-	0,  // [0:11] is the sub-list for method input_type
+	8,  // 8: muydelcampo.ApiService.UserAddrDetail:input_type -> muydelcampo.UserAddrDetailReq
+	9,  // 9: muydelcampo.ApiService.UserAddrListAll:input_type -> muydelcampo.UserAddrListAllReq
+	10, // 10: muydelcampo.ApiService.PlaceDetail:input_type -> muydelcampo.PlaceDetailReq
+	11, // 11: muydelcampo.ApiService.ReverseGeocode:input_type -> muydelcampo.ReverseGeocodeReq
+	12, // 12: muydelcampo.ApiService.PlaceAutocomplete:input_type -> muydelcampo.PlaceAutocompleteReq
+	13, // 13: muydelcampo.ApiService.Code:output_type -> muydelcampo.CodeRes
+	14, // 14: muydelcampo.ApiService.CodeDetail:output_type -> muydelcampo.CodeDetailRes
+	15, // 15: muydelcampo.ApiService.CodeVerify:output_type -> muydelcampo.CodeVerifyRes
+	16, // 16: muydelcampo.ApiService.Userme:output_type -> muydelcampo.UsermeRes
+	17, // 17: muydelcampo.ApiService.UserDetail:output_type -> muydelcampo.UserDetailRes
+	18, // 18: muydelcampo.ApiService.UserCreate:output_type -> muydelcampo.UserCreateRes
+	19, // 19: muydelcampo.ApiService.UserUpdate:output_type -> muydelcampo.UserUpdateRes
+	20, // 20: muydelcampo.ApiService.UserListAll:output_type -> muydelcampo.UserListAllRes
+	21, // 21: muydelcampo.ApiService.UserAddrDetail:output_type -> muydelcampo.UserAddrDetailRes
+	22, // 22: muydelcampo.ApiService.UserAddrListAll:output_type -> muydelcampo.UserAddrListAllRes
+	23, // 23: muydelcampo.ApiService.PlaceDetail:output_type -> muydelcampo.PlaceDetailRes
+	24, // 24: muydelcampo.ApiService.ReverseGeocode:output_type -> muydelcampo.ReverseGeocodeRes
+	25, // 25: muydelcampo.ApiService.PlaceAutocomplete:output_type -> muydelcampo.PlaceAutocompleteRes
+	13, // [13:26] is the sub-list for method output_type
+	0,  // [0:13] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

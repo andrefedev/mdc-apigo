@@ -1,297 +1,436 @@
 package gmaps
 
 import (
-	"apigo/internal/platforms/validatex/normalizex"
 	"context"
+	"errors"
 	"fmt"
-	"log"
-	"time"
+	"strings"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"googlemaps.github.io/maps"
 )
 
-type MapService struct {
-	client *maps.Client
-}
+func (c *Client) Autocomplete(ctx context.Context, input string, token maps.PlaceAutocompleteSessionToken) ([]*Prediction, error) {
+	const op = "gmaps.Client.Autocomplete"
 
-// defaultValue
-var latLng = &maps.LatLng{
-	Lat: 6.249623173934768,  //6.249639919536681, 6.249623173934768, -75.58688348047991
-	Lng: -75.58688348047991, //-75.58688791329203,
-}
-
-var latLng2 = &maps.LatLng{
-	Lat: 6.266733118358222,
-	Lng: -75.58688348047991,
-}
-
-func NewMapService(client *maps.Client) *MapService {
-	return &MapService{client}
-}
-
-func Open(ctx context.Context, pgDatabaseUrl string) (*pgxpool.Pool, error) {
-
-	cfg, err := pgxpool.ParseConfig(pgDatabaseUrl)
-	if err != nil {
-		return nil, err
+	query := normalizeQuery(input)
+	if query == "" {
+		return nil, fmt.Errorf("%s: %w", op, ErrQueryRequired)
 	}
 
-	cfg.MaxConns = 10
-	cfg.MinIdleConns = 0
-	cfg.MaxConnIdleTime = 5 * time.Minute
-	cfg.MaxConnLifetime = 30 * time.Minute
-
-	pool, err := pgxpool.NewWithConfig(ctx, cfg)
-	if err != nil {
-		return nil, err
-	}
-
-	// check ping
-	ctxPing, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	if err := pool.Ping(ctxPing); err != nil {
-		return nil, err
-	}
-
-	return pool, nil
-}
-
-// PlaceDetails función
-func (r MapService) PlaceDetails(ctx context.Context, placeRef string, token maps.PlaceAutocompleteSessionToken) (*Place, error) {
-	fields := []maps.PlaceDetailsFieldMask{
-		maps.PlaceDetailsFieldMaskName,
-		maps.PlaceDetailsFieldMaskPlaceID,
-		maps.PlaceDetailsFieldMaskADRAddress,
-		maps.PlaceDetailsFieldMaskFormattedAddress,
-		maps.PlaceDetailsFieldMaskAddressComponent,
-		maps.PlaceDetailsFieldMaskGeometryLocation,
-	}
-
-	request := &maps.PlaceDetailsRequest{
-		PlaceID:      placeRef,
-		Language:     "es",
-		Region:       "co",
-		Fields:       fields,
-		SessionToken: token,
-	}
-
-	pd, err := r.client.PlaceDetails(ctx, request)
-	if err != nil {
-		return nil, fmt.Errorf("MapsVendor.PlaceDetails: [%w]", err)
-	}
-
-	result := &Place{
-		Ref:     pd.PlaceID,
-		Lat:     pd.Geometry.Location.Lat,
-		Lng:     pd.Geometry.Location.Lng,
-		Name:    normalizex.NormalizeTitle(pd.Name),
-		Address: pd.FormattedAddress,
-	}
-
-	for _, comp := range pd.AddressComponents {
-		for _, t := range comp.Types {
-			switch t {
-			case "sublocality_level_1",
-				"administrative_area_level_3": // cmna
-				result.Cmna = comp.LongName
-			case "route":
-				result.Route = comp.ShortName
-			case "street_number":
-				result.Street = comp.ShortName
-			case "locality",
-				"administrative_area_level_2":
-				result.Locality = comp.LongName
-			case "neighborhood", "sublocality_level_2":
-				result.Neighb = comp.LongName
-			case "sublocality":
-				result.Sublocal = comp.LongName
-			}
-		}
-
-		fmt.Printf("PlaceDetails: %s -> %v\n", comp.LongName, comp.Types)
-	}
-
-	return result, nil
-}
-
-// ReverseGeocode función
-func (r MapService) ReverseGeocode(ctx context.Context, lat, lng float64) (*Place, error) {
-	req := &maps.GeocodingRequest{
-		LatLng:       &maps.LatLng{Lat: lat, Lng: lng},
-		Region:       "co",
-		Language:     "es",
-		ResultType:   []string{"street_address", "premise", "subpremise"}, // opcional: filtra a direcciones
-		LocationType: []maps.GeocodeAccuracy{maps.GeocodeAccuracyRooftop, maps.GeocodeAccuracyRangeInterpolated},
-	}
-
-	res, err := r.client.ReverseGeocode(ctx, req)
-	if err != nil {
-		return nil, fmt.Errorf("MapsVendor.ReverseGeocode: [%w]", err)
-	}
-
-	// empty
-	if len(res) == 0 {
-		return nil, nil
-	}
-
-	first := res[0]
-	result := &Place{
-		Ref:     first.PlaceID,
-		Lat:     first.Geometry.Location.Lat,
-		Lng:     first.Geometry.Location.Lng,
-		Address: first.FormattedAddress,
-	}
-
-	for _, comp := range first.AddressComponents {
-		for _, t := range comp.Types {
-			switch t {
-			case "route":
-				result.Route = normalizex.NormalizarStreet(comp.ShortName)
-			case "street_number":
-				result.Street = normalizex.NormalizarStreet(comp.ShortName)
-			case "locality":
-				result.Locality = normalizex.NormalizeTitle(comp.LongName) // city or locality
-			case "neighborhood":
-				result.Neighb = normalizex.NormalizeTitle(comp.LongName) // barrio neighborhood
-			}
-		}
-
-		fmt.Printf("ReverseGeocode %s -> %v\n", comp.LongName, comp.Types)
-	}
-
-	return result, nil
-}
-
-// PlaceAutocomplete función
-func (r MapService) PlaceAutocomplete(ctx context.Context, input string, token maps.PlaceAutocompleteSessionToken) ([]*Prediction, error) {
-	req := &maps.PlaceAutocompleteRequest{
-		Input:        input,
-		Radius:       25000, // 50km
-		Language:     "es-419",
-		Location:     latLng,
-		StrictBounds: true, // true restringe demasiado; puedes alternar
+	resp, err := c.client.PlaceAutocomplete(ctx, &maps.PlaceAutocompleteRequest{
+		Input:        query,
+		Origin:       &c.config.SearchCenter,
+		Radius:       c.config.SearchRadiusMeters,
+		Location:     &c.config.SearchCenter,
+		Language:     c.config.Language,
+		StrictBounds: c.config.StrictBounds,
 		SessionToken: token,
 		Components: map[maps.Component][]string{
-			maps.ComponentCountry: {"CO"},
+			maps.ComponentCountry: {c.config.CountryCode},
 		},
-	}
-
-	res, err := r.client.PlaceAutocomplete(ctx, req)
+	})
 	if err != nil {
-		return nil, fmt.Errorf("MapsVedor.PlaceAutocomqplete: [client place autocomplete] [%w]", err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	predictions := make([]*Prediction, 0)
-	for _, p := range res.Predictions {
-
-		var prediction Prediction
-		prediction.Ref = p.PlaceID
-		prediction.Desc = p.Description
-		prediction.Title = p.StructuredFormatting.MainText
-		prediction.Subtitle = p.StructuredFormatting.SecondaryText
-		predictions = append(predictions, &prediction)
+	limit := c.config.AutocompleteLimit
+	if limit <= 0 || limit > len(resp.Predictions) {
+		limit = len(resp.Predictions)
 	}
 
-	return predictions, nil
+	results := make([]*Prediction, 0, limit)
+	for i := 0; i < limit; i++ {
+		p := resp.Predictions[i]
+		results = append(results, &Prediction{
+			Ref:            strings.TrimSpace(p.PlaceID),
+			Desc:           strings.TrimSpace(p.Description),
+			Title:          strings.TrimSpace(p.StructuredFormatting.MainText),
+			Subtitle:       strings.TrimSpace(p.StructuredFormatting.SecondaryText),
+			DistanceMeters: p.DistanceMeters,
+			// Types: cloneStrings2(p.Types),
+		})
+	}
+
+	return results, nil
 }
 
-func (r MapService) ComputeDistanceMatrix(ctx context.Context, dests []maps.LatLng) error {
-	origin := latLng2.String()
-	destination := latLng.String()
+func (c *Client) ResolveText(ctx context.Context, input string, token maps.PlaceAutocompleteSessionToken) (*Place, error) {
+	const op = "gmaps.Client.ResolveText"
 
-	waypoints := make([]string, len(dests))
-	for i, d := range dests {
-		waypoints[i] = d.String()
+	query := normalizeQuery(input)
+	if query == "" {
+		return nil, fmt.Errorf("%s: %w", op, ErrQueryRequired)
 	}
 
-	req := &maps.DirectionsRequest{
-		Optimize:    true,
-		Origin:      origin,
-		Destination: destination,
-		Waypoints:   waypoints,
-		Mode:        maps.TravelModeDriving,
+	sawOutsideCoverage := false
 
-		// Optimize:    true,
-		// Units:       maps.UnitsMetric,
-		// Language:      "es",
-		// Region:        "co",
-		DepartureTime: "now",
-		// TrafficModel:  maps.TrafficModelBestGuess,
-	}
-
-	routes, _, err := r.client.Directions(ctx, req)
+	predictions, err := c.Autocomplete(ctx, query, token)
 	if err != nil {
-		return fmt.Errorf("directions error: %w", err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	if len(routes) == 0 {
-		return fmt.Errorf("directions no devolvió rutas")
-	}
-
-	optimizedOrder := routes[0].WaypointOrder
-	fmt.Println("Orden óptimo:", optimizedOrder)
-
-	// Construimos el intent URL para Android
-	var waypointParts []string
-	for _, i := range optimizedOrder {
-		w := waypoints[i]
-		waypointParts = append(waypointParts, w)
-	}
-
-	url := fmt.Sprintf(
-		"google.navigation:q=%s&waypoints=%s",
-		destination,
-		joinWaypoints(waypointParts),
-	)
-
-	log.Printf("navURI: %s", url)
-
-	return nil
-}
-
-func joinWaypoints(points []string) string {
-	return fmt.Sprintf("%s", joinStrings(points, "|"))
-}
-
-func joinStrings(list []string, sep string) string {
-	result := ""
-	for i, s := range list {
-		if i > 0 {
-			result += sep
+	for _, prediction := range predictions {
+		place, err := c.PlaceDetails(ctx, prediction.Ref, token)
+		switch {
+		case err == nil:
+			return place, nil
+		case errors.Is(err, ErrPlaceOutOfCoverage):
+			sawOutsideCoverage = true
+		case errors.Is(err, ErrPlaceNotFound):
+		default:
+			return nil, fmt.Errorf("%s: %w", op, err)
 		}
-		result += s
 	}
-	return result
+
+	place, err := c.findPlaceFromText(ctx, query, token)
+	switch {
+	case err == nil:
+		return place, nil
+	case errors.Is(err, ErrPlaceOutOfCoverage):
+		sawOutsideCoverage = true
+	case errors.Is(err, ErrPlaceNotFound):
+	default:
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	place, err = c.geocode(ctx, query)
+	switch {
+	case err == nil:
+		return place, nil
+	case errors.Is(err, ErrPlaceOutOfCoverage):
+		sawOutsideCoverage = true
+	case errors.Is(err, ErrPlaceNotFound):
+	default:
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if sawOutsideCoverage {
+		return nil, fmt.Errorf("%s: %w", op, ErrPlaceOutOfCoverage)
+	}
+
+	return nil, fmt.Errorf("%s: %w", op, ErrPlaceNotFound)
 }
 
-//func buildGoogleMapsURL(, waypointOrder []int) string {
-//	origin := fmt.Sprintf("%.6f,%.6f", depotLat, depotLng)
-//	dest := origin
-//
-//	ordered := make([]string, len(orders))
-//	for i, idx := range waypointOrder {
-//		o := orders[idx]
-//		ordered[i] = fmt.Sprintf("%.6f,%.6f", o.Location.Lat, o.Location.Lng)
-//	}
-//
-//	waypointsStr := ""
-//	for i, w := range ordered {
-//		if i > 0 {
-//			waypointsStr += "|"
-//		}
-//		waypointsStr += w
-//	}
-//
-//	q := url.Values{}
-//	q.Set("api", "1")
-//	q.Set("origin", origin)
-//	q.Set("destination", dest)
-//	q.Set("travelmode", "driving")
-//	if waypointsStr != "" {
-//		q.Set("waypoints", waypointsStr)
-//	}
-//
-//	return "https://www.google.com/maps/dir/?" + q.Encode()
-//}
+func (c *Client) PlaceDetails(ctx context.Context, placeID string, token maps.PlaceAutocompleteSessionToken) (*Place, error) {
+	const op = "gmaps.Client.PlaceDetails"
+
+	placeID = strings.TrimSpace(placeID)
+	if placeID == "" {
+		return nil, fmt.Errorf("%s: %w", op, ErrPlaceRefRequired)
+	}
+
+	fields := []maps.PlaceDetailsFieldMask{
+		maps.PlaceDetailsFieldMaskAddressComponent,
+		maps.PlaceDetailsFieldMaskFormattedAddress,
+		maps.PlaceDetailsFieldMaskGeometryLocation,
+		maps.PlaceDetailsFieldMaskName,
+		maps.PlaceDetailsFieldMaskPlaceID,
+		maps.PlaceDetailsFieldMaskTypes,
+	}
+
+	result, err := c.client.PlaceDetails(ctx, &maps.PlaceDetailsRequest{
+		PlaceID:      placeID,
+		Language:     c.config.Language,
+		Region:       c.config.Region,
+		Fields:       fields,
+		SessionToken: token,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	place := c.placeFromDetails(result)
+	if !place.InCoverage {
+		return nil, fmt.Errorf("%s: %w", op, ErrPlaceOutOfCoverage)
+	}
+
+	return place, nil
+}
+
+func (c *Client) ReverseGeocode(ctx context.Context, lat, lng float64) (*Place, error) {
+	const op = "gmaps.Client.ReverseGeocode"
+
+	if !isValidLatLng(lat, lng) {
+		return nil, fmt.Errorf("%s: %w", op, ErrCoordinatesInvalid)
+	}
+
+	latLng := &maps.LatLng{Lat: lat, Lng: lng}
+
+	results, err := c.client.ReverseGeocode(ctx, &maps.GeocodingRequest{
+		LatLng:     latLng,
+		Region:     c.config.Region,
+		Language:   c.config.Language,
+		ResultType: []string{"street_address", "premise", "subpremise"},
+		LocationType: []maps.GeocodeAccuracy{
+			maps.GeocodeAccuracyRooftop,
+			maps.GeocodeAccuracyRangeInterpolated,
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if len(results) == 0 {
+		results, err = c.client.ReverseGeocode(ctx, &maps.GeocodingRequest{
+			LatLng:     latLng,
+			Region:     c.config.Region,
+			Language:   c.config.Language,
+			ResultType: []string{"route", "neighborhood", "sublocality", "locality"},
+		})
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+	}
+
+	result := c.pickBestGeocodingResult(results)
+	if result == nil {
+		return nil, fmt.Errorf("%s: %w", op, ErrPlaceNotFound)
+	}
+
+	place := c.placeFromGeocode(*result)
+	if !place.InCoverage {
+		return nil, fmt.Errorf("%s: %w", op, ErrPlaceOutOfCoverage)
+	}
+
+	return place, nil
+}
+
+func (c *Client) findPlaceFromText(ctx context.Context, query string, token maps.PlaceAutocompleteSessionToken) (*Place, error) {
+	const op = "gmaps.Client.findPlaceFromText"
+
+	resp, err := c.client.FindPlaceFromText(ctx, &maps.FindPlaceFromTextRequest{
+		Input:        query,
+		InputType:    maps.FindPlaceFromTextInputTypeTextQuery,
+		Language:     c.config.Language,
+		LocationBias: maps.FindPlaceFromTextLocationBiasCircular,
+		Fields: []maps.PlaceSearchFieldMask{
+			maps.PlaceSearchFieldMaskFormattedAddress,
+			maps.PlaceSearchFieldMaskGeometryLocation,
+			maps.PlaceSearchFieldMaskName,
+			maps.PlaceSearchFieldMaskPlaceID,
+			maps.PlaceSearchFieldMaskTypes,
+		},
+		LocationBiasCenter: &c.config.SearchCenter,
+		LocationBiasRadius: int(c.config.SearchRadiusMeters),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if len(resp.Candidates) == 0 {
+		return nil, fmt.Errorf("%s: %w", op, ErrPlaceNotFound)
+	}
+
+	sawOutsideCoverage := false
+
+	for _, candidate := range resp.Candidates {
+		placeID := strings.TrimSpace(candidate.PlaceID)
+		if placeID == "" {
+			place := c.placeFromSearchResult(candidate)
+			if !place.InCoverage {
+				sawOutsideCoverage = true
+				continue
+			}
+			return place, nil
+		}
+
+		place, err := c.PlaceDetails(ctx, placeID, token)
+		switch {
+		case err == nil:
+			return place, nil
+		case errors.Is(err, ErrPlaceOutOfCoverage):
+			sawOutsideCoverage = true
+		case errors.Is(err, ErrPlaceNotFound):
+		default:
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+	}
+
+	if sawOutsideCoverage {
+		return nil, fmt.Errorf("%s: %w", op, ErrPlaceOutOfCoverage)
+	}
+
+	return nil, fmt.Errorf("%s: %w", op, ErrPlaceNotFound)
+}
+
+func (c *Client) geocode(ctx context.Context, query string) (*Place, error) {
+	const op = "gmaps.Client.geocode"
+
+	results, err := c.client.Geocode(ctx, &maps.GeocodingRequest{
+		Address:  query,
+		Bounds:   &c.config.SearchBounds,
+		Region:   c.config.Region,
+		Language: c.config.Language,
+		Components: map[maps.Component]string{
+			maps.ComponentCountry: c.config.CountryCode,
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result := c.pickBestGeocodingResult(results)
+	if result == nil {
+		return nil, fmt.Errorf("%s: %w", op, ErrPlaceNotFound)
+	}
+
+	place := c.placeFromGeocode(*result)
+	if !place.InCoverage {
+		return nil, fmt.Errorf("%s: %w", op, ErrPlaceOutOfCoverage)
+	}
+
+	return place, nil
+}
+
+func (c *Client) placeFromDetails(result maps.PlaceDetailsResult) *Place {
+	place := &Place{
+		Ref:     strings.TrimSpace(result.PlaceID),
+		Name:    normalizeQuery(result.Name),
+		Address: strings.TrimSpace(result.FormattedAddress),
+		Lat:     result.Geometry.Location.Lat,
+		Lng:     result.Geometry.Location.Lng,
+	}
+
+	c.fillAddressComponents(place, result.AddressComponents)
+	c.finalizePlace(place)
+
+	return place
+}
+
+func (c *Client) placeFromSearchResult(result maps.PlacesSearchResult) *Place {
+	place := &Place{
+		Ref:     strings.TrimSpace(result.PlaceID),
+		Name:    normalizeQuery(result.Name),
+		Address: strings.TrimSpace(result.FormattedAddress),
+		Lat:     result.Geometry.Location.Lat,
+		Lng:     result.Geometry.Location.Lng,
+	}
+
+	c.finalizePlace(place)
+
+	return place
+}
+
+func (c *Client) placeFromGeocode(result maps.GeocodingResult) *Place {
+	place := &Place{
+		Ref:     strings.TrimSpace(result.PlaceID),
+		Address: strings.TrimSpace(result.FormattedAddress),
+		Lat:     result.Geometry.Location.Lat,
+		Lng:     result.Geometry.Location.Lng,
+	}
+
+	c.fillAddressComponents(place, result.AddressComponents)
+	c.finalizePlace(place)
+	place.Approximate = result.PartialMatch || isApproximateLocationType(result.Geometry.LocationType)
+
+	return place
+}
+
+func (c *Client) fillAddressComponents(place *Place, components []maps.AddressComponent) {
+	var premise string
+
+	for _, component := range components {
+		for _, t := range component.Types {
+			switch t {
+			case "route":
+				place.Route = normalizeStreet(component.ShortName)
+			case "street_number":
+				place.Street = normalizeStreet(component.ShortName)
+			case "premise":
+				premise = normalizeQuery(component.LongName)
+			case "neighborhood", "sublocality_level_2":
+				place.Neighb = normalizeTitleOrKeep(component.LongName)
+			case "sublocality":
+				place.Sublocal = normalizeTitleOrKeep(component.LongName)
+			case "sublocality_level_1", "administrative_area_level_3":
+				place.Cmna = normalizeTitleOrKeep(component.LongName)
+			case "locality", "administrative_area_level_2":
+				place.Locality = normalizeTitleOrKeep(component.LongName)
+			}
+		}
+	}
+
+	if place.Name == "" {
+		place.Name = premise
+	}
+}
+
+func (c *Client) finalizePlace(place *Place) {
+	place.Route = strings.TrimSpace(place.Route)
+	place.Street = strings.TrimSpace(place.Street)
+	place.Address = strings.TrimSpace(place.Address)
+
+	place.InCoverage = c.inCoverage(place.Lat, place.Lng)
+}
+
+func (c *Client) inCoverage(lat, lng float64) bool {
+	return lat >= c.config.SearchBounds.SouthWest.Lat &&
+		lat <= c.config.SearchBounds.NorthEast.Lat &&
+		lng >= c.config.SearchBounds.SouthWest.Lng &&
+		lng <= c.config.SearchBounds.NorthEast.Lng
+}
+
+func (c *Client) pickBestGeocodingResult(results []maps.GeocodingResult) *maps.GeocodingResult {
+	if len(results) == 0 {
+		return nil
+	}
+
+	bestIndex := -1
+	bestScore := -1
+
+	for i := range results {
+		score := c.geocodeScore(results[i])
+		if score > bestScore {
+			bestScore = score
+			bestIndex = i
+		}
+	}
+
+	if bestIndex < 0 {
+		return nil
+	}
+
+	return &results[bestIndex]
+}
+
+func (c *Client) geocodeScore(result maps.GeocodingResult) int {
+	score := 0
+
+	for _, t := range result.Types {
+		switch t {
+		case "street_address":
+			score += 100
+		case "premise":
+			score += 95
+		case "subpremise":
+			score += 90
+		case "route":
+			score += 70
+		case "neighborhood":
+			score += 55
+		case "sublocality", "sublocality_level_1":
+			score += 45
+		case "locality":
+			score += 35
+		}
+	}
+
+	switch strings.ToUpper(strings.TrimSpace(result.Geometry.LocationType)) {
+	case "ROOFTOP":
+		score += 20
+	case "RANGE_INTERPOLATED":
+		score += 10
+	case "GEOMETRIC_CENTER":
+		score += 5
+	}
+
+	if !result.PartialMatch {
+		score += 10
+	}
+
+	if c.inCoverage(result.Geometry.Location.Lat, result.Geometry.Location.Lng) {
+		score += 25
+	}
+
+	return score
+}

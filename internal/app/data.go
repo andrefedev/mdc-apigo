@@ -2,7 +2,6 @@ package app
 
 import (
 	"apigo/internal/platforms/validatex/normalizex"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -201,9 +200,11 @@ func (r UserUpdateData) Validate(paths []string) error {
 	return nil
 }
 
-// # USER ADDR DATA #
+// USER_ADDR__
 
-type AddrData struct {
+// USER_ADDR_INSERT_DATA__
+
+type UserAddrInsertData struct {
 	Pid       string
 	Lat       float64
 	Lng       float64
@@ -219,37 +220,98 @@ type AddrData struct {
 	IsDefault bool
 }
 
-func (r *AddrData) Validate(paths []string) error {
-	if paths == nil || len(paths) == 0 {
-		paths = []string{
-			"pid", "lat", "lng", "name", "cmna", "route", "street",
-			"neighb", "locality", "sublocal", "address1", "address2",
-		}
+func (r *UserAddrInsertData) Validate() error {
+	return nil
+}
+
+// USER_ADDR_UPDATE_DATA__
+
+// GOOGLE_MAPS__
+
+type PlaceAutocompleteData struct {
+	Query string
+}
+
+func NewPlaceAutocompleteData(input *PlaceAutocompleteInput) *PlaceAutocompleteData {
+	if input == nil {
+		return &PlaceAutocompleteData{}
 	}
 
-	for _, path := range paths {
-		switch strings.TrimSpace(path) {
-		case "pid":
-			if r.Pid == "" {
-				return errors.New("el place id es un campo obligatorio")
-			}
-		case "lat":
-			if r.Lat == 0 {
-				return errors.New("la latitud es un campo obligatorio")
-			}
-		case "lng":
-			if r.Lng == 0 {
-				return errors.New("la longitud es un campo obligatorio")
-			}
-		case "route":
-			if r.Route == "" {
-				return errors.New("el route es un campo obligatorio")
-			}
-		case "street":
-			if r.Street == "" {
-				return errors.New("el street es un campo obligatorio")
-			}
-		}
+	return &PlaceAutocompleteData{
+		Query: input.Query,
+	}
+}
+
+func (d *PlaceAutocompleteData) Validate() error {
+	const op = "App.PlaceAutocompleteData.Validate"
+
+	d.Query = strings.Join(strings.Fields(strings.TrimSpace(d.Query)), " ")
+	if d.Query == "" {
+		return fmt.Errorf("%s: %w", op, WrapMapxQueryRequired(nil))
+	}
+
+	return nil
+}
+
+type PlaceDetailData struct {
+	Ref   string
+	Token string
+}
+
+func NewPlaceDetailData(input *PlaceDetailInput) *PlaceDetailData {
+	if input == nil {
+		return &PlaceDetailData{}
+	}
+
+	return &PlaceDetailData{
+		Ref:   input.Ref,
+		Token: input.Token,
+	}
+}
+
+func (d *PlaceDetailData) Validate() error {
+	const op = "App.PlaceDetailData.Validate"
+
+	d.Ref = strings.TrimSpace(d.Ref)
+	d.Token = strings.TrimSpace(d.Token)
+
+	if d.Ref == "" {
+		return fmt.Errorf("%s: %w", op, WrapMapxPlaceRefRequired(nil))
+	}
+	if d.Token == "" {
+		return fmt.Errorf("%s: %w", op, WrapMapxPlaceTokenRequired(nil))
+	}
+
+	return nil
+}
+
+type ReverseGeocodeData struct {
+	Lat float64
+	Lng float64
+}
+
+func NewReverseGeocodeData(input *ReverseGeocodeInput) *ReverseGeocodeData {
+	if input == nil {
+		return &ReverseGeocodeData{}
+	}
+
+	return &ReverseGeocodeData{
+		Lat: input.Lat,
+		Lng: input.Lng,
+	}
+}
+
+func (d *ReverseGeocodeData) Validate() error {
+	const op = "App.ReverseGeocodeData.Validate"
+
+	if d.Lat < -90 || d.Lat > 90 {
+		return fmt.Errorf("%s: %w", op, WrapMapxCoordinatesInvalid(nil))
+	}
+	if d.Lng < -180 || d.Lng > 180 {
+		return fmt.Errorf("%s: %w", op, WrapMapxCoordinatesInvalid(nil))
+	}
+	if d.Lat == 0 && d.Lng == 0 {
+		return fmt.Errorf("%s: %w", op, WrapMapxCoordinatesInvalid(nil))
 	}
 
 	return nil

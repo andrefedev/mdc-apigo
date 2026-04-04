@@ -93,3 +93,54 @@ func WrapUserExists(cause error) error {
 	}
 	return errors.Join(ErrUserExists, cause)
 }
+
+func WrapMapxUnavailable(cause error) error {
+	if cause == nil {
+		return ErrMapxUnavailable
+	}
+	return errors.Join(ErrMapxUnavailable, cause)
+}
+
+func WrapMapxQueryRequired(cause error) error {
+	if cause == nil {
+		return ErrMapxQueryRequired
+	}
+	return errors.Join(ErrMapxQueryRequired, cause)
+}
+
+func WrapMapxPlaceRefRequired(cause error) error {
+	if cause == nil {
+		return ErrMapxPlaceRefRequired
+	}
+	return errors.Join(ErrMapxPlaceRefRequired, cause)
+}
+
+func WrapMapxPlaceTokenInvalid(cause error) error {
+	if cause == nil {
+		return ErrMapxPlaceTokenInvalid
+	}
+	return errors.Join(ErrMapxPlaceTokenInvalid, cause)
+}
+
+func WrapMapxPlaceTokenRequired(cause error) error {
+	if cause == nil {
+		return ErrMapxPlaceTokenRequired
+	}
+	return errors.Join(ErrMapxPlaceTokenRequired, cause)
+}
+
+func WrapMapxCoordinatesInvalid(cause error) error {
+	if cause == nil {
+		return ErrMapxCoordinatesInvalid
+	}
+	return errors.Join(ErrMapxCoordinatesInvalid, cause)
+}
+
+// USER_ADDR__
+
+func WrapUserAddrNotFound(cause error) error {
+	if cause == nil {
+		return ErrUserAddrNotFound
+	}
+	return errors.Join(ErrUserAddrNotFound, cause)
+}

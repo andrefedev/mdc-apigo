@@ -111,6 +111,327 @@ message UserListAllRes{
   repeated User users = 1;
 }
 
+// USER_ADDR__
+
+message UserAddrDetailReq {
+  string ref = 1;
+}
+
+message UserAddrDetailRes {
+  UserAddr result = 1;
+}
+
+message UserAddrListAllReq {
+  string uid = 1;
+}
+
+message UserAddrListAllRes{
+  repeated UserAddr results = 1;
+}
+
+// CATLG__
+
+message ProductDetailReq {
+  string ref = 1;
+}
+
+message ProductDetailRes {
+  Product product = 1;
+}
+
+message ProductCreateReq {
+  Payload payload = 1;
+
+  message Payload {
+    string gid = 1;
+    optional string upc = 2;
+    string name = 3;
+    optional string descr = 4;
+    optional string imurl = 5;
+
+    int32 weight = 6;
+    string unitype = 7;
+    int32 quantity = 8;
+
+    bool is_active = 9;
+    bool is_public = 10;
+    int32 cost_price = 11;
+    int32 base_price = 12;
+    int32 num_in_stock = 14;
+  }
+}
+
+message ProductCreateRes {
+  Product product = 1;
+}
+
+message ProductUpdateReq {
+  string ref = 1;
+  Payload payload = 2;
+  google.protobuf.FieldMask update_mask = 3;
+
+  message Payload {
+    string gid = 1;
+    optional string upc = 2;
+    string name = 3;
+    optional string descr = 4;
+    optional string imurl = 5;
+
+    int32 weight = 6;
+    string unitype = 7;
+    int32 quantity = 8;
+
+    bool is_active = 9;
+    bool is_public = 10;
+    int32 cost_price = 11;
+    int32 base_price = 12;
+    int32 num_in_stock = 14;
+    int32 num_in_alloc = 15;
+  }
+}
+
+message ProductUpdateRes {
+  Product product = 1;
+}
+
+message ProductDeleteReq {
+  string ref = 1;
+}
+
+message ProductDeleteRes {
+  Product product = 1;
+}
+
+message ProductListAllReq {
+  Filter filter = 1;
+
+  message Filter {
+    optional string query = 1;
+    optional string genre = 2;
+    optional bool is_active = 3;
+    optional bool is_public = 4;
+  }
+}
+
+message ProductListAllRes {
+  repeated Product products = 1;
+}
+
+message ProductReOrderReq {
+  repeated Payload updates = 1;
+
+  message Payload {
+    string ref = 1;
+    int32 display = 2;
+  }
+}
+
+message ProductReOrderRes {
+  repeated Product results = 1;
+}
+
+// SALES__
+
+message OrderCreateReq {
+  Payload payload = 1;
+
+  message Payload {
+    string user = 1;
+    string addr = 2;
+    string slot = 3;
+    string status = 4;
+    string payment_status = 5;
+    string payment_method = 6;
+  }
+}
+
+message OrderCreateRes {
+  Order result = 1;
+}
+
+message OrderUpdateReq {
+  string ref = 1;
+  Payload payload = 2;
+  google.protobuf.FieldMask update_mask = 3;
+
+  message Payload {
+    string addr = 1;
+    string slot = 2;
+    string status = 3;
+    string payment_status = 5;
+    string payment_method = 6;
+  }
+}
+
+message OrderUpdateRes {
+  Order result = 1;
+}
+
+message OrderDeleteReq {
+  string ref = 1;
+}
+
+message OrderDeleteRes {
+  Order result = 1;
+}
+
+message OrderDetailReq {
+  string ref = 1;
+}
+
+message OrderDetailRes {
+  Order result = 1;
+}
+
+message OrderListAllReq {
+  Filter filter = 1;
+  Paging paging = 3;
+
+  message Filter {
+    optional string query = 1;
+    optional string status = 2;
+    optional string delivery = 4;
+    optional string payment_status = 5;
+  }
+
+  message Paging {
+    int32 limit = 1;
+    int32 offset = 2;
+  }
+}
+
+message OrderListAllRes {
+  repeated Order results = 1;
+}
+
+message OrderChangeStatusReq {
+  string ref = 1;
+  string status = 2;
+}
+
+message OrderChangeStatusRes {
+  Order result = 1;
+}
+
+// # ORDER_NOTE #
+
+message OrderNoteCreateReq {
+  string order = 1;
+  Payload payload = 2;
+
+  message Payload {
+    string note = 1;
+  }
+}
+
+message OrderNoteCreateRes {
+  OrderNote result = 1;
+}
+
+message OrderNoteUpdateReq {
+  string ref = 1;
+  Payload payload = 2;
+  google.protobuf.FieldMask updateMask = 3;
+
+  message Payload {
+    string note = 1;
+  }
+}
+
+message OrderNoteUpdateRes {
+  OrderNote result = 1;
+}
+
+message OrderNoteDeleteReq {
+  string ref = 1;
+}
+
+message OrderNoteDeleteRes {
+  OrderNote result = 1;
+}
+
+message OrderNoteDetailReq {
+  string ref = 1;
+}
+
+message OrderNoteDetailRes {
+  OrderNote result = 1;
+}
+
+message OrderNoteListAllReq {
+  string order = 1;
+}
+
+message OrderNoteListAllRes {
+  repeated OrderNote results = 1;
+}
+
+// # ORDER_LINE #
+
+message OrderLineCreateReq {
+  string order = 1;
+  Payload payload = 2;
+
+  message Payload {
+    string pid = 1;
+    string status = 2;
+    int32 quantity = 3;
+    int32 base_price = 4;
+  }
+}
+
+message OrderLineCreateRes {
+  OrderLine result = 1;
+}
+
+message OrderLineUpdateReq {
+  string ref = 1;
+  Payload payload = 2;
+  google.protobuf.FieldMask updateMask = 3;
+
+  message Payload {
+    string status = 2;
+    int32 quantity = 3;
+    int32 base_price = 4;
+  }
+}
+
+message OrderLineUpdateRes {
+  OrderLine result = 1;
+}
+
+message OrderLineDeleteReq {
+  string ref = 1;
+}
+
+message OrderLineDeleteRes {
+  OrderLine result = 1;
+}
+
+message OrderLineDetailReq {
+  string ref = 1;
+}
+
+message OrderLineDetailRes {
+  OrderLine result = 1;
+}
+
+message OrderLineListAllReq {
+  string order = 1;
+}
+
+message OrderLineListAllRes {
+  repeated OrderLine results = 1;
+}
+
+// # ORDER_DELIVERY #
+
+message OrderDeliveryTodayReq {}
+
+message OrderDeliveryTodayRes {
+  repeated Order results = 1;
+}
+
 // GOOGLE_MAPS__
 
 message PlaceDetailReq {

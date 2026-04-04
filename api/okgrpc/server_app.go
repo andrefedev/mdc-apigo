@@ -1,16 +1,13 @@
 package okgrpc
 
 import (
-	"context"
-	"log"
-
 	"apigo/internal/app"
 	v1 "apigo/protobuf/gen/v1"
+	"context"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"googlemaps.github.io/maps"
 )
 
 func (s Server) Code(ctx context.Context, req *v1.CodeReq) (*v1.CodeRes, error) {
@@ -182,55 +179,92 @@ func (s Server) UserUpdate(ctx context.Context, req *v1.UserUpdateReq) (*v1.User
 	return &v1.UserUpdateRes{User: result.ToProto()}, nil
 }
 
+// USER_ADDR__
+
+func (s Server) UserAddrDetail(ctx context.Context, req *v1.UserAddrDetailReq) (*v1.UserAddrDetailRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ref := req.GetRef()
+	if err := uuid.Validate(ref); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.UserAddrDetail(ctx, ref)
+	if err != nil {
+		return nil, err
+	}
+
+	// formatear a protobuf...
+	return &v1.UserAddrDetailRes{Result: result.ToProto()}, nil
+}
+
+func (s Server) UserAddrListAll(ctx context.Context, req *v1.UserAddrListAllReq) (*v1.UserAddrListAllRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	uid := req.GetUid()
+	if err := uuid.Validate(uid); err != nil {
+		return nil, err
+	}
+
+	res, err := s.useservice.UserAddrListAll(ctx, uid)
+	if err != nil {
+		return nil, err
+	}
+
+	addrs := make([]*v1.UserAddr, len(res))
+	for i, g := range res {
+		addrs[i] = g.ToProto()
+	}
+
+	// formatear a protobuf...
+	return &v1.UserAddrListAllRes{Results: addrs}, nil
+}
+
 // GOOGLE_MAPS__
 
 func (s Server) PlaceDetail(ctx context.Context, req *v1.PlaceDetailReq) (*v1.PlaceDetailRes, error) {
-	ref := req.GetRef()
-	if len(ref) == 0 {
-		return nil, status.Error(codes.InvalidArgument, "no place ref")
+	input := app.NewPlaceDetailInput(req)
+	if err := input.Validate(); err != nil {
+		return nil, err
 	}
 
-	token := req.GetToken()
-	if len(token) == 0 {
-		return nil, status.Error(codes.InvalidArgument, "no place session token")
-	}
-
-	// parse token
-	u, _ := uuid.Parse(token)
-	mtoken := maps.PlaceAutocompleteSessionToken(u)
-
-	result, err := s.vendor.Mapsx.PlaceDetails(ctx, ref, mtoken)
+	result, err := s.useservice.PlaceDetail(ctx, input)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	// formatear a protobuf...
 	return &v1.PlaceDetailRes{Result: result.ToProto()}, nil
 }
 
 func (s Server) ReverseGeocode(ctx context.Context, req *v1.ReverseGeocodeReq) (*v1.ReverseGeocodeRes, error) {
-	lat := req.GetLat()
-	lng := req.GetLng()
-
-	result, err := s.vendor.Mapsx.ReverseGeocode(ctx, lat, lng)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+	input := app.NewReverseGeocodeInput(req)
+	if err := input.Validate(); err != nil {
+		return nil, err
 	}
 
-	// formatear a protobuf...
+	result, err := s.useservice.ReverseGeocode(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
 	return &v1.ReverseGeocodeRes{Result: result.ToProto()}, nil
 }
 
 func (s Server) PlaceAutocomplete(ctx context.Context, req *v1.PlaceAutocompleteReq) (*v1.PlaceAutocompleteRes, error) {
-	query := req.GetQuery()
-	if len(query) < 0 {
-		return nil, status.Error(codes.InvalidArgument, "no query")
+	input := app.NewPlaceAutocompleteInput(req)
+	if err := input.Validate(); err != nil {
+		return nil, err
 	}
 
-	token := maps.NewPlaceAutocompleteSessionToken()
-	res, err := s.vendor.Mapsx.PlaceAutocomplete(ctx, query, token)
+	res, token, err := s.useservice.PlaceAutocomplete(ctx, input)
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, err
 	}
 
 	results := make([]*v1.Prediction, len(res))
@@ -238,8 +272,5 @@ func (s Server) PlaceAutocomplete(ctx context.Context, req *v1.PlaceAutocomplete
 		results[i] = p.ToProto()
 	}
 
-	log.Printf("token: %v", uuid.UUID(token).String())
-
-	// formatear a protobuf...
-	return &v1.PlaceAutocompleteRes{Token: uuid.UUID(token).String(), Results: results}, nil
+	return &v1.PlaceAutocompleteRes{Token: token, Results: results}, nil
 }

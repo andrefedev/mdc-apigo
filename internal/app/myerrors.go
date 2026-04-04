@@ -27,6 +27,23 @@ var (
 	ErrInvalidLastLogin = errors.New("user invalid last login")
 )
 
+// USER_ADDR__
+
+var (
+	ErrUserAddrNotFound = errors.New("user address not found")
+)
+
 var (
 	ErrInvalidMaskPath = errors.New("invalid mask path")
+)
+
+// GOOGLE_MAPS__
+
+var (
+	ErrMapxUnavailable        = errors.New("mapx unavailable")
+	ErrMapxQueryRequired      = errors.New("mpax query required")
+	ErrMapxPlaceRefRequired   = errors.New("mpax place ref required")
+	ErrMapxPlaceTokenInvalid  = errors.New("mpax place token invalid")
+	ErrMapxPlaceTokenRequired = errors.New("mpax place token required")
+	ErrMapxCoordinatesInvalid = errors.New("mapx invalid coordinates")
 )

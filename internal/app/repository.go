@@ -61,10 +61,10 @@ func (r Repository) CodeSelect(ctx context.Context, ref string) (*Code, error) {
 	}
 	defer rows.Close()
 
-	result, err := pgx.CollectOneRow(rows, pgx.RowToAddrOfStructByNameLax[Code])
+	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[Code])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, fmt.Errorf("%s: %w", op, WrapCodeNotFound(err))
+			err = WrapCodeNotFound(err)
 		}
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -112,10 +112,10 @@ func (r Repository) SessionSelect(ctx context.Context, ref string) (*Session, er
 	}
 	defer rows.Close()
 
-	result, err := pgx.CollectOneRow(rows, pgx.RowToStructByNameLax[Session])
+	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByNameLax[Session])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, fmt.Errorf("%s: %w", op, WrapSessionNotFound(err))
+			err = WrapSessionNotFound(err)
 		}
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -138,7 +138,7 @@ func (r Repository) SessionSelectByToken(ctx context.Context, token string) (*Se
 	}
 	defer rows.Close()
 
-	result, err := pgx.CollectOneRow(rows, pgx.RowToStructByNameLax[Session])
+	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByNameLax[Session])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = WrapSessionNotFound(err)
@@ -367,4 +367,55 @@ func (r Repository) UserSelectAll(ctx context.Context, filter *UserFilterData, p
 	}
 
 	return users, nil
+}
+
+// USER_ADDR__
+
+func (r Repository) UserAddrSelect(ctx context.Context, ref string) (*UserAddr, error) {
+	const op = "App.Repository.UserAddrSelect"
+
+	qry := `
+	SELECT
+	id, pid, lat, lng, name, cmna, route, street, neighb, locality, sublocal, address1, address2, is_default, date_created, date_updated
+	FROM users_addrs WHERE id = $1
+	`
+
+	rows, err := r.db.Query(ctx, qry, ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[UserAddr])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			err = WrapUserAddrNotFound(err)
+		}
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (r Repository) UserAddrSelectAll(ctx context.Context, uid string) ([]*UserAddr, error) {
+	const op = "App.Repository.UserAddrSelectAll"
+
+	qry := `
+	SELECT
+	id, pid, lat, lng, name, cmna, route, street, neighb, locality, sublocal, address1, address2, is_default, date_created, date_updated
+	FROM users_addrs WHERE uid = $1 ORDER BY is_default DESC, date_created DESC
+	`
+
+	rows, err := r.db.Query(ctx, qry, uid)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[UserAddr])
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return results, nil
 }
