@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/google/uuid"
 	"googlemaps.github.io/maps"
 )
 
@@ -33,4 +34,15 @@ func NewClient(apiKey string) (*Client, error) {
 
 func NewSessionToken() maps.PlaceAutocompleteSessionToken {
 	return maps.NewPlaceAutocompleteSessionToken()
+}
+
+func ParseSessionToken(token string) (maps.PlaceAutocompleteSessionToken, error) {
+	const op = "Mapx.Client.ParseSessionToken"
+
+	t, err := uuid.Parse(token)
+	if err != nil {
+		return maps.PlaceAutocompleteSessionToken{}, fmt.Errorf("%s: %w", op, ErrPlaceTokenInvalid)
+	}
+
+	return maps.PlaceAutocompleteSessionToken(t), nil
 }
