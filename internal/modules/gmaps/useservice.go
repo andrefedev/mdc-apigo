@@ -46,7 +46,7 @@ func (c *Client) Autocomplete(ctx context.Context, input string, token maps.Plac
 			Desc:           strings.TrimSpace(p.Description),
 			Title:          strings.TrimSpace(p.StructuredFormatting.MainText),
 			Subtitle:       strings.TrimSpace(p.StructuredFormatting.SecondaryText),
-			DistanceMeters: p.DistanceMeters,
+			DistanceMeters: int32(p.DistanceMeters),
 			// Types: cloneStrings2(p.Types),
 		})
 	}
@@ -258,8 +258,8 @@ func (c *Client) geocode(ctx context.Context, query string) (*Place, error) {
 
 	results, err := c.client.Geocode(ctx, &maps.GeocodingRequest{
 		Address:  query,
-		Bounds:   &c.config.SearchBounds,
 		Region:   c.config.Region,
+		Bounds:   &c.config.SearchBounds,
 		Language: c.config.Language,
 		Components: map[maps.Component]string{
 			maps.ComponentCountry: c.config.CountryCode,

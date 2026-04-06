@@ -2,6 +2,7 @@ package okgrpc
 
 import (
 	"apigo/internal/app"
+	"apigo/internal/modules/gmaps"
 	v1 "apigo/protobuf/gen/v1"
 	"context"
 
@@ -181,6 +182,67 @@ func (s Server) UserUpdate(ctx context.Context, req *v1.UserUpdateReq) (*v1.User
 
 // USER_ADDR__
 
+func (s Server) UserAddrCreate(ctx context.Context, req *v1.UserAddrCreateReq) (*v1.UserAddrCreateRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	uid := req.GetUid()
+	if err := uuid.Validate(uid); err != nil {
+		return nil, err
+	}
+
+	payload := req.GetPayload()
+	inputData := app.NewUserAddrCreateInput(payload)
+	if err := inputData.Validate(); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.UserAddrCreate(ctx, uid, inputData)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.UserAddrCreateRes{UserAddr: result.ToProto()}, nil
+}
+
+func (s Server) UserAddrUpdate(ctx context.Context, req *v1.UserAddrUpdateReq) (*v1.UserAddrUpdateRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ref := req.GetRef()
+	if err := uuid.Validate(ref); err != nil {
+		return nil, err
+	}
+
+	payload := req.GetPayload()
+	if payload == nil {
+		return nil, ErrInvalidPayload
+	}
+
+	updateMask := req.GetUpdateMask()
+	updateMask.Normalize()
+	if !updateMask.IsValid(payload) {
+		return nil, ErrInvalidUpdateMask
+	}
+
+	updateMaskPaths := updateMask.GetPaths()
+	updateInputData := app.NewUserAddrUpdateInput(payload)
+	if err := updateInputData.Validate(updateMaskPaths); err != nil {
+		return nil, err
+	}
+
+	userAddr, err := s.useservice.UserAddrUpdate(ctx, ref, updateMaskPaths, updateInputData)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.UserAddrUpdateRes{UserAddr: userAddr.ToProto()}, nil
+}
+
 func (s Server) UserAddrDetail(ctx context.Context, req *v1.UserAddrDetailReq) (*v1.UserAddrDetailRes, error) {
 	_, err := requireStaffUser(ctx)
 	if err != nil {
@@ -226,10 +288,47 @@ func (s Server) UserAddrListAll(ctx context.Context, req *v1.UserAddrListAllReq)
 	return &v1.UserAddrListAllRes{Results: addrs}, nil
 }
 
+// SALES__
+
+func (s Server) OrderListAll(ctx context.Context, req *v1.OrderListAllReq) (*v1.OrderListAllRes, error) {
+	// Auth
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// filter
+	f := req.GetFilter()
+	filter := app.NewUserFilterInput(f)
+	if err := filter.Validate(); err != nil {
+		return nil, err
+	}
+
+	// pagination
+	p := req.GetPaging()
+	paging := app.NewUserPagingInput(p)
+	if err := paging.Validate(); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.UserListAll(ctx, filter, paging)
+	if err != nil {
+		return nil, err
+	}
+
+	// CONVERtIR USERS
+	userspb := make([]*v1.User, 0, len(result))
+	for i := range result {
+		userspb = append(userspb, result[i].ToProto())
+	}
+
+	return &v1.UserListAllRes{Users: userspb}, nil
+}
+
 // GOOGLE_MAPS__
 
 func (s Server) PlaceDetail(ctx context.Context, req *v1.PlaceDetailReq) (*v1.PlaceDetailRes, error) {
-	input := app.NewPlaceDetailInput(req)
+	input := gmaps.NewPlaceDetailInput(req)
 	if err := input.Validate(); err != nil {
 		return nil, err
 	}
@@ -239,11 +338,11 @@ func (s Server) PlaceDetail(ctx context.Context, req *v1.PlaceDetailReq) (*v1.Pl
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &v1.PlaceDetailRes{Result: result.ToProto()}, nil
+	return &v1.PlaceDetailRes{Place: result.ToProto()}, nil
 }
 
 func (s Server) ReverseGeocode(ctx context.Context, req *v1.ReverseGeocodeReq) (*v1.ReverseGeocodeRes, error) {
-	input := app.NewReverseGeocodeInput(req)
+	input := gmaps.NewReverseGeocodeInput(req)
 	if err := input.Validate(); err != nil {
 		return nil, err
 	}
@@ -253,11 +352,11 @@ func (s Server) ReverseGeocode(ctx context.Context, req *v1.ReverseGeocodeReq) (
 		return nil, err
 	}
 
-	return &v1.ReverseGeocodeRes{Result: result.ToProto()}, nil
+	return &v1.ReverseGeocodeRes{Place: result.ToProto()}, nil
 }
 
 func (s Server) PlaceAutocomplete(ctx context.Context, req *v1.PlaceAutocompleteReq) (*v1.PlaceAutocompleteRes, error) {
-	input := app.NewPlaceAutocompleteInput(req)
+	input := gmaps.NewPlaceAutocompleteInput(req)
 	if err := input.Validate(); err != nil {
 		return nil, err
 	}
@@ -272,5 +371,5 @@ func (s Server) PlaceAutocomplete(ctx context.Context, req *v1.PlaceAutocomplete
 		results[i] = p.ToProto()
 	}
 
-	return &v1.PlaceAutocompleteRes{Token: token, Results: results}, nil
+	return &v1.PlaceAutocompleteRes{Token: token, Predictions: results}, nil
 }

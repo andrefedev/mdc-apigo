@@ -135,3 +135,51 @@ func (u *UserAddr) ToProto() *v1.UserAddr {
 		DateUpdated: dateUpdated,
 	}
 }
+
+// SALES__
+
+// ORDER__
+
+type Order struct {
+	Ref  string
+	User *User
+	Addr *UserAddr
+	// Slot          *DeliverySlot
+	Number        int32
+	Status        string
+	BasePrice     int32
+	DiscPrice     int32
+	DateCreated   time.Time
+	DateUpdated   *time.Time
+	PaymentStatus string
+	PaymentMethod string
+}
+
+func (p *Order) ToProto() *v1.Order {
+	user := p.User.ToProto()
+	addr := p.Addr.ToProto()
+	// slot := p.Slot.ToProto()
+
+	var dateCreated *timestamp.Timestamp
+	if !p.DateCreated.IsZero() {
+		dateCreated = timestamppb.New(p.DateCreated)
+	}
+
+	var dateUpdated *timestamp.Timestamp
+	if p.DateUpdated != nil && !p.DateUpdated.IsZero() {
+		dateCreated = timestamppb.New(*p.DateUpdated)
+	}
+
+	return &v1.Order{
+		Ref:  p.Ref,
+		User: user,
+		Addr: addr,
+		// Slot:          slot,
+		Number:        p.Number,
+		Status:        p.Status,
+		DateCreated:   dateCreated,
+		DateUpdated:   dateUpdated,
+		PaymentStatus: p.PaymentStatus,
+		PaymentMethod: p.PaymentMethod,
+	}
+}

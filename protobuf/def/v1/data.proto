@@ -113,6 +113,57 @@ message UserListAllRes{
 
 // USER_ADDR__
 
+message UserAddrCreateReq {
+  string uid = 1;
+  Payload payload = 2;
+
+  message Payload {
+    string pid = 1; // place ref
+    double lat = 2;
+    double lng = 3;
+    string name = 4;
+    string cmna = 5;
+    string route = 6;
+    string street = 7;
+    string neighb = 8;
+    string locality = 9;
+    string sublocal = 10;
+    string address1 = 11; // casa / apto complemento
+    string address2 = 12; // instrucciones de entrega
+  }
+}
+
+message UserAddrCreateRes {
+  UserAddr user_addr = 1;
+}
+
+message UserAddrUpdateReq {
+  string ref = 1;
+  Payload payload = 2;
+  google.protobuf.FieldMask updateMask = 3;
+
+  message Payload {
+    double lat = 1;
+    double lng = 2;
+    string route = 3;
+    string street = 4;
+    string address1 = 5; // casa / apto complemento
+    string address2 = 6; // instrucciones de entrega
+  }
+}
+
+message UserAddrUpdateRes {
+  UserAddr user_addr = 1;
+}
+
+message UserAddrDeleteReq {
+  string ref = 1;
+}
+
+message UserAddrDeleteRes {
+  UserAddr user_addr = 1;
+}
+
 message UserAddrDetailReq {
   string ref = 1;
 }
@@ -440,7 +491,7 @@ message PlaceDetailReq {
 }
 
 message PlaceDetailRes {
-  Place result = 1;
+  Place place = 1;
 }
 
 message ReverseGeocodeReq {
@@ -449,14 +500,15 @@ message ReverseGeocodeReq {
 }
 
 message ReverseGeocodeRes {
-  Place result = 1;
+  Place place = 1;
 }
 
 message PlaceAutocompleteReq {
   string query = 1;
+  string token = 2;
 }
 
 message PlaceAutocompleteRes {
   string token = 1;
-  repeated Prediction results = 2;
+  repeated Prediction predictions = 2;
 }

@@ -14,8 +14,8 @@ type Place struct {
 	Address     string  `json:"address,omitempty"`
 	Locality    string  `json:"locality,omitempty"`
 	Sublocal    string  `json:"sublocal,omitempty"`
-	Approximate bool    `json:"approximate"`
 	InCoverage  bool    `json:"inCoverage"`
+	Approximate bool    `json:"approximate"`
 }
 
 func (p *Place) ToProto() *v1.Place {
@@ -24,17 +24,19 @@ func (p *Place) ToProto() *v1.Place {
 	}
 
 	return &v1.Place{
-		Ref:      p.Ref,
-		Lat:      p.Lat,
-		Lng:      p.Lng,
-		Name:     p.Name,
-		Cmna:     p.Cmna,
-		Route:    p.Route,
-		Street:   p.Street,
-		Neighb:   p.Neighb,
-		Address:  p.Address,
-		Locality: p.Locality,
-		Sublocal: p.Sublocal,
+		Ref:         p.Ref,
+		Lat:         p.Lat,
+		Lng:         p.Lng,
+		Name:        p.Name,
+		Cmna:        p.Cmna,
+		Route:       p.Route,
+		Street:      p.Street,
+		Neighb:      p.Neighb,
+		Address:     p.Address,
+		Locality:    p.Locality,
+		Sublocal:    p.Sublocal,
+		InCoverage:  p.InCoverage,
+		Approximate: p.Approximate,
 	}
 }
 
@@ -43,7 +45,7 @@ type Prediction struct {
 	Desc           string `json:"desc"`
 	Title          string `json:"title"`
 	Subtitle       string `json:"subtitle"`
-	DistanceMeters int    `json:"distanceMeters,omitempty"`
+	DistanceMeters int32  `json:"distanceMeters,omitempty"`
 }
 
 func (p *Prediction) ToProto() *v1.Prediction {
@@ -52,9 +54,10 @@ func (p *Prediction) ToProto() *v1.Prediction {
 	}
 
 	return &v1.Prediction{
-		Ref:      p.Ref,
-		Desc:     p.Desc,
-		Title:    p.Title,
-		Subtitle: p.Subtitle,
+		Ref:            p.Ref,
+		Desc:           p.Desc,
+		Title:          p.Title,
+		Subtitle:       p.Subtitle,
+		DistanceMeters: p.DistanceMeters,
 	}
 }

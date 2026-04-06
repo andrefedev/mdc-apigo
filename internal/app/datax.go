@@ -253,7 +253,7 @@ func (r *UserUpdateInput) Validate(paths []string) error {
 
 // USER_ADDR_INSERT_DATA__
 
-type UserAddrInsertInput struct {
+type UserAddrCreateInput struct {
 	Pid       string
 	Lat       float64
 	Lng       float64
@@ -269,8 +269,244 @@ type UserAddrInsertInput struct {
 	IsDefault bool
 }
 
-func (r *UserAddrInsertInput) Validate() error {
+func NewUserAddrCreateInput(payload *v1.UserAddrCreateReq_Payload) *UserAddrCreateInput {
+	if payload == nil {
+		return &UserAddrCreateInput{}
+	}
+	return &UserAddrCreateInput{
+		Pid:      payload.GetPid(),
+		Lat:      payload.GetLat(),
+		Lng:      payload.GetLng(),
+		Name:     payload.GetName(),
+		Cmna:     payload.GetCmna(),
+		Route:    payload.GetRoute(),
+		Street:   payload.GetStreet(),
+		Neighb:   payload.GetNeighb(),
+		Locality: payload.GetLocality(),
+		Sublocal: payload.GetSublocal(),
+	}
+}
+
+func (r *UserAddrCreateInput) Validate() error {
 	return nil
 }
 
 // USER_ADDR_UPDATE_DATA__
+
+type UserAddrUpdateInput struct {
+	Lat      float64
+	Lng      float64
+	Route    string
+	Street   string
+	Address1 string // casa / apto complemento
+	Address2 string // instrucciones de entrega
+}
+
+func NewUserAddrUpdateInput(payload *v1.UserAddrUpdateReq_Payload) *UserAddrUpdateInput {
+	if payload == nil {
+		return &UserAddrUpdateInput{}
+	}
+	return &UserAddrUpdateInput{
+		Lat:      payload.GetLat(),
+		Lng:      payload.GetLng(),
+		Route:    payload.GetRoute(),
+		Street:   payload.GetStreet(),
+		Address1: payload.GetAddress1(),
+		Address2: payload.GetAddress2(),
+	}
+}
+
+func (r *UserAddrUpdateInput) Validate(paths []string) error {
+	return nil
+}
+
+// SALES__
+
+// ORDER_INSERT_INPUT__
+
+type OrderInsertInput struct {
+	User          string
+	Addr          string
+	Slot          string
+	Status        string
+	PaymentStatus string
+	PaymentMethod string
+}
+
+func NewOrderInsertInput(payload *v1.OrderCreateReq_Payload) *OrderInsertInput {
+	if payload == nil {
+		return &OrderInsertInput{}
+	}
+	return &OrderInsertInput{
+		User:          payload.GetUser(),
+		Addr:          payload.GetAddr(),
+		Slot:          payload.GetSlot(),
+		Status:        payload.GetStatus(),
+		PaymentStatus: payload.GetPaymentStatus(),
+	}
+}
+
+func (r *OrderInsertInput) Validation(paths []string) error {
+	//for _, path := range paths {
+	//	switch strings.TrimSpace(path) {
+	//	case "user":
+	//		if r.User == "" {
+	//			return errors.New("la referencia del usuario es un campo obligatorio")
+	//		}
+	//	case "addr":
+	//		if r.Addr == "" {
+	//			return errors.New("la referencia de la dirección de envío es un campo obligatorio")
+	//		}
+	//	case "slot":
+	//		if r.Slot == "" {
+	//			return errors.New("la referencia del día y franja horaria es un campo obligatorio")
+	//		}
+	//	case "status":
+	//		// validar opciones del status
+	//		if r.Status == "" {
+	//			return errors.New("el estado del pedido es un campo obligatorio")
+	//		}
+	//	case "payment_status":
+	//		if r.PaymentStatus == "" {
+	//			return errors.New("el estado del pago del pedido es un obligatorio")
+	//		}
+	//	case "payment_method":
+	//		if r.PaymentMethod == "" {
+	//			return errors.New("el método del pago del pedido es un obligatorio")
+	//		}
+	//	}
+	//}
+
+	return nil
+}
+
+// ORDER_UPDATE_INPUT__
+
+type OrderUpdateInput struct {
+	Addr          string
+	Slot          string
+	Status        string
+	PaymentStatus string
+	PaymentMethod string
+}
+
+func NewOrderUpdateInput(payload *v1.OrderUpdateReq_Payload) *OrderUpdateInput {
+	if payload == nil {
+		return &OrderUpdateInput{}
+	}
+	return &OrderUpdateInput{
+		Addr:          payload.GetAddr(),
+		Slot:          payload.GetSlot(),
+		Status:        payload.GetStatus(),
+		PaymentStatus: payload.GetPaymentStatus(),
+	}
+}
+
+func (r *OrderUpdateInput) Validation(paths []string) error {
+	//for _, path := range paths {
+	//	switch strings.TrimSpace(path) {
+	//	case "user":
+	//		if r.User == "" {
+	//			return errors.New("la referencia del usuario es un campo obligatorio")
+	//		}
+	//	case "addr":
+	//		if r.Addr == "" {
+	//			return errors.New("la referencia de la dirección de envío es un campo obligatorio")
+	//		}
+	//	case "slot":
+	//		if r.Slot == "" {
+	//			return errors.New("la referencia del día y franja horaria es un campo obligatorio")
+	//		}
+	//	case "status":
+	//		// validar opciones del status
+	//		if r.Status == "" {
+	//			return errors.New("el estado del pedido es un campo obligatorio")
+	//		}
+	//	case "payment_status":
+	//		if r.PaymentStatus == "" {
+	//			return errors.New("el estado del pago del pedido es un obligatorio")
+	//		}
+	//	case "payment_method":
+	//		if r.PaymentMethod == "" {
+	//			return errors.New("el método del pago del pedido es un obligatorio")
+	//		}
+	//	}
+	//}
+
+	return nil
+}
+
+// ORDER_FILTER_INPUT__
+
+type OrderFilterInput struct {
+	Query         *string
+	Status        *string
+	Delivery      *string
+	PaymentStatus *string
+}
+
+func NewOrderFilterInput(req *v1.OrderListAllReq_Filter) *OrderFilterInput {
+	if req == nil {
+		return &OrderFilterInput{}
+	}
+	return &OrderFilterInput{
+		Query:         req.Query,
+		Status:        req.Status,
+		Delivery:      req.Delivery,
+		PaymentStatus: req.PaymentStatus,
+	}
+}
+
+func (r *OrderFilterInput) Validate() error {
+	const op = "App.UserFilterData.Validate"
+
+	if r.Query != nil {
+		if *r.Query == "" {
+			r.Query = nil
+		} else {
+			r.Query = new(normalizex.NormalizeName(*r.Query))
+		}
+	}
+
+	if r.Query != nil && *r.Query == "" {
+		if *r.Query == "" {
+			return fmt.Errorf("%s: %w", op, ErrInvalidFlatQuery)
+		}
+	}
+
+	return nil
+}
+
+// ORDER_PAGING_INPUT__
+
+type OrderPagingInput struct {
+	Limit  int32
+	Offset int32
+}
+
+func NewOrderPagingInput(req *v1.OrderListAllReq_Paging) *OrderPagingInput {
+	if req == nil {
+		return &OrderPagingInput{}
+	}
+	return &OrderPagingInput{
+		Limit:  req.Limit,
+		Offset: req.Offset,
+	}
+}
+
+func (r *OrderPagingInput) Validate() error {
+	const op = "App.OrderPagingInput.Validate"
+
+	// Normalize
+	limit := int32(40)
+	if r.Limit == 0 {
+		r.Limit = limit
+	}
+	if r.Limit > limit {
+		r.Limit = limit
+	}
+
+	// Validation
+
+	return nil
+}

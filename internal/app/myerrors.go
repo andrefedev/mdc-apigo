@@ -36,3 +36,8 @@ var (
 var (
 	ErrInvalidMaskPath = errors.New("invalid mask path")
 )
+
+var (
+	ErrOrderNotFound    = errors.New("order not found")
+	ErrInvalidFlatQuery = errors.New("invalid flat query")
+)

@@ -294,6 +294,76 @@ func (s *UseService) UserListAll(ctx context.Context, filter *UserFilterInput, p
 
 // USER_ADDR__
 
+func (s *UseService) UserAddrCreate(ctx context.Context, uid string, input *UserAddrCreateInput) (*UserAddr, error) {
+	const op = "App.UseService.UserAddrCreate"
+
+	// manejar: usuario existente
+	_, err := s.deps.Repository.UserSelect(ctx, uid)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	data := NewUserAddrInsertData(input)
+	if err := data.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	var result *UserAddr
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		ref, err := s.deps.Repository.UserAddrInsert(ctx, uid, data)
+		if err != nil {
+			return err
+		}
+
+		result, err = s.deps.Repository.UserAddrSelect(ctx, ref)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) UserAddrUpdate(ctx context.Context, ref string, paths []string, input *UserAddrUpdateInput) (*UserAddr, error) {
+	const op = "App.UseService.UserAddrUpdate"
+
+	if err := uuid.Validate(ref); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	updata := NewUserAddrUpdateData(input)
+	if err := updata.Validate(paths); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	userAddr, err := s.deps.Repository.UserAddrSelect(ctx, ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		_, err := s.deps.Repository.UserAddrUpdate(ctx, ref, paths, updata)
+		if err != nil {
+			return err
+		}
+
+		userAddr, err = s.deps.Repository.UserAddrSelect(ctx, ref)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return userAddr, nil
+}
+
 func (s *UseService) UserAddrDetail(ctx context.Context, ref string) (*UserAddr, error) {
 	const op = "App.UseService.UserAddrDetail"
 
@@ -322,6 +392,105 @@ func (s *UseService) UserAddrListAll(ctx context.Context, uid string) ([]*UserAd
 	}
 
 	return result, nil
+}
+
+// ORDER__
+
+func (s *UseService) OrderCreate(ctx context.Context, input *OrderInsertInput) (*Order, error) {
+	const op = "App.UseService.OrderCreate"
+
+	data := NewOrderInsertData(input)
+	if err := data.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	var order *Order
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		ref, err := s.deps.Repository.OrderInsert(ctx, data)
+		if err != nil {
+			return err
+		}
+
+		order, err = s.deps.Repository.OrderSelect(ctx, ref)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return order, nil
+}
+
+func (s *UseService) OrderUpdate(ctx context.Context, ref string, paths []string, input *OrderUpdateInput) (*Order, error) {
+	const op = "App.UseService.OrderUpdate"
+
+	if err := uuid.Validate(ref); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	updata := NewOrderUpdateData(input)
+	if err := updata.Validate(paths); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.OrderSelect(ctx, ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		_, err := s.deps.Repository.OrderUpdate(ctx, ref, paths, updata)
+		if err != nil {
+			return err
+		}
+
+		result, err = s.deps.Repository.OrderSelect(ctx, ref)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) OrderDetail(ctx context.Context, ref string) (*Order, error) {
+	const op = "App.UseService.OrderDetail"
+
+	order, err := s.deps.Repository.OrderSelect(ctx, ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return order, nil
+}
+
+func (s *UseService) OrderListAll(ctx context.Context, filter *OrderFilterInput, paging *OrderPagingInput) ([]*Order, error) {
+	const op = "App.UseService.OrderListAll"
+
+	// aqui se convierten
+	f := NewOrderFilterData(filter)
+	if err := f.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	p := NewOrderPagingData(paging)
+	if err := p.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	orders, err := s.deps.Repository.OrderSelectAll(ctx, f, p)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return orders, nil
 }
 
 // GOOGLE_MAPS__

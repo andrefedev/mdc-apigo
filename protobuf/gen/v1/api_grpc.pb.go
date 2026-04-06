@@ -28,7 +28,10 @@ const (
 	ApiService_UserUpdate_FullMethodName        = "/muydelcampo.ApiService/UserUpdate"
 	ApiService_UserListAll_FullMethodName       = "/muydelcampo.ApiService/UserListAll"
 	ApiService_UserAddrDetail_FullMethodName    = "/muydelcampo.ApiService/UserAddrDetail"
+	ApiService_UserAddrCreate_FullMethodName    = "/muydelcampo.ApiService/UserAddrCreate"
+	ApiService_UserAddrUpdate_FullMethodName    = "/muydelcampo.ApiService/UserAddrUpdate"
 	ApiService_UserAddrListAll_FullMethodName   = "/muydelcampo.ApiService/UserAddrListAll"
+	ApiService_OrderListAll_FullMethodName      = "/muydelcampo.ApiService/OrderListAll"
 	ApiService_PlaceDetail_FullMethodName       = "/muydelcampo.ApiService/PlaceDetail"
 	ApiService_ReverseGeocode_FullMethodName    = "/muydelcampo.ApiService/ReverseGeocode"
 	ApiService_PlaceAutocomplete_FullMethodName = "/muydelcampo.ApiService/PlaceAutocomplete"
@@ -50,10 +53,16 @@ type ApiServiceClient interface {
 	UserListAll(ctx context.Context, in *UserListAllReq, opts ...grpc.CallOption) (*UserListAllRes, error)
 	// USER_ADDR__
 	UserAddrDetail(ctx context.Context, in *UserAddrDetailReq, opts ...grpc.CallOption) (*UserAddrDetailRes, error)
-	// rpc UserAddrCreate(UserAddrCreateReq) returns (UserAddrCreateRes);
-	// rpc UserAddrUpdate(UserAddrUpdateReq) returns (UserAddrUpdateRes);
+	UserAddrCreate(ctx context.Context, in *UserAddrCreateReq, opts ...grpc.CallOption) (*UserAddrCreateRes, error)
+	UserAddrUpdate(ctx context.Context, in *UserAddrUpdateReq, opts ...grpc.CallOption) (*UserAddrUpdateRes, error)
 	// rpc UserAddrDelete(UserAddrDeleteReq) returns (UserAddrDeleteRes);
 	UserAddrListAll(ctx context.Context, in *UserAddrListAllReq, opts ...grpc.CallOption) (*UserAddrListAllRes, error)
+	// ORDER
+	// rpc OrderCreate(OrderCreateReq) returns (OrderCreateRes);
+	// rpc OrderUpdate(OrderUpdateReq) returns (OrderUpdateRes);
+	// rpc OrderDelete(OrderDeleteReq) returns (OrderDeleteRes);
+	// rpc OrderDetail(OrderDetailReq) returns (OrderDetailRes);
+	OrderListAll(ctx context.Context, in *OrderListAllReq, opts ...grpc.CallOption) (*OrderListAllRes, error)
 	// GOOGLE_MAPS__
 	PlaceDetail(ctx context.Context, in *PlaceDetailReq, opts ...grpc.CallOption) (*PlaceDetailRes, error)
 	ReverseGeocode(ctx context.Context, in *ReverseGeocodeReq, opts ...grpc.CallOption) (*ReverseGeocodeRes, error)
@@ -158,10 +167,40 @@ func (c *apiServiceClient) UserAddrDetail(ctx context.Context, in *UserAddrDetai
 	return out, nil
 }
 
+func (c *apiServiceClient) UserAddrCreate(ctx context.Context, in *UserAddrCreateReq, opts ...grpc.CallOption) (*UserAddrCreateRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserAddrCreateRes)
+	err := c.cc.Invoke(ctx, ApiService_UserAddrCreate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiServiceClient) UserAddrUpdate(ctx context.Context, in *UserAddrUpdateReq, opts ...grpc.CallOption) (*UserAddrUpdateRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserAddrUpdateRes)
+	err := c.cc.Invoke(ctx, ApiService_UserAddrUpdate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *apiServiceClient) UserAddrListAll(ctx context.Context, in *UserAddrListAllReq, opts ...grpc.CallOption) (*UserAddrListAllRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserAddrListAllRes)
 	err := c.cc.Invoke(ctx, ApiService_UserAddrListAll_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiServiceClient) OrderListAll(ctx context.Context, in *OrderListAllReq, opts ...grpc.CallOption) (*OrderListAllRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrderListAllRes)
+	err := c.cc.Invoke(ctx, ApiService_OrderListAll_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -214,10 +253,16 @@ type ApiServiceServer interface {
 	UserListAll(context.Context, *UserListAllReq) (*UserListAllRes, error)
 	// USER_ADDR__
 	UserAddrDetail(context.Context, *UserAddrDetailReq) (*UserAddrDetailRes, error)
-	// rpc UserAddrCreate(UserAddrCreateReq) returns (UserAddrCreateRes);
-	// rpc UserAddrUpdate(UserAddrUpdateReq) returns (UserAddrUpdateRes);
+	UserAddrCreate(context.Context, *UserAddrCreateReq) (*UserAddrCreateRes, error)
+	UserAddrUpdate(context.Context, *UserAddrUpdateReq) (*UserAddrUpdateRes, error)
 	// rpc UserAddrDelete(UserAddrDeleteReq) returns (UserAddrDeleteRes);
 	UserAddrListAll(context.Context, *UserAddrListAllReq) (*UserAddrListAllRes, error)
+	// ORDER
+	// rpc OrderCreate(OrderCreateReq) returns (OrderCreateRes);
+	// rpc OrderUpdate(OrderUpdateReq) returns (OrderUpdateRes);
+	// rpc OrderDelete(OrderDeleteReq) returns (OrderDeleteRes);
+	// rpc OrderDetail(OrderDetailReq) returns (OrderDetailRes);
+	OrderListAll(context.Context, *OrderListAllReq) (*OrderListAllRes, error)
 	// GOOGLE_MAPS__
 	PlaceDetail(context.Context, *PlaceDetailReq) (*PlaceDetailRes, error)
 	ReverseGeocode(context.Context, *ReverseGeocodeReq) (*ReverseGeocodeRes, error)
@@ -259,8 +304,17 @@ func (UnimplementedApiServiceServer) UserListAll(context.Context, *UserListAllRe
 func (UnimplementedApiServiceServer) UserAddrDetail(context.Context, *UserAddrDetailReq) (*UserAddrDetailRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method UserAddrDetail not implemented")
 }
+func (UnimplementedApiServiceServer) UserAddrCreate(context.Context, *UserAddrCreateReq) (*UserAddrCreateRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method UserAddrCreate not implemented")
+}
+func (UnimplementedApiServiceServer) UserAddrUpdate(context.Context, *UserAddrUpdateReq) (*UserAddrUpdateRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method UserAddrUpdate not implemented")
+}
 func (UnimplementedApiServiceServer) UserAddrListAll(context.Context, *UserAddrListAllReq) (*UserAddrListAllRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method UserAddrListAll not implemented")
+}
+func (UnimplementedApiServiceServer) OrderListAll(context.Context, *OrderListAllReq) (*OrderListAllRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method OrderListAll not implemented")
 }
 func (UnimplementedApiServiceServer) PlaceDetail(context.Context, *PlaceDetailReq) (*PlaceDetailRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method PlaceDetail not implemented")
@@ -454,6 +508,42 @@ func _ApiService_UserAddrDetail_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ApiService_UserAddrCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserAddrCreateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).UserAddrCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_UserAddrCreate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).UserAddrCreate(ctx, req.(*UserAddrCreateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiService_UserAddrUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserAddrUpdateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).UserAddrUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_UserAddrUpdate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).UserAddrUpdate(ctx, req.(*UserAddrUpdateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ApiService_UserAddrListAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserAddrListAllReq)
 	if err := dec(in); err != nil {
@@ -468,6 +558,24 @@ func _ApiService_UserAddrListAll_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ApiServiceServer).UserAddrListAll(ctx, req.(*UserAddrListAllReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiService_OrderListAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderListAllReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).OrderListAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_OrderListAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).OrderListAll(ctx, req.(*OrderListAllReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -570,8 +678,20 @@ var ApiService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ApiService_UserAddrDetail_Handler,
 		},
 		{
+			MethodName: "UserAddrCreate",
+			Handler:    _ApiService_UserAddrCreate_Handler,
+		},
+		{
+			MethodName: "UserAddrUpdate",
+			Handler:    _ApiService_UserAddrUpdate_Handler,
+		},
+		{
 			MethodName: "UserAddrListAll",
 			Handler:    _ApiService_UserAddrListAll_Handler,
+		},
+		{
+			MethodName: "OrderListAll",
+			Handler:    _ApiService_OrderListAll_Handler,
 		},
 		{
 			MethodName: "PlaceDetail",
