@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jackc/pgx/v5"
-
 	"apigo/internal/modules/postgres"
+
+	"github.com/jackc/pgx/v5"
 )
 
 type Repository struct {
@@ -523,8 +523,6 @@ func (r Repository) UserAddrSelectAll(ctx context.Context, uid string) ([]*UserA
 
 // ORDER__
 
-// # ORDER #
-
 func (r Repository) OrderInsert(ctx context.Context, data *OrderInsertData) (string, error) {
 	const op = "App.Repository.OrderInsert"
 
@@ -614,7 +612,7 @@ func (r Repository) OrderDelete(ctx context.Context, ref string) (int64, error) 
 	return tag.RowsAffected(), nil
 }
 
-func (r Repository) OrderSelect(ctx context.Context, ref string) (*Order, error) {
+func (r Repository) OrderSelect(ctx context.Context, ref string, forUpdate bool) (*Order, error) {
 	const op = "App.Repository.OrderSelect"
 
 	qry := `
@@ -641,9 +639,14 @@ func (r Repository) OrderSelect(ctx context.Context, ref string) (*Order, error)
 	WHERE o.id = $1
 	`
 
+	// # FOR UPDATE #
+	if forUpdate {
+		qry += " FOR UPDATE"
+	}
+
 	rows, err := r.db.Query(ctx, qry, ref)
 	if err != nil {
-		return nil, fmt.Errorf("Repository.OrderSelect: [db query] [%w]", err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 	defer rows.Close()
 
@@ -752,6 +755,156 @@ func (r Repository) OrderSelectAll(ctx context.Context, filter *OrderFilterData,
 	defer rows.Close()
 
 	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[Order])
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return results, nil
+}
+
+// ORDER_LINE__
+
+func (r Repository) OrderLineInsert(ctx context.Context, oid string, data *OrderLineInsertData) (string, error) {
+	const op = "App.Repository.OrderLineInsert"
+	qry := `INSERT INTO orders_lines (oid, pid, quantity, base_price) VALUES (@oid, @pid, @quantity, @base_price) RETURNING id;`
+
+	var ref string
+	if err := r.db.QueryRow(
+		ctx,
+		qry,
+		pgx.NamedArgs{
+			"oid":        oid,
+			"pid":        data.Pid,
+			"quantity":   data.Quantity,
+			"base_price": data.BasePrice,
+		},
+	).Scan(&ref); err != nil {
+		return "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	return ref, nil
+
+}
+
+func (r Repository) OrderLineUpdate(ctx context.Context, ref string, paths []string, data *OrderLineUpdateData) (int64, error) {
+	const op = "App.Repository.OrderLineUpdate"
+
+	var values []any
+	var clauses []string
+
+	for _, path := range paths {
+		switch path {
+		case "status":
+			values = append(values, data.Status)
+			clauses = append(clauses, fmt.Sprintf(`status = $%d`, len(values)))
+		case "quantity":
+			values = append(values, data.Quantity)
+			clauses = append(clauses, fmt.Sprintf(`quantity = $%d`, len(values)))
+		case "base_price":
+			values = append(values, data.BasePrice)
+			clauses = append(clauses, fmt.Sprintf(`base_price = $%d`, len(values)))
+		}
+	}
+	if len(clauses) == 0 {
+		return 0, nil
+	}
+
+	// Update sets
+	xquery := "UPDATE orders_lines"
+	xquery += " SET " + strings.Join(clauses, ", ")
+
+	// Where
+	values = append(values, ref)
+	xquery += fmt.Sprintf(" WHERE id = $%d", len(values))
+
+	// exec
+	res, err := r.db.Exec(ctx, xquery, values...)
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return res.RowsAffected(), nil
+}
+
+func (r Repository) OrderLineDelete(ctx context.Context, ref string) (int64, error) {
+	const op = "App.Repository.OrderLineDelete"
+
+	qry := `DELETE FROM orders_lines WHERE id = $1 AND oid IN (SELECT id FROM orders WHERE status NOT IN ('canceled', 'successfully'));`
+
+	tag, err := r.db.Exec(ctx, qry, ref)
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return tag.RowsAffected(), nil
+}
+
+func (r Repository) OrderLineSelect(ctx context.Context, ref string, forUpdate bool) (*OrderLine, error) {
+	const op = "App.Repository.OrderLineSelect"
+
+	qry := `
+	SELECT
+	ol.id, ol.status, ol.quantity, ol.base_price, ol.total_price,
+	p.id AS product_ref, p.upc AS product_upc, p.code AS product_code, p.name AS product_name, p.imurl AS product_imurl,
+	p.display AS product_display, p.weight AS product_weight, p.unitype AS product_unitype, p.quantity AS product_quantity,
+	p.is_active AS product_is_active, p.is_public AS product_is_public, p.cost_price AS product_cost_price, p.base_price AS product_base_price,
+	p.num_in_alloc AS product_num_in_alloc, p.num_in_stock AS product_num_in_stock, p.date_created AS product_date_created
+	-- FROM --
+	FROM orders_lines AS ol
+	-- JOIN PRODUCT --
+	INNER JOIN products AS p ON p.id = ol.pid
+	-- WHERE --
+	WHERE ol.id = $1
+	`
+
+	// # FOR UPDATE #
+	if forUpdate {
+		qry += " FOR UPDATE"
+	}
+
+	rows, err := r.db.Query(ctx, qry, ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[OrderLine])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			err = WrapOrderLineNotFound(err)
+		}
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (r Repository) OrderLineSelectAll(ctx context.Context, oid string) ([]*OrderLine, error) {
+	const op = "App.Repository.OrderLineSelectAll"
+
+	qry := `
+	SELECT
+	l.id, l.status, l.quantity, l.base_price, l.total_price,
+	p.id AS product_ref, p.upc AS product_upc, p.code AS product_code, p.name AS product_name,
+	p.imurl AS product_imurl, p.display AS product_display, p.weight AS product_weight, p.unitype AS product_unitype,
+	p.quantity AS product_quantity, p.is_active AS product_is_active, p.is_public AS product_is_public, p.cost_price AS product_cost_price,
+	p.base_price AS product_base_price, p.num_in_alloc AS product_num_in_alloc, p.num_in_stock AS product_num_in_stock,
+	p.date_created AS product_date_created, p.date_updated AS product_date_updated
+	-- FROM --
+	FROM orders_lines AS l
+	-- JOIN PRODUCT --
+	INNER JOIN products AS p ON p.id = l.pid
+	-- WHERE --
+	WHERE l.oid = $1 ORDER BY l.date_created DESC;
+	`
+
+	rows, err := r.db.Query(ctx, qry, oid)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[OrderLine])
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

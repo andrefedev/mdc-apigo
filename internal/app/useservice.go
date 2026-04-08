@@ -411,7 +411,7 @@ func (s *UseService) OrderCreate(ctx context.Context, input *OrderInsertInput) (
 			return err
 		}
 
-		order, err = s.deps.Repository.OrderSelect(ctx, ref)
+		order, err = s.deps.Repository.OrderSelect(ctx, ref, false)
 		if err != nil {
 			return err
 		}
@@ -436,7 +436,7 @@ func (s *UseService) OrderUpdate(ctx context.Context, ref string, paths []string
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	result, err := s.deps.Repository.OrderSelect(ctx, ref)
+	result, err := s.deps.Repository.OrderSelect(ctx, ref, false)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -447,9 +447,42 @@ func (s *UseService) OrderUpdate(ctx context.Context, ref string, paths []string
 			return err
 		}
 
-		result, err = s.deps.Repository.OrderSelect(ctx, ref)
+		result, err = s.deps.Repository.OrderSelect(ctx, ref, false)
 		if err != nil {
 			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) OrderDelete(ctx context.Context, ref string) (*Order, error) {
+	const op = "App.UseService.OrderDelete"
+
+	if err := uuid.Validate(ref); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.OrderSelect(ctx, ref, false)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if result.Status != "pending" {
+		return nil, fmt.Errorf("%s: %w", op, WrapOrderDeleteNotAllowed(nil))
+	}
+
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		affected, err := s.deps.Repository.OrderDelete(ctx, ref)
+		if err != nil {
+			return err
+		}
+		if affected == 0 {
+			return WrapOrderDeleteNotAllowed(nil)
 		}
 
 		return nil
@@ -463,7 +496,7 @@ func (s *UseService) OrderUpdate(ctx context.Context, ref string, paths []string
 func (s *UseService) OrderDetail(ctx context.Context, ref string) (*Order, error) {
 	const op = "App.UseService.OrderDetail"
 
-	order, err := s.deps.Repository.OrderSelect(ctx, ref)
+	order, err := s.deps.Repository.OrderSelect(ctx, ref, false)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -491,6 +524,141 @@ func (s *UseService) OrderListAll(ctx context.Context, filter *OrderFilterInput,
 	}
 
 	return orders, nil
+}
+
+// ORDER_LINE__
+
+func (s *UseService) OrderLineCreate(ctx context.Context, oid string, input *OrderLineCreateInput) (*OrderLine, error) {
+	const op = "App.UseService.OrderLineCreate"
+
+	if err := uuid.Validate(oid); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	// # CHECK ORDER EXISTS #
+	if _, err := s.deps.Repository.OrderSelect(ctx, oid, false); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	data := NewOrderLineInsertData(input)
+	if err := data.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	var result *OrderLine
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		ref, err := s.deps.Repository.OrderLineInsert(ctx, oid, data)
+		if err != nil {
+			return err
+		}
+
+		result, err = s.deps.Repository.OrderLineSelect(ctx, ref, false)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) OrderLineUpdate(ctx context.Context, ref string, paths []string, input *OrderLineUpdateInput) (*OrderLine, error) {
+	const op = "App.UseService.OrderLineUpdate"
+
+	if err := uuid.Validate(ref); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	data := NewOrderLineUpdateData(input)
+	if err := data.Validate(paths); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.OrderLineSelect(ctx, ref, false)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		_, err := s.deps.Repository.OrderLineUpdate(ctx, ref, paths, data)
+		if err != nil {
+			return err
+		}
+
+		result, err = s.deps.Repository.OrderLineSelect(ctx, ref, false)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) OrderLineDelete(ctx context.Context, ref string) (*OrderLine, error) {
+	const op = "App.UseService.OrderLineDelete"
+
+	if err := uuid.Validate(ref); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.OrderLineSelect(ctx, ref, false)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		_, err := s.deps.Repository.OrderLineSelect(ctx, ref, true)
+		if err != nil {
+			return err
+		}
+
+		if _, err := s.deps.Repository.OrderLineDelete(ctx, ref); err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) OrderLineDetail(ctx context.Context, ref string) (*OrderLine, error) {
+	const op = "App.UseService.OrderLineDetail"
+
+	if err := uuid.Validate(ref); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.OrderLineSelect(ctx, ref, false)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) OrderLineListAll(ctx context.Context, oid string) ([]*OrderLine, error) {
+	const op = "App.UseService.OrderLineListAll"
+
+	if err := uuid.Validate(oid); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.OrderLineSelectAll(ctx, oid)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
 }
 
 // GOOGLE_MAPS__

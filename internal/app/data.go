@@ -446,19 +446,37 @@ func (r *OrderPagingData) Validate() error {
 
 // ORDER_LINE__
 
+type OrderLineSelectData struct {
+	Ref       string
+	ForUpdate bool
+}
+
 type OrderLineInsertData struct {
-	Item       string
+	Pid        string
 	Status     string
 	Quantity   int32
 	BasePrice  int32
 	OfferPrice int32
 }
 
+func NewOrderLineInsertData(input *OrderLineCreateInput) *OrderLineInsertData {
+	if input == nil {
+		return &OrderLineInsertData{}
+	}
+	return &OrderLineInsertData{
+		Pid:        input.Pid,
+		Status:     input.Status,
+		Quantity:   input.Quantity,
+		BasePrice:  input.BasePrice,
+		OfferPrice: input.OfferPrice,
+	}
+}
+
 func (r *OrderLineInsertData) Validate() error {
 	const op = "App.OrderLineInsertData.Validate"
 
-	if uuid.Validate(r.Item) != nil {
-		return fmt.Errorf("%s: %w", op, ErrInvalidOrderLineItem)
+	if uuid.Validate(r.Pid) != nil {
+		return fmt.Errorf("%s: %w", op, ErrInvalidOrderLinePid)
 	}
 
 	if r.Quantity == 0 {
@@ -475,7 +493,51 @@ func (r *OrderLineInsertData) Validate() error {
 
 	// BASE_PRICE < OFFER_PRICE
 	if r.BasePrice < r.OfferPrice {
-		return fmt.Errorf("%s: %w", op, ErrInvalid) // nombrar..
+		return fmt.Errorf("%s: %w", op, ErrInvalidOrderLinePriceRange) // nombrar..
+	}
+
+	return nil
+}
+
+type OrderLineUpdateData struct {
+	Status     string
+	Quantity   int32
+	BasePrice  int32
+	OfferPrice int32
+}
+
+func NewOrderLineUpdateData(input *OrderLineUpdateInput) *OrderLineUpdateData {
+	if input == nil {
+		return &OrderLineUpdateData{}
+	}
+	return &OrderLineUpdateData{
+		Status:     input.Status,
+		Quantity:   input.Quantity,
+		BasePrice:  input.BasePrice,
+		OfferPrice: input.OfferPrice,
+	}
+}
+
+func (r *OrderLineUpdateData) Validate(paths []string) error {
+	const op = "App.OrderLineUpdateData.Validate"
+
+	priceRange := 0
+	for _, path := range paths {
+		switch strings.TrimSpace(path) {
+		case "base_price":
+			priceRange += 1
+			if r.BasePrice == 0 {
+				return fmt.Errorf("%s, %w", op, ErrInvalidOrderLineBasePrice)
+			}
+		case "offer_price":
+			priceRange += 1
+		}
+	}
+
+	if priceRange == 2 {
+		if r.BasePrice < r.OfferPrice {
+			return fmt.Errorf("%s: %w", op, ErrInvalidOrderLinePriceRange)
+		}
 	}
 
 	return nil

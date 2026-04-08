@@ -112,6 +112,8 @@ func WrapInvalidFlatQuery(cause error) error {
 
 // SALES__
 
+// ORDER__
+
 func WrapOrderNotFound(cause error) error {
 	if cause == nil {
 		return ErrOrderNotFound
@@ -119,11 +121,27 @@ func WrapOrderNotFound(cause error) error {
 	return errors.Join(ErrOrderNotFound, cause)
 }
 
-func WrapInvalidOrderLineItem(cause error) error {
+func WrapOrderDeleteNotAllowed(cause error) error {
 	if cause == nil {
-		return ErrInvalidOrderLineItem
+		return ErrOrderDeleteNotAllowed
 	}
-	return errors.Join(ErrInvalidOrderLineItem, cause)
+	return errors.Join(ErrOrderDeleteNotAllowed, cause)
+}
+
+// __ORDER_LINE__
+
+func WrapOrderLineNotFound(cause error) error {
+	if cause == nil {
+		return ErrOrderLineNotFound
+	}
+	return errors.Join(ErrOrderLineNotFound, cause)
+}
+
+func WrapInvalidOrderLinePid(cause error) error {
+	if cause == nil {
+		return ErrInvalidOrderLinePid
+	}
+	return errors.Join(ErrInvalidOrderLinePid, cause)
 }
 
 func WrapInvalidOrderLineQuantity(cause error) error {

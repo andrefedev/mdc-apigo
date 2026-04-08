@@ -346,6 +346,25 @@ func (s Server) OrderUpdate(ctx context.Context, req *v1.OrderUpdateReq) (*v1.Or
 	return &v1.OrderUpdateRes{Result: result.ToProto()}, nil
 }
 
+func (s Server) OrderDelete(ctx context.Context, req *v1.OrderDeleteReq) (*v1.OrderDeleteRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ref := req.GetRef()
+	if err := uuid.Validate(ref); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.OrderDelete(ctx, ref)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.OrderDeleteRes{Result: result.ToProto()}, nil
+}
+
 func (s Server) OrderDetail(ctx context.Context, req *v1.OrderDetailReq) (*v1.OrderDetailRes, error) {
 	_, err := requireStaffUser(ctx)
 	if err != nil {
@@ -397,6 +416,131 @@ func (s Server) OrderListAll(ctx context.Context, req *v1.OrderListAllReq) (*v1.
 	}
 
 	return &v1.OrderListAllRes{Results: results}, nil
+}
+
+// ORDER_LINE__
+
+func (s Server) OrderLineCreate(ctx context.Context, req *v1.OrderLineCreateReq) (*v1.OrderLineCreateRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	oid := req.GetOrder()
+	if err := uuid.Validate(oid); err != nil {
+		return nil, err
+	}
+
+	payload := req.GetPayload()
+	input := app.NewOrderLineCreateInput(payload)
+	if err := input.Validate(); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.OrderLineCreate(ctx, oid, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.OrderLineCreateRes{Result: result.ToProto()}, nil
+}
+
+func (s Server) OrderLineUpdate(ctx context.Context, req *v1.OrderLineUpdateReq) (*v1.OrderLineUpdateRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ref := req.GetRef()
+	if err := uuid.Validate(ref); err != nil {
+		return nil, err
+	}
+
+	payload := req.GetPayload()
+	if payload == nil {
+		return nil, ErrInvalidPayload
+	}
+
+	updateMask := req.GetUpdateMask()
+	updateMask.Normalize()
+	if !updateMask.IsValid(payload) {
+		return nil, ErrInvalidUpdateMask
+	}
+
+	paths := updateMask.GetPaths()
+	input := app.NewOrderLineUpdateInput(payload)
+	if err := input.Validate(paths); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.OrderLineUpdate(ctx, ref, paths, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.OrderLineUpdateRes{Result: result.ToProto()}, nil
+}
+
+func (s Server) OrderLineDelete(ctx context.Context, req *v1.OrderLineDeleteReq) (*v1.OrderLineDeleteRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ref := req.GetRef()
+	if err := uuid.Validate(ref); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.OrderLineDelete(ctx, ref)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.OrderLineDeleteRes{Result: result.ToProto()}, nil
+}
+
+func (s Server) OrderLineDetail(ctx context.Context, req *v1.OrderLineDetailReq) (*v1.OrderLineDetailRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ref := req.GetRef()
+	if err := uuid.Validate(ref); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.OrderLineDetail(ctx, ref)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.OrderLineDetailRes{Result: result.ToProto()}, nil
+}
+
+func (s Server) OrderLineListAll(ctx context.Context, req *v1.OrderLineListAllReq) (*v1.OrderLineListAllRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	oid := req.GetOrder()
+	if err := uuid.Validate(oid); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.OrderLineListAll(ctx, oid)
+	if err != nil {
+		return nil, err
+	}
+
+	results := make([]*v1.OrderLine, 0, len(result))
+	for i := range result {
+		results = append(results, result[i].ToProto())
+	}
+
+	return &v1.OrderLineListAllRes{Results: results}, nil
 }
 
 // GOOGLE_MAPS__
