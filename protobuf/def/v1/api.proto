@@ -31,19 +31,19 @@ service ApiService {
   // SALES__
 
   // ORDER
-  // rpc OrderCreate(OrderCreateReq) returns (OrderCreateRes);
-  // rpc OrderUpdate(OrderUpdateReq) returns (OrderUpdateRes);
+  rpc OrderCreate(OrderCreateReq) returns (OrderCreateRes);
+  rpc OrderUpdate(OrderUpdateReq) returns (OrderUpdateRes);
   // rpc OrderDelete(OrderDeleteReq) returns (OrderDeleteRes);
-  // rpc OrderDetail(OrderDetailReq) returns (OrderDetailRes);
+  rpc OrderDetail(OrderDetailReq) returns (OrderDetailRes);
   rpc OrderListAll(OrderListAllReq) returns (OrderListAllRes);
   // rpc OrderChangeStatus(OrderChangeStatusReq) returns (OrderChangeStatusRes);
 
   // ORDER_LINE
-  // rpc OrderLineUpdate(OrderLineUpdateReq) returns (OrderLineUpdateRes);
-  // rpc OrderLineCreate(OrderLineCreateReq) returns (OrderLineCreateRes);
-  // rpc OrderLineDelete(OrderLineDeleteReq) returns (OrderLineDeleteRes);
-  // rpc OrderLineDetail(OrderLineDetailReq) returns (OrderLineDetailRes);
-  // rpc OrderLineListAll(OrderLineListAllReq) returns (OrderLineListAllRes);
+  rpc OrderLineUpdate(OrderLineUpdateReq) returns (OrderLineUpdateRes);
+  rpc OrderLineCreate(OrderLineCreateReq) returns (OrderLineCreateRes);
+  rpc OrderLineDelete(OrderLineDeleteReq) returns (OrderLineDeleteRes);
+  rpc OrderLineDetail(OrderLineDetailReq) returns (OrderLineDetailRes);
+  rpc OrderLineListAll(OrderLineListAllReq) returns (OrderLineListAllRes);
 
   // ORDER_NOTE
   // rpc OrderNoteCreate(OrderNoteCreateReq) returns (OrderNoteCreateRes);

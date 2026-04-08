@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"apigo/internal/platforms/validatex/validationx"
+
+	"github.com/google/uuid"
 )
 
 // # CODE__ #
@@ -438,6 +440,43 @@ func (r *OrderPagingData) Validate() error {
 	}
 
 	// Validation
+
+	return nil
+}
+
+// ORDER_LINE__
+
+type OrderLineInsertData struct {
+	Item       string
+	Status     string
+	Quantity   int32
+	BasePrice  int32
+	OfferPrice int32
+}
+
+func (r *OrderLineInsertData) Validate() error {
+	const op = "App.OrderLineInsertData.Validate"
+
+	if uuid.Validate(r.Item) != nil {
+		return fmt.Errorf("%s: %w", op, ErrInvalidOrderLineItem)
+	}
+
+	if r.Quantity == 0 {
+		return fmt.Errorf("%s: %w", op, ErrInvalidOrderLineQuantity)
+	}
+
+	if r.BasePrice == 0 {
+		return fmt.Errorf("%s, %w", op, ErrInvalidOrderLineBasePrice)
+	}
+
+	if r.OfferPrice == 0 {
+		return fmt.Errorf("%s: %w", op, ErrInvalidOrderLineOfferPrice)
+	}
+
+	// BASE_PRICE < OFFER_PRICE
+	if r.BasePrice < r.OfferPrice {
+		return fmt.Errorf("%s: %w", op, ErrInvalid) // nombrar..
+	}
 
 	return nil
 }

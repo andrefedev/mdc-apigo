@@ -290,6 +290,81 @@ func (s Server) UserAddrListAll(ctx context.Context, req *v1.UserAddrListAllReq)
 
 // SALES__
 
+func (s Server) OrderCreate(ctx context.Context, req *v1.OrderCreateReq) (*v1.OrderCreateRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	payload := req.GetPayload()
+	input := app.NewOrderInsertInput(payload)
+	if err := input.Validation(nil); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.OrderCreate(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.OrderCreateRes{Result: result.ToProto()}, nil
+}
+
+func (s Server) OrderUpdate(ctx context.Context, req *v1.OrderUpdateReq) (*v1.OrderUpdateRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ref := req.GetRef()
+	if err := uuid.Validate(ref); err != nil {
+		return nil, err
+	}
+
+	payload := req.GetPayload()
+	if payload == nil {
+		return nil, ErrInvalidPayload
+	}
+
+	updateMask := req.GetUpdateMask()
+	updateMask.Normalize()
+	if !updateMask.IsValid(payload) {
+		return nil, ErrInvalidUpdateMask
+	}
+
+	paths := updateMask.GetPaths()
+	input := app.NewOrderUpdateInput(payload)
+	if err := input.Validation(paths); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.OrderUpdate(ctx, ref, paths, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.OrderUpdateRes{Result: result.ToProto()}, nil
+}
+
+func (s Server) OrderDetail(ctx context.Context, req *v1.OrderDetailReq) (*v1.OrderDetailRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ref := req.GetRef()
+	if err := uuid.Validate(ref); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.OrderDetail(ctx, ref)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.OrderDetailRes{Result: result.ToProto()}, nil
+}
+
 func (s Server) OrderListAll(ctx context.Context, req *v1.OrderListAllReq) (*v1.OrderListAllRes, error) {
 	// Auth
 	_, err := requireStaffUser(ctx)
@@ -299,30 +374,29 @@ func (s Server) OrderListAll(ctx context.Context, req *v1.OrderListAllReq) (*v1.
 
 	// filter
 	f := req.GetFilter()
-	filter := app.NewUserFilterInput(f)
+	filter := app.NewOrderFilterInput(f)
 	if err := filter.Validate(); err != nil {
 		return nil, err
 	}
 
 	// pagination
 	p := req.GetPaging()
-	paging := app.NewUserPagingInput(p)
+	paging := app.NewOrderPagingInput(p)
 	if err := paging.Validate(); err != nil {
 		return nil, err
 	}
 
-	result, err := s.useservice.UserListAll(ctx, filter, paging)
+	result, err := s.useservice.OrderListAll(ctx, filter, paging)
 	if err != nil {
 		return nil, err
 	}
 
-	// CONVERtIR USERS
-	userspb := make([]*v1.User, 0, len(result))
+	results := make([]*v1.Order, 0, len(result))
 	for i := range result {
-		userspb = append(userspb, result[i].ToProto())
+		results = append(results, result[i].ToProto())
 	}
 
-	return &v1.UserListAllRes{Users: userspb}, nil
+	return &v1.OrderListAllRes{Results: results}, nil
 }
 
 // GOOGLE_MAPS__

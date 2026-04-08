@@ -136,6 +136,105 @@ func (u *UserAddr) ToProto() *v1.UserAddr {
 	}
 }
 
+// CATLG__
+
+// GENRE__
+
+type Genre struct {
+	Ref         string
+	Name        string
+	Descr       *string
+	Imurl       *string
+	Display     int32
+	IsPublic    bool
+	DateCreated time.Time
+}
+
+func (uc *Genre) ToProto() *v1.Genre {
+	var dateCreated *timestamp.Timestamp
+
+	if !uc.DateCreated.IsZero() {
+		dateCreated = timestamppb.New(uc.DateCreated)
+	}
+
+	return &v1.Genre{
+		Ref:         uc.Ref,
+		Name:        uc.Name,
+		Descr:       uc.Descr,
+		Imurl:       uc.Imurl,
+		Display:     uc.Display,
+		IsPublic:    uc.IsPublic,
+		DateCreated: dateCreated,
+	}
+}
+
+// PRODUCT__
+
+type Product struct {
+	Ref     string
+	Upc     *string
+	Code    int32
+	Name    string
+	Genre   *Genre
+	Descr   *string
+	Imurl   *string
+	Display int32
+
+	Weight   int32
+	Unitype  string
+	Quantity int32
+
+	IsActive    bool
+	IsPublic    bool
+	CostPrice   int32
+	BasePrice   int32
+	NumInStock  int32
+	NumInAlloc  int32
+	NumInAvail  int32
+	DateCreated time.Time
+	DateUpdated *time.Time
+}
+
+func (p *Product) ToProto() *v1.Product {
+	var genrepb *v1.Genre
+	if p.Genre != nil {
+		// genre puede ser nil
+		genrepb = p.Genre.ToProto()
+	}
+
+	var dateCreated *timestamp.Timestamp
+	if !p.DateCreated.IsZero() {
+		dateCreated = timestamppb.New(p.DateCreated)
+	}
+
+	var dateUpdated *timestamp.Timestamp
+	if p.DateUpdated != nil && !p.DateUpdated.IsZero() {
+		dateCreated = timestamppb.New(*p.DateUpdated)
+	}
+
+	return &v1.Product{
+		Ref:         p.Ref,
+		Upc:         p.Upc,
+		Code:        p.Code,
+		Name:        p.Name,
+		Genre:       genrepb,
+		Descr:       p.Descr,
+		Imurl:       p.Imurl,
+		Display:     p.Display,
+		Weight:      p.Weight,
+		Unitype:     p.Unitype,
+		Quantity:    p.Quantity,
+		IsPublic:    p.IsPublic,
+		IsActive:    p.IsActive,
+		CostPrice:   p.CostPrice,
+		BasePrice:   p.BasePrice,
+		NumInStock:  p.NumInStock,
+		NumInAlloc:  p.NumInAlloc,
+		DateCreated: dateCreated,
+		DateUpdated: dateUpdated,
+	}
+}
+
 // SALES__
 
 // ORDER__
@@ -181,5 +280,31 @@ func (p *Order) ToProto() *v1.Order {
 		DateUpdated:   dateUpdated,
 		PaymentStatus: p.PaymentStatus,
 		PaymentMethod: p.PaymentMethod,
+	}
+}
+
+// ORDER_LINE__
+
+// ORDER_LINE
+
+type OrderLine struct {
+	Ref        string
+	Item       *Product
+	Status     string
+	Quantity   int32
+	BasePrice  int32
+	TotalPrice int32
+}
+
+func (p *OrderLine) ToProto() *v1.OrderLine {
+	product := p.Item.ToProto()
+
+	return &v1.OrderLine{
+		Ref:        p.Ref,
+		Item:       product,
+		Status:     p.Status,
+		Quantity:   p.Quantity,
+		BasePrice:  p.BasePrice,
+		TotalPrice: p.TotalPrice,
 	}
 }

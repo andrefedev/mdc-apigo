@@ -7,6 +7,7 @@
 package v1
 
 import (
+	date "google.golang.org/genproto/googleapis/type/date"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -650,7 +651,8 @@ type Order struct {
 	// owner creador
 	// dirección de envío
 	User          *User                  `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
-	Addr          *UserAddr              `protobuf:"bytes,3,opt,name=addr,proto3" json:"addr,omitempty"` // DeliverySlot slot = 4;
+	Addr          *UserAddr              `protobuf:"bytes,3,opt,name=addr,proto3" json:"addr,omitempty"`
+	Slot          *DeliverySlot          `protobuf:"bytes,4,opt,name=slot,proto3" json:"slot,omitempty"`
 	Number        int32                  `protobuf:"varint,5,opt,name=number,proto3" json:"number,omitempty"`
 	Status        string                 `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"` // es un enum
 	BasePrice     int32                  `protobuf:"varint,7,opt,name=base_price,json=basePrice,proto3" json:"base_price,omitempty"`
@@ -711,6 +713,13 @@ func (x *Order) GetUser() *User {
 func (x *Order) GetAddr() *UserAddr {
 	if x != nil {
 		return x.Addr
+	}
+	return nil
+}
+
+func (x *Order) GetSlot() *DeliverySlot {
+	if x != nil {
+		return x.Slot
 	}
 	return nil
 }
@@ -778,66 +787,6 @@ func (x *Order) GetPaymentMethod() string {
 	return ""
 }
 
-type OrderNote struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
-	Note          string                 `protobuf:"bytes,2,opt,name=note,proto3" json:"note,omitempty"`
-	DateCreated   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=date_created,json=dateCreated,proto3" json:"date_created,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *OrderNote) Reset() {
-	*x = OrderNote{}
-	mi := &file_domain_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *OrderNote) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*OrderNote) ProtoMessage() {}
-
-func (x *OrderNote) ProtoReflect() protoreflect.Message {
-	mi := &file_domain_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use OrderNote.ProtoReflect.Descriptor instead.
-func (*OrderNote) Descriptor() ([]byte, []int) {
-	return file_domain_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *OrderNote) GetRef() string {
-	if x != nil {
-		return x.Ref
-	}
-	return ""
-}
-
-func (x *OrderNote) GetNote() string {
-	if x != nil {
-		return x.Note
-	}
-	return ""
-}
-
-func (x *OrderNote) GetDateCreated() *timestamppb.Timestamp {
-	if x != nil {
-		return x.DateCreated
-	}
-	return nil
-}
-
 type OrderLine struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
@@ -854,7 +803,7 @@ type OrderLine struct {
 
 func (x *OrderLine) Reset() {
 	*x = OrderLine{}
-	mi := &file_domain_proto_msgTypes[7]
+	mi := &file_domain_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -866,7 +815,7 @@ func (x *OrderLine) String() string {
 func (*OrderLine) ProtoMessage() {}
 
 func (x *OrderLine) ProtoReflect() protoreflect.Message {
-	mi := &file_domain_proto_msgTypes[7]
+	mi := &file_domain_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -879,7 +828,7 @@ func (x *OrderLine) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderLine.ProtoReflect.Descriptor instead.
 func (*OrderLine) Descriptor() ([]byte, []int) {
-	return file_domain_proto_rawDescGZIP(), []int{7}
+	return file_domain_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *OrderLine) GetRef() string {
@@ -938,6 +887,166 @@ func (x *OrderLine) GetTotalPrice() int32 {
 	return 0
 }
 
+type OrderNote struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	Note          string                 `protobuf:"bytes,2,opt,name=note,proto3" json:"note,omitempty"`
+	DateCreated   *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=date_created,json=dateCreated,proto3" json:"date_created,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderNote) Reset() {
+	*x = OrderNote{}
+	mi := &file_domain_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderNote) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderNote) ProtoMessage() {}
+
+func (x *OrderNote) ProtoReflect() protoreflect.Message {
+	mi := &file_domain_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderNote.ProtoReflect.Descriptor instead.
+func (*OrderNote) Descriptor() ([]byte, []int) {
+	return file_domain_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *OrderNote) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+func (x *OrderNote) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
+func (x *OrderNote) GetDateCreated() *timestamppb.Timestamp {
+	if x != nil {
+		return x.DateCreated
+	}
+	return nil
+}
+
+type DeliverySlot struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
+	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"` // "07:00-10:00"
+	WorkDate      *date.Date             `protobuf:"bytes,3,opt,name=work_date,json=workDate,proto3" json:"work_date,omitempty"`
+	Capacity      int32                  `protobuf:"varint,4,opt,name=capacity,proto3" json:"capacity,omitempty"`
+	Reserved      int32                  `protobuf:"varint,5,opt,name=reserved,proto3" json:"reserved,omitempty"`
+	Remaining     int32                  `protobuf:"varint,6,opt,name=remaining,proto3" json:"remaining,omitempty"`
+	StartUnix     int64                  `protobuf:"varint,7,opt,name=start_unix,json=startUnix,proto3" json:"start_unix,omitempty"` // segundos epoch
+	UntilUnix     int64                  `protobuf:"varint,8,opt,name=until_unix,json=untilUnix,proto3" json:"until_unix,omitempty"` // segundos epoch
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliverySlot) Reset() {
+	*x = DeliverySlot{}
+	mi := &file_domain_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliverySlot) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliverySlot) ProtoMessage() {}
+
+func (x *DeliverySlot) ProtoReflect() protoreflect.Message {
+	mi := &file_domain_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliverySlot.ProtoReflect.Descriptor instead.
+func (*DeliverySlot) Descriptor() ([]byte, []int) {
+	return file_domain_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *DeliverySlot) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+func (x *DeliverySlot) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *DeliverySlot) GetWorkDate() *date.Date {
+	if x != nil {
+		return x.WorkDate
+	}
+	return nil
+}
+
+func (x *DeliverySlot) GetCapacity() int32 {
+	if x != nil {
+		return x.Capacity
+	}
+	return 0
+}
+
+func (x *DeliverySlot) GetReserved() int32 {
+	if x != nil {
+		return x.Reserved
+	}
+	return 0
+}
+
+func (x *DeliverySlot) GetRemaining() int32 {
+	if x != nil {
+		return x.Remaining
+	}
+	return 0
+}
+
+func (x *DeliverySlot) GetStartUnix() int64 {
+	if x != nil {
+		return x.StartUnix
+	}
+	return 0
+}
+
+func (x *DeliverySlot) GetUntilUnix() int64 {
+	if x != nil {
+		return x.UntilUnix
+	}
+	return 0
+}
+
 type Place struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
@@ -959,7 +1068,7 @@ type Place struct {
 
 func (x *Place) Reset() {
 	*x = Place{}
-	mi := &file_domain_proto_msgTypes[8]
+	mi := &file_domain_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -971,7 +1080,7 @@ func (x *Place) String() string {
 func (*Place) ProtoMessage() {}
 
 func (x *Place) ProtoReflect() protoreflect.Message {
-	mi := &file_domain_proto_msgTypes[8]
+	mi := &file_domain_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -984,7 +1093,7 @@ func (x *Place) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Place.ProtoReflect.Descriptor instead.
 func (*Place) Descriptor() ([]byte, []int) {
-	return file_domain_proto_rawDescGZIP(), []int{8}
+	return file_domain_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Place) GetRef() string {
@@ -1091,7 +1200,7 @@ type Prediction struct {
 
 func (x *Prediction) Reset() {
 	*x = Prediction{}
-	mi := &file_domain_proto_msgTypes[9]
+	mi := &file_domain_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1103,7 +1212,7 @@ func (x *Prediction) String() string {
 func (*Prediction) ProtoMessage() {}
 
 func (x *Prediction) ProtoReflect() protoreflect.Message {
-	mi := &file_domain_proto_msgTypes[9]
+	mi := &file_domain_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1116,7 +1225,7 @@ func (x *Prediction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Prediction.ProtoReflect.Descriptor instead.
 func (*Prediction) Descriptor() ([]byte, []int) {
-	return file_domain_proto_rawDescGZIP(), []int{9}
+	return file_domain_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *Prediction) GetRef() string {
@@ -1158,7 +1267,7 @@ var File_domain_proto protoreflect.FileDescriptor
 
 const file_domain_proto_rawDesc = "" +
 	"\n" +
-	"\fdomain.proto\x12\vmuydelcampo\x1a\x1fgoogle/protobuf/timestamp.proto\"\xac\x01\n" +
+	"\fdomain.proto\x12\vmuydelcampo\x1a\x16google/type/date.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xac\x01\n" +
 	"\x04Code\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x14\n" +
 	"\x05phone\x18\x02 \x01(\tR\x05phone\x12=\n" +
@@ -1233,11 +1342,12 @@ const file_domain_proto_rawDesc = "" +
 	"\fdate_updated\x18\x15 \x01(\v2\x1a.google.protobuf.TimestampR\vdateUpdatedB\x06\n" +
 	"\x04_upcB\b\n" +
 	"\x06_descrB\b\n" +
-	"\x06_imurl\"\xc8\x03\n" +
+	"\x06_imurl\"\xf7\x03\n" +
 	"\x05Order\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12%\n" +
 	"\x04user\x18\x02 \x01(\v2\x11.muydelcampo.UserR\x04user\x12)\n" +
-	"\x04addr\x18\x03 \x01(\v2\x15.muydelcampo.UserAddrR\x04addr\x12\x16\n" +
+	"\x04addr\x18\x03 \x01(\v2\x15.muydelcampo.UserAddrR\x04addr\x12-\n" +
+	"\x04slot\x18\x04 \x01(\v2\x19.muydelcampo.DeliverySlotR\x04slot\x12\x16\n" +
 	"\x06number\x18\x05 \x01(\x05R\x06number\x12\x16\n" +
 	"\x06status\x18\x06 \x01(\tR\x06status\x12\x1d\n" +
 	"\n" +
@@ -1250,11 +1360,7 @@ const file_domain_proto_rawDesc = "" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\x12=\n" +
 	"\fdate_updated\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\vdateUpdated\x12%\n" +
 	"\x0epayment_status\x18\f \x01(\tR\rpaymentStatus\x12%\n" +
-	"\x0epayment_method\x18\r \x01(\tR\rpaymentMethod\"p\n" +
-	"\tOrderNote\x12\x10\n" +
-	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
-	"\x04note\x18\x02 \x01(\tR\x04note\x12=\n" +
-	"\fdate_created\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\"\xfb\x01\n" +
+	"\x0epayment_method\x18\r \x01(\tR\rpaymentMethod\"\xfb\x01\n" +
 	"\tOrderLine\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12(\n" +
 	"\x04item\x18\x02 \x01(\v2\x14.muydelcampo.ProductR\x04item\x12\x16\n" +
@@ -1267,7 +1373,22 @@ const file_domain_proto_rawDesc = "" +
 	"\voffer_price\x18\a \x01(\x05R\n" +
 	"offerPrice\x12\x1f\n" +
 	"\vtotal_price\x18\b \x01(\x05R\n" +
-	"totalPrice\"\xc0\x02\n" +
+	"totalPrice\"p\n" +
+	"\tOrderNote\x12\x10\n" +
+	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
+	"\x04note\x18\x02 \x01(\tR\x04note\x12=\n" +
+	"\fdate_created\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\"\xf8\x01\n" +
+	"\fDeliverySlot\x12\x10\n" +
+	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\x12.\n" +
+	"\twork_date\x18\x03 \x01(\v2\x11.google.type.DateR\bworkDate\x12\x1a\n" +
+	"\bcapacity\x18\x04 \x01(\x05R\bcapacity\x12\x1a\n" +
+	"\breserved\x18\x05 \x01(\x05R\breserved\x12\x1c\n" +
+	"\tremaining\x18\x06 \x01(\x05R\tremaining\x12\x1d\n" +
+	"\n" +
+	"start_unix\x18\a \x01(\x03R\tstartUnix\x12\x1d\n" +
+	"\n" +
+	"until_unix\x18\b \x01(\x03R\tuntilUnix\"\xc0\x02\n" +
 	"\x05Place\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x10\n" +
 	"\x03lat\x18\x02 \x01(\x01R\x03lat\x12\x10\n" +
@@ -1305,7 +1426,7 @@ func file_domain_proto_rawDescGZIP() []byte {
 	return file_domain_proto_rawDescData
 }
 
-var file_domain_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_domain_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_domain_proto_goTypes = []any{
 	(*Code)(nil),                  // 0: muydelcampo.Code
 	(*User)(nil),                  // 1: muydelcampo.User
@@ -1313,34 +1434,38 @@ var file_domain_proto_goTypes = []any{
 	(*Genre)(nil),                 // 3: muydelcampo.Genre
 	(*Product)(nil),               // 4: muydelcampo.Product
 	(*Order)(nil),                 // 5: muydelcampo.Order
-	(*OrderNote)(nil),             // 6: muydelcampo.OrderNote
-	(*OrderLine)(nil),             // 7: muydelcampo.OrderLine
-	(*Place)(nil),                 // 8: muydelcampo.Place
-	(*Prediction)(nil),            // 9: muydelcampo.Prediction
-	(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
+	(*OrderLine)(nil),             // 6: muydelcampo.OrderLine
+	(*OrderNote)(nil),             // 7: muydelcampo.OrderNote
+	(*DeliverySlot)(nil),          // 8: muydelcampo.DeliverySlot
+	(*Place)(nil),                 // 9: muydelcampo.Place
+	(*Prediction)(nil),            // 10: muydelcampo.Prediction
+	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
+	(*date.Date)(nil),             // 12: google.type.Date
 }
 var file_domain_proto_depIdxs = []int32{
-	10, // 0: muydelcampo.Code.date_created:type_name -> google.protobuf.Timestamp
-	10, // 1: muydelcampo.Code.date_expired:type_name -> google.protobuf.Timestamp
-	10, // 2: muydelcampo.User.last_login:type_name -> google.protobuf.Timestamp
-	10, // 3: muydelcampo.User.date_joined:type_name -> google.protobuf.Timestamp
-	10, // 4: muydelcampo.UserAddr.date_created:type_name -> google.protobuf.Timestamp
-	10, // 5: muydelcampo.UserAddr.date_updated:type_name -> google.protobuf.Timestamp
-	10, // 6: muydelcampo.Genre.date_created:type_name -> google.protobuf.Timestamp
+	11, // 0: muydelcampo.Code.date_created:type_name -> google.protobuf.Timestamp
+	11, // 1: muydelcampo.Code.date_expired:type_name -> google.protobuf.Timestamp
+	11, // 2: muydelcampo.User.last_login:type_name -> google.protobuf.Timestamp
+	11, // 3: muydelcampo.User.date_joined:type_name -> google.protobuf.Timestamp
+	11, // 4: muydelcampo.UserAddr.date_created:type_name -> google.protobuf.Timestamp
+	11, // 5: muydelcampo.UserAddr.date_updated:type_name -> google.protobuf.Timestamp
+	11, // 6: muydelcampo.Genre.date_created:type_name -> google.protobuf.Timestamp
 	3,  // 7: muydelcampo.Product.genre:type_name -> muydelcampo.Genre
-	10, // 8: muydelcampo.Product.date_created:type_name -> google.protobuf.Timestamp
-	10, // 9: muydelcampo.Product.date_updated:type_name -> google.protobuf.Timestamp
+	11, // 8: muydelcampo.Product.date_created:type_name -> google.protobuf.Timestamp
+	11, // 9: muydelcampo.Product.date_updated:type_name -> google.protobuf.Timestamp
 	1,  // 10: muydelcampo.Order.user:type_name -> muydelcampo.User
 	2,  // 11: muydelcampo.Order.addr:type_name -> muydelcampo.UserAddr
-	10, // 12: muydelcampo.Order.date_created:type_name -> google.protobuf.Timestamp
-	10, // 13: muydelcampo.Order.date_updated:type_name -> google.protobuf.Timestamp
-	10, // 14: muydelcampo.OrderNote.date_created:type_name -> google.protobuf.Timestamp
+	8,  // 12: muydelcampo.Order.slot:type_name -> muydelcampo.DeliverySlot
+	11, // 13: muydelcampo.Order.date_created:type_name -> google.protobuf.Timestamp
+	11, // 14: muydelcampo.Order.date_updated:type_name -> google.protobuf.Timestamp
 	4,  // 15: muydelcampo.OrderLine.item:type_name -> muydelcampo.Product
-	16, // [16:16] is the sub-list for method output_type
-	16, // [16:16] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	11, // 16: muydelcampo.OrderNote.date_created:type_name -> google.protobuf.Timestamp
+	12, // 17: muydelcampo.DeliverySlot.work_date:type_name -> google.type.Date
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_domain_proto_init() }
@@ -1357,7 +1482,7 @@ func file_domain_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_domain_proto_rawDesc), len(file_domain_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

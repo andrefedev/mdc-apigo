@@ -118,3 +118,31 @@ func WrapOrderNotFound(cause error) error {
 	}
 	return errors.Join(ErrOrderNotFound, cause)
 }
+
+func WrapInvalidOrderLineItem(cause error) error {
+	if cause == nil {
+		return ErrInvalidOrderLineItem
+	}
+	return errors.Join(ErrInvalidOrderLineItem, cause)
+}
+
+func WrapInvalidOrderLineQuantity(cause error) error {
+	if cause == nil {
+		return ErrInvalidOrderLineQuantity
+	}
+	return errors.Join(ErrInvalidOrderLineQuantity, cause)
+}
+
+func WrapInvalidOrderLineBasePrice(cause error) error {
+	if cause == nil {
+		return ErrInvalidOrderLineBasePrice
+	}
+	return errors.Join(ErrInvalidOrderLineBasePrice, cause)
+}
+
+func WrapInvalidOrderLineOfferPrice(cause error) error {
+	if cause == nil {
+		return ErrInvalidOrderLineOfferPrice
+	}
+	return errors.Join(ErrInvalidOrderLineOfferPrice, cause)
+}
