@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -524,6 +525,89 @@ func (s *UseService) OrderListAll(ctx context.Context, filter *OrderFilterInput,
 	}
 
 	return orders, nil
+}
+
+func (s *UseService) OrderChangeStatus(ctx context.Context, ref string, input *OrderChangeStatusInput) (*Order, error) {
+	const op = "App.UseService.OrderChangeStatus"
+
+	if err := uuid.Validate(ref); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	data := NewOrderChangeStatusData(input)
+	if err := data.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	var order *Order
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		var err error
+
+		order, err = s.deps.Repository.OrderSelect(ctx, ref, true)
+		if err != nil {
+			return err
+		}
+
+		currentStatus := strings.TrimSpace(order.Status)
+		nextStatus := data.Status
+
+		if currentStatus == nextStatus {
+			return nil
+		}
+
+		switch nextStatus {
+		case "acepted":
+			if currentStatus != "pending" {
+				return WrapOrderInvalidTransition(nil)
+			}
+
+			lines, err := s.deps.Repository.OrderLineSelectAll(ctx, order.Ref)
+			if err != nil {
+				return err
+			}
+			if len(lines) == 0 {
+				return WrapOrderLineEmpty(nil)
+			}
+
+		case "canceled":
+			if currentStatus != "pending" && currentStatus != "acepted" && currentStatus != "dispatched" {
+				return WrapOrderInvalidTransition(nil)
+			}
+
+		case "dispatched":
+			if currentStatus != "acepted" {
+				return WrapOrderInvalidTransition(nil)
+			}
+
+		case "successfully":
+			if currentStatus != "dispatched" {
+				return WrapOrderInvalidTransition(nil)
+			}
+
+		case "pending":
+			return WrapOrderInvalidTransition(nil)
+
+		default:
+			return WrapInvalidOrderStatus(nil)
+		}
+
+		if _, err := s.deps.Repository.OrderUpdate(ctx, ref, []string{"status"}, &OrderUpdateData{
+			Status: nextStatus,
+		}); err != nil {
+			return err
+		}
+
+		order, err = s.deps.Repository.OrderSelect(ctx, ref, false)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return order, nil
 }
 
 // ORDER_LINE__

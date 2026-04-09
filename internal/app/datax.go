@@ -436,6 +436,34 @@ func (r *OrderUpdateInput) Validation(paths []string) error {
 	return nil
 }
 
+// ORDER_CHANGE_STATUS_INPUT__
+
+type OrderChangeStatusInput struct {
+	Status string
+}
+
+func NewOrderChangeStatusInput(req *v1.OrderChangeStatusReq) *OrderChangeStatusInput {
+	if req == nil {
+		return &OrderChangeStatusInput{}
+	}
+	return &OrderChangeStatusInput{
+		Status: req.GetStatus(),
+	}
+}
+
+func (r *OrderChangeStatusInput) Validate() error {
+	const op = "App.OrderChangeStatusInput.Validate"
+
+	status := strings.TrimSpace(r.Status)
+	switch status {
+	case "pending", "acepted", "canceled", "dispatched", "successfully":
+		r.Status = status
+		return nil
+	default:
+		return fmt.Errorf("%s: %w", op, ErrInvalidOrderStatus)
+	}
+}
+
 // ORDER_FILTER_INPUT__
 
 type OrderFilterInput struct {

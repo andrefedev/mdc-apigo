@@ -75,6 +75,15 @@ func grpcStatusError(err error) error {
 	if errors.Is(err, app.ErrOrderDeleteNotAllowed) {
 		return status.Error(codes.FailedPrecondition, "El pedido no se puede eliminar en su estado actual")
 	}
+	if errors.Is(err, app.ErrInvalidOrderStatus) {
+		return status.Error(codes.InvalidArgument, "El estado del pedido no es válido")
+	}
+	if errors.Is(err, app.ErrOrderInvalidTransition) {
+		return status.Error(codes.FailedPrecondition, "La transición de estado del pedido no es válida")
+	}
+	if errors.Is(err, app.ErrOrderLineEmpty) {
+		return status.Error(codes.FailedPrecondition, "El pedido no tiene líneas para cambiar a ese estado")
+	}
 	if errors.Is(err, app.ErrInvalidFlatQuery) {
 		return status.Error(codes.InvalidArgument, "El filtro de búsqueda no es válido")
 	}

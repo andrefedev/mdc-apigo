@@ -418,6 +418,30 @@ func (s Server) OrderListAll(ctx context.Context, req *v1.OrderListAllReq) (*v1.
 	return &v1.OrderListAllRes{Results: results}, nil
 }
 
+func (s Server) OrderChangeStatus(ctx context.Context, req *v1.OrderChangeStatusReq) (*v1.OrderChangeStatusRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ref := req.GetRef()
+	if err := uuid.Validate(ref); err != nil {
+		return nil, err
+	}
+
+	input := app.NewOrderChangeStatusInput(req)
+	if err := input.Validate(); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.OrderChangeStatus(ctx, ref, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.OrderChangeStatusRes{Result: result.ToProto()}, nil
+}
+
 // ORDER_LINE__
 
 func (s Server) OrderLineCreate(ctx context.Context, req *v1.OrderLineCreateReq) (*v1.OrderLineCreateRes, error) {

@@ -88,13 +88,8 @@ message Product {
 
 message Order {
   string ref = 1;
-  // cesta
-  // usuario
-  // owner creador
-  // dirección de envío
   User user = 2;
   UserAddr addr = 3;
-  DeliverySlot slot = 4;
 
   int32 number = 5;
   string status = 6; // es un enum
@@ -106,6 +101,8 @@ message Order {
 
   string payment_status = 12; // es un enum...
   string payment_method = 13; // es un enum...
+  google.type.Date delivery_date = 14;
+  // DeliveryDay delivery_date = 4;
 }
 
 message OrderLine {
@@ -125,15 +122,19 @@ message OrderNote {
   google.protobuf.Timestamp date_created = 3;
 }
 
-message DeliverySlot {
+message DeliveryDay {
   string ref = 1;
-  string code = 2; // "07:00-10:00"
-  google.type.Date work_date = 3;
-  int32 capacity = 4;
-  int32 reserved = 5;
-  int32 remaining = 6;
-  int64 start_unix = 7; // segundos epoch
-  int64 until_unix = 8; // segundos epoch
+  string kind = 2;
+  optional string note = 3;
+  google.type.Date wday = 4;
+  bool is_open = 5;
+  int32 capacity = 6;
+  int32 reserved = 7;
+  int64 cutoff_min = 8; // segundos epoch
+  google.protobuf.Timestamp date_created = 9;
+  google.protobuf.Timestamp date_updated = 10;
+  int64 delivery_start = 11; // segundos epoch
+  int64 delivery_until = 12; // segundos epoch
 }
 
 // GOOGLE_MAPS__

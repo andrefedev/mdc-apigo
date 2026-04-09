@@ -128,6 +128,27 @@ func WrapOrderDeleteNotAllowed(cause error) error {
 	return errors.Join(ErrOrderDeleteNotAllowed, cause)
 }
 
+func WrapInvalidOrderStatus(cause error) error {
+	if cause == nil {
+		return ErrInvalidOrderStatus
+	}
+	return errors.Join(ErrInvalidOrderStatus, cause)
+}
+
+func WrapOrderInvalidTransition(cause error) error {
+	if cause == nil {
+		return ErrOrderInvalidTransition
+	}
+	return errors.Join(ErrOrderInvalidTransition, cause)
+}
+
+func WrapOrderLineEmpty(cause error) error {
+	if cause == nil {
+		return ErrOrderLineEmpty
+	}
+	return errors.Join(ErrOrderLineEmpty, cause)
+}
+
 // __ORDER_LINE__
 
 func WrapOrderLineNotFound(cause error) error {

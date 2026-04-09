@@ -624,7 +624,7 @@ func (r Repository) OrderSelect(ctx context.Context, ref string, forUpdate bool)
 	addr.id AS addr_ref, addr.lat AS addr_lat, addr.lng AS addr_lng, addr.name AS addr_name, addr.cmna AS addr_cmna, addr.route AS addr_route,
 	addr.street AS addr_street, addr.neighb AS addr_neighb, addr.locality AS addr_locality, addr.sublocal AS addr_sublocal, addr.address1 AS addr_address1, addr.address2 AS addr_address2,
 	-- SLOT --
-	slot.id AS slot_ref, slot.code AS slot_code, days.work_date AS slot_work_date
+	slot.id AS slot_ref, slot.code AS slot_code, days.work_date AS slot_work_date -- 
 	-- FROM --
 	FROM orders AS o
 	-- JOIN CLIENT --
@@ -650,7 +650,7 @@ func (r Repository) OrderSelect(ctx context.Context, ref string, forUpdate bool)
 	}
 	defer rows.Close()
 
-	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[Order])
+	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[OrderRaw])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = WrapOrderNotFound(err)
@@ -658,34 +658,26 @@ func (r Repository) OrderSelect(ctx context.Context, ref string, forUpdate bool)
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return result, nil
+	return result.ToOrder(), nil
 }
 
 func (r Repository) OrderSelectAll(ctx context.Context, filter *OrderFilterData, paging *OrderPagingData) ([]*Order, error) {
-	const op = "App.Repository.OrderDelete"
+	const op = "App.Repository.OrderSelectAll"
 
 	qry := `
 	SELECT
-	o.id, o.number, o.status, o.date_created, o.date_updated, o.payment_status, o.payment_method,
+	o.id, o.number, o.status, o.date_created, o.date_updated, o.delivery_date, o.payment_status, o.payment_method,
 	-- USER --
 	u.id AS user_ref, u.name AS user_name, u.phone AS user_phone,
 	-- ADDR --
 	addr.id AS addr_ref, addr.lat AS addr_lat, addr.lng AS addr_lng, addr.name AS addr_name, addr.cmna AS addr_cmna, addr.route AS addr_route,
-	addr.street AS addr_street, addr.neighb AS addr_neighb, addr.locality AS addr_locality, addr.sublocal AS addr_sublocal, addr.address1 AS addr_address1, addr.address2 AS addr_address2,
-	-- SLOT --
-	slot.id AS slot_ref, slot.code AS slot_code, days.work_date AS slot_work_date
+	addr.street AS addr_street, addr.neighb AS addr_neighb, addr.locality AS addr_locality, addr.sublocal AS addr_sublocal, addr.address1 AS addr_address1, addr.address2 AS addr_address2
 	-- FROM --
 	FROM orders AS o
 	-- JOIN CLIENT --
 	JOIN users AS u ON u.id = o.uid
 	-- JOIN SHIPPING --
 	JOIN users_addrs AS addr ON addr.id = o.shid
-	-- JOIN DELIVERY SLOT --
-	JOIN deliveries_slots AS slot ON slot.id = o.sloid
-	-- JOIN DELIVERY DAYS --
-	JOIN deliveries_days AS days ON days.id = slot.wid
-	-- ORDER BY --
-	-- ORDER BY p.date_created DESC
 	`
 
 	// # BEGIN FILTER #
@@ -754,9 +746,14 @@ func (r Repository) OrderSelectAll(ctx context.Context, filter *OrderFilterData,
 	}
 	defer rows.Close()
 
-	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[Order])
+	crows, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[OrderRaw])
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	results := make([]*Order, 0, len(crows))
+	for i := range crows {
+		results = append(results, crows[i].ToOrder())
 	}
 
 	return results, nil
