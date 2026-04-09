@@ -185,3 +185,54 @@ func WrapInvalidOrderLineOfferPrice(cause error) error {
 	}
 	return errors.Join(ErrInvalidOrderLineOfferPrice, cause)
 }
+
+func WrapInvalidOrderLinePriceRange(cause error) error {
+	if cause == nil {
+		return ErrInvalidOrderLinePriceRange
+	}
+	return errors.Join(ErrInvalidOrderLinePriceRange, cause)
+}
+
+// DELIVERY_DAY__
+
+func WrapDeliveryDayNotFound(cause error) error {
+	if cause == nil {
+		return ErrDeliveryDayNotFound
+	}
+	return errors.Join(ErrDeliveryDayNotFound, cause)
+}
+
+func WrapInvalidDeliveryDayDate(cause error) error {
+	if cause == nil {
+		return ErrInvalidDeliveryDayDate
+	}
+	return errors.Join(ErrInvalidDeliveryDayDate, cause)
+}
+
+func WrapInvalidDeliveryDayKind(cause error) error {
+	if cause == nil {
+		return ErrInvalidDeliveryDayKind
+	}
+	return errors.Join(ErrInvalidDeliveryDayKind, cause)
+}
+
+func WrapInvalidDeliveryDayRange(cause error) error {
+	if cause == nil {
+		return ErrInvalidDeliveryDayRange
+	}
+	return errors.Join(ErrInvalidDeliveryDayRange, cause)
+}
+
+func WrapInvalidDeliveryDayCutoff(cause error) error {
+	if cause == nil {
+		return ErrInvalidDeliveryDayCutoff
+	}
+	return errors.Join(ErrInvalidDeliveryDayCutoff, cause)
+}
+
+func WrapInvalidDeliveryDayCap(cause error) error {
+	if cause == nil {
+		return ErrInvalidDeliveryDayCap
+	}
+	return errors.Join(ErrInvalidDeliveryDayCap, cause)
+}

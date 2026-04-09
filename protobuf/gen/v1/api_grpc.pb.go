@@ -19,32 +19,33 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ApiService_Code_FullMethodName              = "/muydelcampo.ApiService/Code"
-	ApiService_CodeDetail_FullMethodName        = "/muydelcampo.ApiService/CodeDetail"
-	ApiService_CodeVerify_FullMethodName        = "/muydelcampo.ApiService/CodeVerify"
-	ApiService_Userme_FullMethodName            = "/muydelcampo.ApiService/Userme"
-	ApiService_UserDetail_FullMethodName        = "/muydelcampo.ApiService/UserDetail"
-	ApiService_UserCreate_FullMethodName        = "/muydelcampo.ApiService/UserCreate"
-	ApiService_UserUpdate_FullMethodName        = "/muydelcampo.ApiService/UserUpdate"
-	ApiService_UserListAll_FullMethodName       = "/muydelcampo.ApiService/UserListAll"
-	ApiService_UserAddrDetail_FullMethodName    = "/muydelcampo.ApiService/UserAddrDetail"
-	ApiService_UserAddrCreate_FullMethodName    = "/muydelcampo.ApiService/UserAddrCreate"
-	ApiService_UserAddrUpdate_FullMethodName    = "/muydelcampo.ApiService/UserAddrUpdate"
-	ApiService_UserAddrListAll_FullMethodName   = "/muydelcampo.ApiService/UserAddrListAll"
-	ApiService_OrderCreate_FullMethodName       = "/muydelcampo.ApiService/OrderCreate"
-	ApiService_OrderUpdate_FullMethodName       = "/muydelcampo.ApiService/OrderUpdate"
-	ApiService_OrderDelete_FullMethodName       = "/muydelcampo.ApiService/OrderDelete"
-	ApiService_OrderDetail_FullMethodName       = "/muydelcampo.ApiService/OrderDetail"
-	ApiService_OrderListAll_FullMethodName      = "/muydelcampo.ApiService/OrderListAll"
-	ApiService_OrderChangeStatus_FullMethodName = "/muydelcampo.ApiService/OrderChangeStatus"
-	ApiService_OrderLineUpdate_FullMethodName   = "/muydelcampo.ApiService/OrderLineUpdate"
-	ApiService_OrderLineCreate_FullMethodName   = "/muydelcampo.ApiService/OrderLineCreate"
-	ApiService_OrderLineDelete_FullMethodName   = "/muydelcampo.ApiService/OrderLineDelete"
-	ApiService_OrderLineDetail_FullMethodName   = "/muydelcampo.ApiService/OrderLineDetail"
-	ApiService_OrderLineListAll_FullMethodName  = "/muydelcampo.ApiService/OrderLineListAll"
-	ApiService_PlaceDetail_FullMethodName       = "/muydelcampo.ApiService/PlaceDetail"
-	ApiService_ReverseGeocode_FullMethodName    = "/muydelcampo.ApiService/ReverseGeocode"
-	ApiService_PlaceAutocomplete_FullMethodName = "/muydelcampo.ApiService/PlaceAutocomplete"
+	ApiService_Code_FullMethodName               = "/muydelcampo.ApiService/Code"
+	ApiService_CodeDetail_FullMethodName         = "/muydelcampo.ApiService/CodeDetail"
+	ApiService_CodeVerify_FullMethodName         = "/muydelcampo.ApiService/CodeVerify"
+	ApiService_Userme_FullMethodName             = "/muydelcampo.ApiService/Userme"
+	ApiService_UserDetail_FullMethodName         = "/muydelcampo.ApiService/UserDetail"
+	ApiService_UserCreate_FullMethodName         = "/muydelcampo.ApiService/UserCreate"
+	ApiService_UserUpdate_FullMethodName         = "/muydelcampo.ApiService/UserUpdate"
+	ApiService_UserListAll_FullMethodName        = "/muydelcampo.ApiService/UserListAll"
+	ApiService_UserAddrDetail_FullMethodName     = "/muydelcampo.ApiService/UserAddrDetail"
+	ApiService_UserAddrCreate_FullMethodName     = "/muydelcampo.ApiService/UserAddrCreate"
+	ApiService_UserAddrUpdate_FullMethodName     = "/muydelcampo.ApiService/UserAddrUpdate"
+	ApiService_UserAddrListAll_FullMethodName    = "/muydelcampo.ApiService/UserAddrListAll"
+	ApiService_OrderCreate_FullMethodName        = "/muydelcampo.ApiService/OrderCreate"
+	ApiService_OrderUpdate_FullMethodName        = "/muydelcampo.ApiService/OrderUpdate"
+	ApiService_OrderDelete_FullMethodName        = "/muydelcampo.ApiService/OrderDelete"
+	ApiService_OrderDetail_FullMethodName        = "/muydelcampo.ApiService/OrderDetail"
+	ApiService_OrderListAll_FullMethodName       = "/muydelcampo.ApiService/OrderListAll"
+	ApiService_OrderChangeStatus_FullMethodName  = "/muydelcampo.ApiService/OrderChangeStatus"
+	ApiService_OrderLineUpdate_FullMethodName    = "/muydelcampo.ApiService/OrderLineUpdate"
+	ApiService_OrderLineCreate_FullMethodName    = "/muydelcampo.ApiService/OrderLineCreate"
+	ApiService_OrderLineDelete_FullMethodName    = "/muydelcampo.ApiService/OrderLineDelete"
+	ApiService_OrderLineDetail_FullMethodName    = "/muydelcampo.ApiService/OrderLineDetail"
+	ApiService_OrderLineListAll_FullMethodName   = "/muydelcampo.ApiService/OrderLineListAll"
+	ApiService_DeliveryDayListAll_FullMethodName = "/muydelcampo.ApiService/DeliveryDayListAll"
+	ApiService_PlaceDetail_FullMethodName        = "/muydelcampo.ApiService/PlaceDetail"
+	ApiService_ReverseGeocode_FullMethodName     = "/muydelcampo.ApiService/ReverseGeocode"
+	ApiService_PlaceAutocomplete_FullMethodName  = "/muydelcampo.ApiService/PlaceAutocomplete"
 )
 
 // ApiServiceClient is the client API for ApiService service.
@@ -80,6 +81,9 @@ type ApiServiceClient interface {
 	OrderLineDelete(ctx context.Context, in *OrderLineDeleteReq, opts ...grpc.CallOption) (*OrderLineDeleteRes, error)
 	OrderLineDetail(ctx context.Context, in *OrderLineDetailReq, opts ...grpc.CallOption) (*OrderLineDetailRes, error)
 	OrderLineListAll(ctx context.Context, in *OrderLineListAllReq, opts ...grpc.CallOption) (*OrderLineListAllRes, error)
+	// DELIVERY_DAY
+	// rpc DeliveryDayDetail(DeliveryDayDetailReq) returns (DeliveryDayDetailRes);
+	DeliveryDayListAll(ctx context.Context, in *DeliveryDayListAllReq, opts ...grpc.CallOption) (*DeliveryDayListAllRes, error)
 	// GOOGLE_MAPS__
 	PlaceDetail(ctx context.Context, in *PlaceDetailReq, opts ...grpc.CallOption) (*PlaceDetailRes, error)
 	ReverseGeocode(ctx context.Context, in *ReverseGeocodeReq, opts ...grpc.CallOption) (*ReverseGeocodeRes, error)
@@ -324,6 +328,16 @@ func (c *apiServiceClient) OrderLineListAll(ctx context.Context, in *OrderLineLi
 	return out, nil
 }
 
+func (c *apiServiceClient) DeliveryDayListAll(ctx context.Context, in *DeliveryDayListAllReq, opts ...grpc.CallOption) (*DeliveryDayListAllRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeliveryDayListAllRes)
+	err := c.cc.Invoke(ctx, ApiService_DeliveryDayListAll_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *apiServiceClient) PlaceDetail(ctx context.Context, in *PlaceDetailReq, opts ...grpc.CallOption) (*PlaceDetailRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PlaceDetailRes)
@@ -387,6 +401,9 @@ type ApiServiceServer interface {
 	OrderLineDelete(context.Context, *OrderLineDeleteReq) (*OrderLineDeleteRes, error)
 	OrderLineDetail(context.Context, *OrderLineDetailReq) (*OrderLineDetailRes, error)
 	OrderLineListAll(context.Context, *OrderLineListAllReq) (*OrderLineListAllRes, error)
+	// DELIVERY_DAY
+	// rpc DeliveryDayDetail(DeliveryDayDetailReq) returns (DeliveryDayDetailRes);
+	DeliveryDayListAll(context.Context, *DeliveryDayListAllReq) (*DeliveryDayListAllRes, error)
 	// GOOGLE_MAPS__
 	PlaceDetail(context.Context, *PlaceDetailReq) (*PlaceDetailRes, error)
 	ReverseGeocode(context.Context, *ReverseGeocodeReq) (*ReverseGeocodeRes, error)
@@ -469,6 +486,9 @@ func (UnimplementedApiServiceServer) OrderLineDetail(context.Context, *OrderLine
 }
 func (UnimplementedApiServiceServer) OrderLineListAll(context.Context, *OrderLineListAllReq) (*OrderLineListAllRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method OrderLineListAll not implemented")
+}
+func (UnimplementedApiServiceServer) DeliveryDayListAll(context.Context, *DeliveryDayListAllReq) (*DeliveryDayListAllRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeliveryDayListAll not implemented")
 }
 func (UnimplementedApiServiceServer) PlaceDetail(context.Context, *PlaceDetailReq) (*PlaceDetailRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method PlaceDetail not implemented")
@@ -914,6 +934,24 @@ func _ApiService_OrderLineListAll_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ApiService_DeliveryDayListAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeliveryDayListAllReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).DeliveryDayListAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_DeliveryDayListAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).DeliveryDayListAll(ctx, req.(*DeliveryDayListAllReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ApiService_PlaceDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PlaceDetailReq)
 	if err := dec(in); err != nil {
@@ -1066,6 +1104,10 @@ var ApiService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OrderLineListAll",
 			Handler:    _ApiService_OrderLineListAll_Handler,
+		},
+		{
+			MethodName: "DeliveryDayListAll",
+			Handler:    _ApiService_DeliveryDayListAll_Handler,
 		},
 		{
 			MethodName: "PlaceDetail",

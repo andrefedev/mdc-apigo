@@ -908,3 +908,204 @@ func (r Repository) OrderLineSelectAll(ctx context.Context, oid string) ([]*Orde
 
 	return results, nil
 }
+
+// DELIVERY_DAY__
+
+//func (r Repository) DeliveryDaySelect(ctx context.Context, workDate time.Time, forUpdate bool) (*DeliveryDay, error) {
+//	const op = "App.Repository.DeliveryDaySelect"
+//
+//	qry := deliveryDaySelectColumns + ` WHERE work_date = $1`
+//	if forUpdate {
+//		qry += ` FOR UPDATE`
+//	}
+//
+//	rows, err := r.db.Query(ctx, qry, workDate.Format("2006-01-02"))
+//	if err != nil {
+//		return nil, fmt.Errorf("%s: %w", op, err)
+//	}
+//	defer rows.Close()
+//
+//	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[DeliveryDay])
+//	if err != nil {
+//		if errors.Is(err, pgx.ErrNoRows) {
+//			err = WrapDeliveryDayNotFound(err)
+//		}
+//		return nil, fmt.Errorf("%s: %w", op, err)
+//	}
+//
+//	return result, nil
+//}
+
+func (r Repository) DeliveryDaySelectAll(ctx context.Context, filter *DeliveryDayFilterData, paging *DeliveryDayPagingData) ([]*DeliveryDay, error) {
+	const op = "App.Repository.DeliveryDaySelectAll"
+
+	qry := `SELECT id, kind, note, wday, is_open, capacity, reserved, cutoff_time, date_created, date_updated, delivery_start, delivery_until FROM deliveries_days2`
+
+	var values []any
+	var clauses []string
+
+	if filter != nil {
+		if filter.Kind != nil {
+			values = append(values, *filter.Kind)
+			clauses = append(clauses, fmt.Sprintf(`kind = $%d`, len(values)))
+		}
+		if filter.IsOpen != nil {
+			values = append(values, *filter.IsOpen)
+			clauses = append(clauses, fmt.Sprintf(`is_open = $%d`, len(values)))
+		}
+		if filter.FromDate != nil {
+			values = append(values, filter.FromDate.Format("2006-01-02"))
+			clauses = append(clauses, fmt.Sprintf(`wday >= $%d`, len(values)))
+		}
+		if filter.UntilDate != nil {
+			values = append(values, filter.UntilDate.Format("2006-01-02"))
+			clauses = append(clauses, fmt.Sprintf(`wday <= $%d`, len(values)))
+		}
+	}
+
+	if len(clauses) > 0 {
+		qry += ` WHERE ` + strings.Join(clauses, ` AND `)
+	}
+
+	qry += ` ORDER BY wday ASC`
+
+	if paging != nil {
+		qry += fmt.Sprintf(` LIMIT %d OFFSET %d`, paging.Limit, paging.Offset)
+	}
+
+	rows, err := r.db.Query(ctx, qry, values...)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[DeliveryDay])
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return results, nil
+}
+
+//func (r Repository) DeliveryDaySelectAvailable(ctx context.Context, fromDate time.Time, applyCutoff bool, limit int32) ([]*DeliveryDay, error) {
+//	const op = "App.Repository.DeliveryDaySelectAvailable"
+//
+//	qry := deliveryDaySelectColumns + `
+//	WHERE is_open = TRUE
+//	  AND reserved < capacity
+//	  AND (
+//	    work_date > $1
+//	    OR (
+//	      work_date = $1
+//	      AND (
+//	        NOT $2
+//	        OR CURRENT_TIME <= make_time(cutoff_min / 60, cutoff_min % 60, 0)
+//	      )
+//	    )
+//	  )
+//	ORDER BY work_date ASC
+//	LIMIT $3
+//	`
+//
+//	rows, err := r.db.Query(ctx, qry, fromDate.Format("2006-01-02"), applyCutoff, limit)
+//	if err != nil {
+//		return nil, fmt.Errorf("%s: %w", op, err)
+//	}
+//	defer rows.Close()
+//
+//	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[DeliveryDay])
+//	if err != nil {
+//		return nil, fmt.Errorf("%s: %w", op, err)
+//	}
+//
+//	return results, nil
+//}
+
+//func (r Repository) DeliveryDaySelectNextAvailable(ctx context.Context, fromDate time.Time, applyCutoff bool) (*DeliveryDay, error) {
+//	const op = "App.Repository.DeliveryDaySelectNextAvailable"
+//
+//	qry := deliveryDaySelectColumns + `
+//	WHERE is_open = TRUE
+//	  AND reserved < capacity
+//	  AND (
+//	    work_date > $1
+//	    OR (
+//	      work_date = $1
+//	      AND (
+//	        NOT $2
+//	        OR CURRENT_TIME <= make_time(cutoff_min / 60, cutoff_min % 60, 0)
+//	      )
+//	    )
+//	  )
+//	ORDER BY work_date ASC
+//	LIMIT 1
+//	`
+//
+//	rows, err := r.db.Query(ctx, qry, fromDate.Format("2006-01-02"), applyCutoff)
+//	if err != nil {
+//		return nil, fmt.Errorf("%s: %w", op, err)
+//	}
+//	defer rows.Close()
+//
+//	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[DeliveryDay])
+//	if err != nil {
+//		if errors.Is(err, pgx.ErrNoRows) {
+//			err = WrapDeliveryDayNotFound(err)
+//		}
+//		return nil, fmt.Errorf("%s: %w", op, err)
+//	}
+//
+//	return result, nil
+//}
+
+//func (r Repository) DeliveryDayUpdate(ctx context.Context, workDate time.Time, paths []string, data *DeliveryDayUpdateData) (int64, error) {
+//	const op = "App.Repository.DeliveryDayUpdate"
+//
+//	var values []any
+//	var clauses []string
+//
+//	for _, path := range paths {
+//		switch path {
+//		case "kind":
+//			values = append(values, data.Kind)
+//			clauses = append(clauses, fmt.Sprintf(`kind = $%d`, len(values)))
+//		case "note":
+//			values = append(values, data.Note)
+//			clauses = append(clauses, fmt.Sprintf(`note = $%d`, len(values)))
+//		case "is_open":
+//			values = append(values, data.IsOpen)
+//			clauses = append(clauses, fmt.Sprintf(`is_open = $%d`, len(values)))
+//		case "capacity":
+//			values = append(values, data.Capacity)
+//			clauses = append(clauses, fmt.Sprintf(`capacity = $%d`, len(values)))
+//		case "cutoff_min":
+//			values = append(values, data.CutoffMin)
+//			clauses = append(clauses, fmt.Sprintf(`cutoff_min = $%d`, len(values)))
+//		case "delivery_start":
+//			values = append(values, data.DeliveryStart)
+//			clauses = append(clauses, fmt.Sprintf(`delivery_start = $%d`, len(values)))
+//		case "delivery_until":
+//			values = append(values, data.DeliveryUntil)
+//			clauses = append(clauses, fmt.Sprintf(`delivery_until = $%d`, len(values)))
+//		}
+//	}
+//
+//	if len(clauses) == 0 {
+//		return 0, nil
+//	}
+//
+//	clauses = append(clauses, "date_updated = NOW()")
+//
+//	xquery := `UPDATE deliveries_days`
+//	xquery += ` SET ` + strings.Join(clauses, ", ")
+//
+//	values = append(values, workDate.Format("2006-01-02"))
+//	xquery += fmt.Sprintf(` WHERE work_date = $%d`, len(values))
+//
+//	res, err := r.db.Exec(ctx, xquery, values...)
+//	if err != nil {
+//		return 0, fmt.Errorf("%s: %w", op, err)
+//	}
+//
+//	return res.RowsAffected(), nil
+//}

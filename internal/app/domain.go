@@ -315,7 +315,7 @@ func (p *OrderLine) ToProto() *v1.OrderLine {
 	}
 }
 
-// DELIVERY_SLOT__
+// DELIVERY_DAY__
 
 type DeliveryDay struct {
 	Ref           string     `db:"id"`
@@ -332,21 +332,35 @@ type DeliveryDay struct {
 	DeliveryUntil int32      `db:"delivery_until"`
 }
 
-//func (p *DeliveryDay) ToProto() *v1.DeliverySlot {
-//	workDate := &date.Date{
-//		Day:   int32(p.WorkDate.Day()),
-//		Year:  int32(p.WorkDate.Year()),
-//		Month: int32(p.WorkDate.Month()),
-//	}
-//
-//	return &v1.DeliverySlot{
-//		Ref:       p.Ref,
-//		Code:      p.Code,
-//		WorkDate:  workDate,
-//		Capacity:  p.Capacity,
-//		Reserved:  p.Reserved,
-//		Remaining: p.Remaining,
-//		StartUnix: p.StartUnix,
-//		UntilUnix: p.UntilUnix,
-//	}
-//}
+func (p *DeliveryDay) ToProto() *v1.DeliveryDay {
+	workDate := &date.Date{
+		Day:   int32(p.Wday.Day()),
+		Year:  int32(p.Wday.Year()),
+		Month: int32(p.Wday.Month()),
+	}
+
+	var dateCreated *timestamp.Timestamp
+	if !p.DateCreated.IsZero() {
+		dateCreated = timestamppb.New(p.DateCreated)
+	}
+
+	var dateUpdated *timestamp.Timestamp
+	if p.DateUpdated != nil && !p.DateUpdated.IsZero() {
+		dateUpdated = timestamppb.New(*p.DateUpdated)
+	}
+
+	return &v1.DeliveryDay{
+		Ref:           p.Ref,
+		Kind:          p.Kind,
+		Note:          p.Note,
+		WorkDate:      workDate,
+		IsOpen:        p.IsOpen,
+		Capacity:      p.Capacity,
+		Reserved:      p.Reserved,
+		CutoffMin:     int64(p.CutoffMin),
+		DateCreated:   dateCreated,
+		DateUpdated:   dateUpdated,
+		DeliveryStart: int64(p.DeliveryStart),
+		DeliveryUntil: int64(p.DeliveryUntil),
+	}
+}

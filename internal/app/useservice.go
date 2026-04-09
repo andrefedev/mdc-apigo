@@ -27,6 +27,12 @@ func NewUseService(deps UseServiceDeps) *UseService {
 	return &UseService{deps: deps}
 }
 
+func isSameDate(a, b time.Time) bool {
+	return a.Year() == b.Year() &&
+		a.Month() == b.Month() &&
+		a.Day() == b.Day()
+}
+
 func (s *UseService) Code(ctx context.Context, input *CodeInput) (string, string, error) {
 	oper := "App.UseService.Code"
 
@@ -739,6 +745,148 @@ func (s *UseService) OrderLineListAll(ctx context.Context, oid string) ([]*Order
 
 	result, err := s.deps.Repository.OrderLineSelectAll(ctx, oid)
 	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+// DELIVERY_DAY__
+
+func (s *UseService) DeliveryDayDetail(ctx context.Context, input *DeliveryDayDateInput) (*DeliveryDay, error) {
+	const op = "App.UseService.DeliveryDayDetail"
+
+	if err := input.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.DeliveryDaySelect(ctx, input.WorkDate, false)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) DeliveryDayListAll(ctx context.Context, filter *DeliveryDayFilterInput, paging *DeliveryDayPagingInput) ([]*DeliveryDay, error) {
+	const op = "App.UseService.DeliveryDayListAll"
+
+	f := NewDeliveryDayFilterData(filter)
+	if err := f.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	p := NewDeliveryDayPagingData(paging)
+	if err := p.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.DeliveryDaySelectAll(ctx, f, p)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) DeliveryDayListAvailable(ctx context.Context, input *DeliveryDayListAvailableInput) ([]*DeliveryDay, error) {
+	const op = "App.UseService.DeliveryDayListAvailable"
+
+	data := NewDeliveryDayListAvailableData(input)
+	if err := data.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	now := time.Now().UTC()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	applyCutoff := isSameDate(data.FromDate, today)
+
+	result, err := s.deps.Repository.DeliveryDaySelectAvailable(ctx, data.FromDate, applyCutoff, data.Limit)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) DeliveryDayNextAvailable(ctx context.Context, input *DeliveryDayNextAvailableInput) (*DeliveryDay, error) {
+	const op = "App.UseService.DeliveryDayNextAvailable"
+
+	data := NewDeliveryDayNextAvailableData(input)
+	if err := data.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	now := time.Now().UTC()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	applyCutoff := isSameDate(data.FromDate, today)
+
+	result, err := s.deps.Repository.DeliveryDaySelectNextAvailable(ctx, data.FromDate, applyCutoff)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) DeliveryDayUpdate(ctx context.Context, dateInput *DeliveryDayDateInput, paths []string, input *DeliveryDayUpdateInput) (*DeliveryDay, error) {
+	const op = "App.UseService.DeliveryDayUpdate"
+
+	if err := dateInput.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	data := NewDeliveryDayUpdateData(input)
+	if err := data.Validate(paths); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.DeliveryDaySelect(ctx, dateInput.WorkDate, false)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	nextCapacity := result.Capacity
+	nextCutoff := result.CutoffMin
+	nextStart := result.DeliveryStart
+	nextUntil := result.DeliveryUntil
+
+	for _, path := range paths {
+		switch strings.TrimSpace(path) {
+		case "capacity":
+			nextCapacity = data.Capacity
+		case "cutoff_min":
+			nextCutoff = data.CutoffMin
+		case "delivery_start":
+			nextStart = data.DeliveryStart
+		case "delivery_until":
+			nextUntil = data.DeliveryUntil
+		}
+	}
+
+	if nextCapacity < result.Reserved {
+		return nil, fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayCap)
+	}
+	if nextStart >= nextUntil {
+		return nil, fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayRange)
+	}
+	if nextCutoff >= nextUntil {
+		return nil, fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayCutoff)
+	}
+
+	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		_, err := s.deps.Repository.DeliveryDayUpdate(ctx, dateInput.WorkDate, paths, data)
+		if err != nil {
+			return err
+		}
+
+		result, err = s.deps.Repository.DeliveryDaySelect(ctx, dateInput.WorkDate, false)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 

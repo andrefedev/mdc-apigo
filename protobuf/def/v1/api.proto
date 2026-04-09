@@ -55,8 +55,12 @@ service ApiService {
   // ORDER_DELIVERY
   // rpc OrderDeliveryToday(OrderDeliveryTodayReq) returns  (OrderDeliveryTodayRes);
 
-  // DELIVERY
-  // rpc DeliverySlotFilter(DeliverySlotFilterReq) returns (DeliverySlotFilterRes);
+  // DELIVERY_DAY
+  // rpc DeliveryDayDetail(DeliveryDayDetailReq) returns (DeliveryDayDetailRes);
+  rpc DeliveryDayListAll(DeliveryDayListAllReq) returns (DeliveryDayListAllRes);
+  // rpc DeliveryDayListAvailable(DeliveryDayListAvailableReq) returns (DeliveryDayListAvailableRes);
+  // rpc DeliveryDayNextAvailable(DeliveryDayNextAvailableReq) returns (DeliveryDayNextAvailableRes);
+  // rpc DeliveryDayUpdate(DeliveryDayUpdateReq) returns (DeliveryDayUpdateRes);
 
   // GOOGLE_MAPS__
   rpc PlaceDetail(PlaceDetailReq) returns (PlaceDetailRes);

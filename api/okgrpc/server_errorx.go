@@ -109,6 +109,27 @@ func grpcStatusError(err error) error {
 		return status.Error(codes.InvalidArgument, "El rango de precios de la línea no es válido")
 	}
 
+	// DELIVERY_DAY__
+
+	if errors.Is(err, app.ErrDeliveryDayNotFound) {
+		return status.Error(codes.NotFound, "El día de entrega solicitado no existe")
+	}
+	if errors.Is(err, app.ErrInvalidDeliveryDayDate) {
+		return status.Error(codes.InvalidArgument, "La fecha del día de entrega no es válida")
+	}
+	if errors.Is(err, app.ErrInvalidDeliveryDayKind) {
+		return status.Error(codes.InvalidArgument, "El tipo del día de entrega no es válido")
+	}
+	if errors.Is(err, app.ErrInvalidDeliveryDayRange) {
+		return status.Error(codes.InvalidArgument, "El rango horario del día de entrega no es válido")
+	}
+	if errors.Is(err, app.ErrInvalidDeliveryDayCutoff) {
+		return status.Error(codes.InvalidArgument, "El cutoff del día de entrega no es válido")
+	}
+	if errors.Is(err, app.ErrInvalidDeliveryDayCap) {
+		return status.Error(codes.InvalidArgument, "La capacidad del día de entrega no es válida")
+	}
+
 	// INPUT__
 
 	if errors.Is(err, app.ErrInvalidMaskPath) {

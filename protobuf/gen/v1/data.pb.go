@@ -7,6 +7,7 @@
 package v1
 
 import (
+	date "google.golang.org/genproto/googleapis/type/date"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	fieldmaskpb "google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -3334,6 +3335,478 @@ func (x *OrderDeliveryTodayRes) GetResults() []*Order {
 	return nil
 }
 
+type DeliveryDayDetailReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	WorkDate      *date.Date             `protobuf:"bytes,1,opt,name=work_date,json=workDate,proto3" json:"work_date,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayDetailReq) Reset() {
+	*x = DeliveryDayDetailReq{}
+	mi := &file_data_proto_msgTypes[72]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayDetailReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayDetailReq) ProtoMessage() {}
+
+func (x *DeliveryDayDetailReq) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[72]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayDetailReq.ProtoReflect.Descriptor instead.
+func (*DeliveryDayDetailReq) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{72}
+}
+
+func (x *DeliveryDayDetailReq) GetWorkDate() *date.Date {
+	if x != nil {
+		return x.WorkDate
+	}
+	return nil
+}
+
+type DeliveryDayDetailRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Result        *DeliveryDay           `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayDetailRes) Reset() {
+	*x = DeliveryDayDetailRes{}
+	mi := &file_data_proto_msgTypes[73]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayDetailRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayDetailRes) ProtoMessage() {}
+
+func (x *DeliveryDayDetailRes) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[73]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayDetailRes.ProtoReflect.Descriptor instead.
+func (*DeliveryDayDetailRes) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{73}
+}
+
+func (x *DeliveryDayDetailRes) GetResult() *DeliveryDay {
+	if x != nil {
+		return x.Result
+	}
+	return nil
+}
+
+type DeliveryDayListAllReq struct {
+	state         protoimpl.MessageState        `protogen:"open.v1"`
+	Filter        *DeliveryDayListAllReq_Filter `protobuf:"bytes,1,opt,name=filter,proto3" json:"filter,omitempty"`
+	Paging        *DeliveryDayListAllReq_Paging `protobuf:"bytes,2,opt,name=paging,proto3" json:"paging,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayListAllReq) Reset() {
+	*x = DeliveryDayListAllReq{}
+	mi := &file_data_proto_msgTypes[74]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayListAllReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayListAllReq) ProtoMessage() {}
+
+func (x *DeliveryDayListAllReq) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[74]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayListAllReq.ProtoReflect.Descriptor instead.
+func (*DeliveryDayListAllReq) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{74}
+}
+
+func (x *DeliveryDayListAllReq) GetFilter() *DeliveryDayListAllReq_Filter {
+	if x != nil {
+		return x.Filter
+	}
+	return nil
+}
+
+func (x *DeliveryDayListAllReq) GetPaging() *DeliveryDayListAllReq_Paging {
+	if x != nil {
+		return x.Paging
+	}
+	return nil
+}
+
+type DeliveryDayListAllRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Results       []*DeliveryDay         `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayListAllRes) Reset() {
+	*x = DeliveryDayListAllRes{}
+	mi := &file_data_proto_msgTypes[75]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayListAllRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayListAllRes) ProtoMessage() {}
+
+func (x *DeliveryDayListAllRes) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[75]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayListAllRes.ProtoReflect.Descriptor instead.
+func (*DeliveryDayListAllRes) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *DeliveryDayListAllRes) GetResults() []*DeliveryDay {
+	if x != nil {
+		return x.Results
+	}
+	return nil
+}
+
+type DeliveryDayListAvailableReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FromDate      *date.Date             `protobuf:"bytes,1,opt,name=from_date,json=fromDate,proto3" json:"from_date,omitempty"`
+	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayListAvailableReq) Reset() {
+	*x = DeliveryDayListAvailableReq{}
+	mi := &file_data_proto_msgTypes[76]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayListAvailableReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayListAvailableReq) ProtoMessage() {}
+
+func (x *DeliveryDayListAvailableReq) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[76]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayListAvailableReq.ProtoReflect.Descriptor instead.
+func (*DeliveryDayListAvailableReq) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{76}
+}
+
+func (x *DeliveryDayListAvailableReq) GetFromDate() *date.Date {
+	if x != nil {
+		return x.FromDate
+	}
+	return nil
+}
+
+func (x *DeliveryDayListAvailableReq) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+type DeliveryDayListAvailableRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Results       []*DeliveryDay         `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayListAvailableRes) Reset() {
+	*x = DeliveryDayListAvailableRes{}
+	mi := &file_data_proto_msgTypes[77]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayListAvailableRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayListAvailableRes) ProtoMessage() {}
+
+func (x *DeliveryDayListAvailableRes) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[77]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayListAvailableRes.ProtoReflect.Descriptor instead.
+func (*DeliveryDayListAvailableRes) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{77}
+}
+
+func (x *DeliveryDayListAvailableRes) GetResults() []*DeliveryDay {
+	if x != nil {
+		return x.Results
+	}
+	return nil
+}
+
+type DeliveryDayNextAvailableReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FromDate      *date.Date             `protobuf:"bytes,1,opt,name=from_date,json=fromDate,proto3" json:"from_date,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayNextAvailableReq) Reset() {
+	*x = DeliveryDayNextAvailableReq{}
+	mi := &file_data_proto_msgTypes[78]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayNextAvailableReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayNextAvailableReq) ProtoMessage() {}
+
+func (x *DeliveryDayNextAvailableReq) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[78]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayNextAvailableReq.ProtoReflect.Descriptor instead.
+func (*DeliveryDayNextAvailableReq) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{78}
+}
+
+func (x *DeliveryDayNextAvailableReq) GetFromDate() *date.Date {
+	if x != nil {
+		return x.FromDate
+	}
+	return nil
+}
+
+type DeliveryDayNextAvailableRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Result        *DeliveryDay           `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayNextAvailableRes) Reset() {
+	*x = DeliveryDayNextAvailableRes{}
+	mi := &file_data_proto_msgTypes[79]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayNextAvailableRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayNextAvailableRes) ProtoMessage() {}
+
+func (x *DeliveryDayNextAvailableRes) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[79]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayNextAvailableRes.ProtoReflect.Descriptor instead.
+func (*DeliveryDayNextAvailableRes) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{79}
+}
+
+func (x *DeliveryDayNextAvailableRes) GetResult() *DeliveryDay {
+	if x != nil {
+		return x.Result
+	}
+	return nil
+}
+
+type DeliveryDayUpdateReq struct {
+	state         protoimpl.MessageState        `protogen:"open.v1"`
+	WorkDate      *date.Date                    `protobuf:"bytes,1,opt,name=work_date,json=workDate,proto3" json:"work_date,omitempty"`
+	Payload       *DeliveryDayUpdateReq_Payload `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
+	UpdateMask    *fieldmaskpb.FieldMask        `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayUpdateReq) Reset() {
+	*x = DeliveryDayUpdateReq{}
+	mi := &file_data_proto_msgTypes[80]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayUpdateReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayUpdateReq) ProtoMessage() {}
+
+func (x *DeliveryDayUpdateReq) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[80]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayUpdateReq.ProtoReflect.Descriptor instead.
+func (*DeliveryDayUpdateReq) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{80}
+}
+
+func (x *DeliveryDayUpdateReq) GetWorkDate() *date.Date {
+	if x != nil {
+		return x.WorkDate
+	}
+	return nil
+}
+
+func (x *DeliveryDayUpdateReq) GetPayload() *DeliveryDayUpdateReq_Payload {
+	if x != nil {
+		return x.Payload
+	}
+	return nil
+}
+
+func (x *DeliveryDayUpdateReq) GetUpdateMask() *fieldmaskpb.FieldMask {
+	if x != nil {
+		return x.UpdateMask
+	}
+	return nil
+}
+
+type DeliveryDayUpdateRes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Result        *DeliveryDay           `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayUpdateRes) Reset() {
+	*x = DeliveryDayUpdateRes{}
+	mi := &file_data_proto_msgTypes[81]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayUpdateRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayUpdateRes) ProtoMessage() {}
+
+func (x *DeliveryDayUpdateRes) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[81]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayUpdateRes.ProtoReflect.Descriptor instead.
+func (*DeliveryDayUpdateRes) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{81}
+}
+
+func (x *DeliveryDayUpdateRes) GetResult() *DeliveryDay {
+	if x != nil {
+		return x.Result
+	}
+	return nil
+}
+
 type PlaceDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
@@ -3344,7 +3817,7 @@ type PlaceDetailReq struct {
 
 func (x *PlaceDetailReq) Reset() {
 	*x = PlaceDetailReq{}
-	mi := &file_data_proto_msgTypes[72]
+	mi := &file_data_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3356,7 +3829,7 @@ func (x *PlaceDetailReq) String() string {
 func (*PlaceDetailReq) ProtoMessage() {}
 
 func (x *PlaceDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[72]
+	mi := &file_data_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3369,7 +3842,7 @@ func (x *PlaceDetailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlaceDetailReq.ProtoReflect.Descriptor instead.
 func (*PlaceDetailReq) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{72}
+	return file_data_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *PlaceDetailReq) GetRef() string {
@@ -3395,7 +3868,7 @@ type PlaceDetailRes struct {
 
 func (x *PlaceDetailRes) Reset() {
 	*x = PlaceDetailRes{}
-	mi := &file_data_proto_msgTypes[73]
+	mi := &file_data_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3407,7 +3880,7 @@ func (x *PlaceDetailRes) String() string {
 func (*PlaceDetailRes) ProtoMessage() {}
 
 func (x *PlaceDetailRes) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[73]
+	mi := &file_data_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3420,7 +3893,7 @@ func (x *PlaceDetailRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlaceDetailRes.ProtoReflect.Descriptor instead.
 func (*PlaceDetailRes) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{73}
+	return file_data_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *PlaceDetailRes) GetPlace() *Place {
@@ -3440,7 +3913,7 @@ type ReverseGeocodeReq struct {
 
 func (x *ReverseGeocodeReq) Reset() {
 	*x = ReverseGeocodeReq{}
-	mi := &file_data_proto_msgTypes[74]
+	mi := &file_data_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3452,7 +3925,7 @@ func (x *ReverseGeocodeReq) String() string {
 func (*ReverseGeocodeReq) ProtoMessage() {}
 
 func (x *ReverseGeocodeReq) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[74]
+	mi := &file_data_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3465,7 +3938,7 @@ func (x *ReverseGeocodeReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReverseGeocodeReq.ProtoReflect.Descriptor instead.
 func (*ReverseGeocodeReq) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{74}
+	return file_data_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *ReverseGeocodeReq) GetLat() float64 {
@@ -3491,7 +3964,7 @@ type ReverseGeocodeRes struct {
 
 func (x *ReverseGeocodeRes) Reset() {
 	*x = ReverseGeocodeRes{}
-	mi := &file_data_proto_msgTypes[75]
+	mi := &file_data_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3503,7 +3976,7 @@ func (x *ReverseGeocodeRes) String() string {
 func (*ReverseGeocodeRes) ProtoMessage() {}
 
 func (x *ReverseGeocodeRes) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[75]
+	mi := &file_data_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3516,7 +3989,7 @@ func (x *ReverseGeocodeRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReverseGeocodeRes.ProtoReflect.Descriptor instead.
 func (*ReverseGeocodeRes) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{75}
+	return file_data_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *ReverseGeocodeRes) GetPlace() *Place {
@@ -3536,7 +4009,7 @@ type PlaceAutocompleteReq struct {
 
 func (x *PlaceAutocompleteReq) Reset() {
 	*x = PlaceAutocompleteReq{}
-	mi := &file_data_proto_msgTypes[76]
+	mi := &file_data_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3548,7 +4021,7 @@ func (x *PlaceAutocompleteReq) String() string {
 func (*PlaceAutocompleteReq) ProtoMessage() {}
 
 func (x *PlaceAutocompleteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[76]
+	mi := &file_data_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3561,7 +4034,7 @@ func (x *PlaceAutocompleteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlaceAutocompleteReq.ProtoReflect.Descriptor instead.
 func (*PlaceAutocompleteReq) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{76}
+	return file_data_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *PlaceAutocompleteReq) GetQuery() string {
@@ -3588,7 +4061,7 @@ type PlaceAutocompleteRes struct {
 
 func (x *PlaceAutocompleteRes) Reset() {
 	*x = PlaceAutocompleteRes{}
-	mi := &file_data_proto_msgTypes[77]
+	mi := &file_data_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3600,7 +4073,7 @@ func (x *PlaceAutocompleteRes) String() string {
 func (*PlaceAutocompleteRes) ProtoMessage() {}
 
 func (x *PlaceAutocompleteRes) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[77]
+	mi := &file_data_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3613,7 +4086,7 @@ func (x *PlaceAutocompleteRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlaceAutocompleteRes.ProtoReflect.Descriptor instead.
 func (*PlaceAutocompleteRes) Descriptor() ([]byte, []int) {
-	return file_data_proto_rawDescGZIP(), []int{77}
+	return file_data_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *PlaceAutocompleteRes) GetToken() string {
@@ -3643,7 +4116,7 @@ type UserCreateReq_Payload struct {
 
 func (x *UserCreateReq_Payload) Reset() {
 	*x = UserCreateReq_Payload{}
-	mi := &file_data_proto_msgTypes[78]
+	mi := &file_data_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3655,7 +4128,7 @@ func (x *UserCreateReq_Payload) String() string {
 func (*UserCreateReq_Payload) ProtoMessage() {}
 
 func (x *UserCreateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[78]
+	mi := &file_data_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3719,7 +4192,7 @@ type UserUpdateReq_Payload struct {
 
 func (x *UserUpdateReq_Payload) Reset() {
 	*x = UserUpdateReq_Payload{}
-	mi := &file_data_proto_msgTypes[79]
+	mi := &file_data_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3731,7 +4204,7 @@ func (x *UserUpdateReq_Payload) String() string {
 func (*UserUpdateReq_Payload) ProtoMessage() {}
 
 func (x *UserUpdateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[79]
+	mi := &file_data_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3794,7 +4267,7 @@ type UserListAllReq_Filter struct {
 
 func (x *UserListAllReq_Filter) Reset() {
 	*x = UserListAllReq_Filter{}
-	mi := &file_data_proto_msgTypes[80]
+	mi := &file_data_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3806,7 +4279,7 @@ func (x *UserListAllReq_Filter) String() string {
 func (*UserListAllReq_Filter) ProtoMessage() {}
 
 func (x *UserListAllReq_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[80]
+	mi := &file_data_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3860,7 +4333,7 @@ type UserListAllReq_Paging struct {
 
 func (x *UserListAllReq_Paging) Reset() {
 	*x = UserListAllReq_Paging{}
-	mi := &file_data_proto_msgTypes[81]
+	mi := &file_data_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3872,7 +4345,7 @@ func (x *UserListAllReq_Paging) String() string {
 func (*UserListAllReq_Paging) ProtoMessage() {}
 
 func (x *UserListAllReq_Paging) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[81]
+	mi := &file_data_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3922,7 +4395,7 @@ type UserAddrCreateReq_Payload struct {
 
 func (x *UserAddrCreateReq_Payload) Reset() {
 	*x = UserAddrCreateReq_Payload{}
-	mi := &file_data_proto_msgTypes[82]
+	mi := &file_data_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3934,7 +4407,7 @@ func (x *UserAddrCreateReq_Payload) String() string {
 func (*UserAddrCreateReq_Payload) ProtoMessage() {}
 
 func (x *UserAddrCreateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[82]
+	mi := &file_data_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4048,7 +4521,7 @@ type UserAddrUpdateReq_Payload struct {
 
 func (x *UserAddrUpdateReq_Payload) Reset() {
 	*x = UserAddrUpdateReq_Payload{}
-	mi := &file_data_proto_msgTypes[83]
+	mi := &file_data_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4060,7 +4533,7 @@ func (x *UserAddrUpdateReq_Payload) String() string {
 func (*UserAddrUpdateReq_Payload) ProtoMessage() {}
 
 func (x *UserAddrUpdateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[83]
+	mi := &file_data_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4139,7 +4612,7 @@ type ProductCreateReq_Payload struct {
 
 func (x *ProductCreateReq_Payload) Reset() {
 	*x = ProductCreateReq_Payload{}
-	mi := &file_data_proto_msgTypes[84]
+	mi := &file_data_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4151,7 +4624,7 @@ func (x *ProductCreateReq_Payload) String() string {
 func (*ProductCreateReq_Payload) ProtoMessage() {}
 
 func (x *ProductCreateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[84]
+	mi := &file_data_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4280,7 +4753,7 @@ type ProductUpdateReq_Payload struct {
 
 func (x *ProductUpdateReq_Payload) Reset() {
 	*x = ProductUpdateReq_Payload{}
-	mi := &file_data_proto_msgTypes[85]
+	mi := &file_data_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4292,7 +4765,7 @@ func (x *ProductUpdateReq_Payload) String() string {
 func (*ProductUpdateReq_Payload) ProtoMessage() {}
 
 func (x *ProductUpdateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[85]
+	mi := &file_data_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4418,7 +4891,7 @@ type ProductListAllReq_Filter struct {
 
 func (x *ProductListAllReq_Filter) Reset() {
 	*x = ProductListAllReq_Filter{}
-	mi := &file_data_proto_msgTypes[86]
+	mi := &file_data_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4430,7 +4903,7 @@ func (x *ProductListAllReq_Filter) String() string {
 func (*ProductListAllReq_Filter) ProtoMessage() {}
 
 func (x *ProductListAllReq_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[86]
+	mi := &file_data_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4484,7 +4957,7 @@ type ProductReOrderReq_Payload struct {
 
 func (x *ProductReOrderReq_Payload) Reset() {
 	*x = ProductReOrderReq_Payload{}
-	mi := &file_data_proto_msgTypes[87]
+	mi := &file_data_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4496,7 +4969,7 @@ func (x *ProductReOrderReq_Payload) String() string {
 func (*ProductReOrderReq_Payload) ProtoMessage() {}
 
 func (x *ProductReOrderReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[87]
+	mi := &file_data_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4540,7 +5013,7 @@ type OrderCreateReq_Payload struct {
 
 func (x *OrderCreateReq_Payload) Reset() {
 	*x = OrderCreateReq_Payload{}
-	mi := &file_data_proto_msgTypes[88]
+	mi := &file_data_proto_msgTypes[98]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4552,7 +5025,7 @@ func (x *OrderCreateReq_Payload) String() string {
 func (*OrderCreateReq_Payload) ProtoMessage() {}
 
 func (x *OrderCreateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[88]
+	mi := &file_data_proto_msgTypes[98]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4623,7 +5096,7 @@ type OrderUpdateReq_Payload struct {
 
 func (x *OrderUpdateReq_Payload) Reset() {
 	*x = OrderUpdateReq_Payload{}
-	mi := &file_data_proto_msgTypes[89]
+	mi := &file_data_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4635,7 +5108,7 @@ func (x *OrderUpdateReq_Payload) String() string {
 func (*OrderUpdateReq_Payload) ProtoMessage() {}
 
 func (x *OrderUpdateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[89]
+	mi := &file_data_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4698,7 +5171,7 @@ type OrderListAllReq_Filter struct {
 
 func (x *OrderListAllReq_Filter) Reset() {
 	*x = OrderListAllReq_Filter{}
-	mi := &file_data_proto_msgTypes[90]
+	mi := &file_data_proto_msgTypes[100]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4710,7 +5183,7 @@ func (x *OrderListAllReq_Filter) String() string {
 func (*OrderListAllReq_Filter) ProtoMessage() {}
 
 func (x *OrderListAllReq_Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[90]
+	mi := &file_data_proto_msgTypes[100]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4764,7 +5237,7 @@ type OrderListAllReq_Paging struct {
 
 func (x *OrderListAllReq_Paging) Reset() {
 	*x = OrderListAllReq_Paging{}
-	mi := &file_data_proto_msgTypes[91]
+	mi := &file_data_proto_msgTypes[101]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4776,7 +5249,7 @@ func (x *OrderListAllReq_Paging) String() string {
 func (*OrderListAllReq_Paging) ProtoMessage() {}
 
 func (x *OrderListAllReq_Paging) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[91]
+	mi := &file_data_proto_msgTypes[101]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4815,7 +5288,7 @@ type OrderNoteCreateReq_Payload struct {
 
 func (x *OrderNoteCreateReq_Payload) Reset() {
 	*x = OrderNoteCreateReq_Payload{}
-	mi := &file_data_proto_msgTypes[92]
+	mi := &file_data_proto_msgTypes[102]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4827,7 +5300,7 @@ func (x *OrderNoteCreateReq_Payload) String() string {
 func (*OrderNoteCreateReq_Payload) ProtoMessage() {}
 
 func (x *OrderNoteCreateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[92]
+	mi := &file_data_proto_msgTypes[102]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4859,7 +5332,7 @@ type OrderNoteUpdateReq_Payload struct {
 
 func (x *OrderNoteUpdateReq_Payload) Reset() {
 	*x = OrderNoteUpdateReq_Payload{}
-	mi := &file_data_proto_msgTypes[93]
+	mi := &file_data_proto_msgTypes[103]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4871,7 +5344,7 @@ func (x *OrderNoteUpdateReq_Payload) String() string {
 func (*OrderNoteUpdateReq_Payload) ProtoMessage() {}
 
 func (x *OrderNoteUpdateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[93]
+	mi := &file_data_proto_msgTypes[103]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4906,7 +5379,7 @@ type OrderLineCreateReq_Payload struct {
 
 func (x *OrderLineCreateReq_Payload) Reset() {
 	*x = OrderLineCreateReq_Payload{}
-	mi := &file_data_proto_msgTypes[94]
+	mi := &file_data_proto_msgTypes[104]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4918,7 +5391,7 @@ func (x *OrderLineCreateReq_Payload) String() string {
 func (*OrderLineCreateReq_Payload) ProtoMessage() {}
 
 func (x *OrderLineCreateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[94]
+	mi := &file_data_proto_msgTypes[104]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4973,7 +5446,7 @@ type OrderLineUpdateReq_Payload struct {
 
 func (x *OrderLineUpdateReq_Payload) Reset() {
 	*x = OrderLineUpdateReq_Payload{}
-	mi := &file_data_proto_msgTypes[95]
+	mi := &file_data_proto_msgTypes[105]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4985,7 +5458,7 @@ func (x *OrderLineUpdateReq_Payload) String() string {
 func (*OrderLineUpdateReq_Payload) ProtoMessage() {}
 
 func (x *OrderLineUpdateReq_Payload) ProtoReflect() protoreflect.Message {
-	mi := &file_data_proto_msgTypes[95]
+	mi := &file_data_proto_msgTypes[105]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5022,12 +5495,224 @@ func (x *OrderLineUpdateReq_Payload) GetBasePrice() int32 {
 	return 0
 }
 
+type DeliveryDayListAllReq_Filter struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FromDate      *date.Date             `protobuf:"bytes,1,opt,name=from_date,json=fromDate,proto3" json:"from_date,omitempty"`
+	UntilDate     *date.Date             `protobuf:"bytes,2,opt,name=until_date,json=untilDate,proto3" json:"until_date,omitempty"`
+	IsOpen        *bool                  `protobuf:"varint,3,opt,name=is_open,json=isOpen,proto3,oneof" json:"is_open,omitempty"`
+	Kind          *string                `protobuf:"bytes,4,opt,name=kind,proto3,oneof" json:"kind,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayListAllReq_Filter) Reset() {
+	*x = DeliveryDayListAllReq_Filter{}
+	mi := &file_data_proto_msgTypes[106]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayListAllReq_Filter) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayListAllReq_Filter) ProtoMessage() {}
+
+func (x *DeliveryDayListAllReq_Filter) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[106]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayListAllReq_Filter.ProtoReflect.Descriptor instead.
+func (*DeliveryDayListAllReq_Filter) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{74, 0}
+}
+
+func (x *DeliveryDayListAllReq_Filter) GetFromDate() *date.Date {
+	if x != nil {
+		return x.FromDate
+	}
+	return nil
+}
+
+func (x *DeliveryDayListAllReq_Filter) GetUntilDate() *date.Date {
+	if x != nil {
+		return x.UntilDate
+	}
+	return nil
+}
+
+func (x *DeliveryDayListAllReq_Filter) GetIsOpen() bool {
+	if x != nil && x.IsOpen != nil {
+		return *x.IsOpen
+	}
+	return false
+}
+
+func (x *DeliveryDayListAllReq_Filter) GetKind() string {
+	if x != nil && x.Kind != nil {
+		return *x.Kind
+	}
+	return ""
+}
+
+type DeliveryDayListAllReq_Paging struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Limit         int32                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayListAllReq_Paging) Reset() {
+	*x = DeliveryDayListAllReq_Paging{}
+	mi := &file_data_proto_msgTypes[107]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayListAllReq_Paging) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayListAllReq_Paging) ProtoMessage() {}
+
+func (x *DeliveryDayListAllReq_Paging) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[107]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayListAllReq_Paging.ProtoReflect.Descriptor instead.
+func (*DeliveryDayListAllReq_Paging) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{74, 1}
+}
+
+func (x *DeliveryDayListAllReq_Paging) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *DeliveryDayListAllReq_Paging) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type DeliveryDayUpdateReq_Payload struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Kind          string                 `protobuf:"bytes,1,opt,name=kind,proto3" json:"kind,omitempty"`
+	Note          *string                `protobuf:"bytes,2,opt,name=note,proto3,oneof" json:"note,omitempty"`
+	IsOpen        bool                   `protobuf:"varint,3,opt,name=is_open,json=isOpen,proto3" json:"is_open,omitempty"`
+	Capacity      int32                  `protobuf:"varint,4,opt,name=capacity,proto3" json:"capacity,omitempty"`
+	CutoffMin     int32                  `protobuf:"varint,5,opt,name=cutoff_min,json=cutoffMin,proto3" json:"cutoff_min,omitempty"`
+	DeliveryStart int32                  `protobuf:"varint,6,opt,name=delivery_start,json=deliveryStart,proto3" json:"delivery_start,omitempty"`
+	DeliveryUntil int32                  `protobuf:"varint,7,opt,name=delivery_until,json=deliveryUntil,proto3" json:"delivery_until,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeliveryDayUpdateReq_Payload) Reset() {
+	*x = DeliveryDayUpdateReq_Payload{}
+	mi := &file_data_proto_msgTypes[108]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeliveryDayUpdateReq_Payload) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeliveryDayUpdateReq_Payload) ProtoMessage() {}
+
+func (x *DeliveryDayUpdateReq_Payload) ProtoReflect() protoreflect.Message {
+	mi := &file_data_proto_msgTypes[108]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeliveryDayUpdateReq_Payload.ProtoReflect.Descriptor instead.
+func (*DeliveryDayUpdateReq_Payload) Descriptor() ([]byte, []int) {
+	return file_data_proto_rawDescGZIP(), []int{80, 0}
+}
+
+func (x *DeliveryDayUpdateReq_Payload) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *DeliveryDayUpdateReq_Payload) GetNote() string {
+	if x != nil && x.Note != nil {
+		return *x.Note
+	}
+	return ""
+}
+
+func (x *DeliveryDayUpdateReq_Payload) GetIsOpen() bool {
+	if x != nil {
+		return x.IsOpen
+	}
+	return false
+}
+
+func (x *DeliveryDayUpdateReq_Payload) GetCapacity() int32 {
+	if x != nil {
+		return x.Capacity
+	}
+	return 0
+}
+
+func (x *DeliveryDayUpdateReq_Payload) GetCutoffMin() int32 {
+	if x != nil {
+		return x.CutoffMin
+	}
+	return 0
+}
+
+func (x *DeliveryDayUpdateReq_Payload) GetDeliveryStart() int32 {
+	if x != nil {
+		return x.DeliveryStart
+	}
+	return 0
+}
+
+func (x *DeliveryDayUpdateReq_Payload) GetDeliveryUntil() int32 {
+	if x != nil {
+		return x.DeliveryUntil
+	}
+	return 0
+}
+
 var File_data_proto protoreflect.FileDescriptor
 
 const file_data_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"data.proto\x12\vmuydelcampo\x1a google/protobuf/field_mask.proto\x1a\fdomain.proto\"\x1f\n" +
+	"data.proto\x12\vmuydelcampo\x1a google/protobuf/field_mask.proto\x1a\x16google/type/date.proto\x1a\fdomain.proto\"\x1f\n" +
 	"\aCodeReq\x12\x14\n" +
 	"\x05phone\x18\x01 \x01(\tR\x05phone\"\x1b\n" +
 	"\aCodeRes\x12\x10\n" +
@@ -5344,7 +6029,54 @@ const file_data_proto_rawDesc = "" +
 	"\aresults\x18\x01 \x03(\v2\x16.muydelcampo.OrderLineR\aresults\"\x17\n" +
 	"\x15OrderDeliveryTodayReq\"E\n" +
 	"\x15OrderDeliveryTodayRes\x12,\n" +
-	"\aresults\x18\x01 \x03(\v2\x12.muydelcampo.OrderR\aresults\"8\n" +
+	"\aresults\x18\x01 \x03(\v2\x12.muydelcampo.OrderR\aresults\"F\n" +
+	"\x14DeliveryDayDetailReq\x12.\n" +
+	"\twork_date\x18\x01 \x01(\v2\x11.google.type.DateR\bworkDate\"H\n" +
+	"\x14DeliveryDayDetailRes\x120\n" +
+	"\x06result\x18\x01 \x01(\v2\x18.muydelcampo.DeliveryDayR\x06result\"\x8e\x03\n" +
+	"\x15DeliveryDayListAllReq\x12A\n" +
+	"\x06filter\x18\x01 \x01(\v2).muydelcampo.DeliveryDayListAllReq.FilterR\x06filter\x12A\n" +
+	"\x06paging\x18\x02 \x01(\v2).muydelcampo.DeliveryDayListAllReq.PagingR\x06paging\x1a\xb6\x01\n" +
+	"\x06Filter\x12.\n" +
+	"\tfrom_date\x18\x01 \x01(\v2\x11.google.type.DateR\bfromDate\x120\n" +
+	"\n" +
+	"until_date\x18\x02 \x01(\v2\x11.google.type.DateR\tuntilDate\x12\x1c\n" +
+	"\ais_open\x18\x03 \x01(\bH\x00R\x06isOpen\x88\x01\x01\x12\x17\n" +
+	"\x04kind\x18\x04 \x01(\tH\x01R\x04kind\x88\x01\x01B\n" +
+	"\n" +
+	"\b_is_openB\a\n" +
+	"\x05_kind\x1a6\n" +
+	"\x06Paging\x12\x14\n" +
+	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\"K\n" +
+	"\x15DeliveryDayListAllRes\x122\n" +
+	"\aresults\x18\x01 \x03(\v2\x18.muydelcampo.DeliveryDayR\aresults\"c\n" +
+	"\x1bDeliveryDayListAvailableReq\x12.\n" +
+	"\tfrom_date\x18\x01 \x01(\v2\x11.google.type.DateR\bfromDate\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\"Q\n" +
+	"\x1bDeliveryDayListAvailableRes\x122\n" +
+	"\aresults\x18\x01 \x03(\v2\x18.muydelcampo.DeliveryDayR\aresults\"M\n" +
+	"\x1bDeliveryDayNextAvailableReq\x12.\n" +
+	"\tfrom_date\x18\x01 \x01(\v2\x11.google.type.DateR\bfromDate\"O\n" +
+	"\x1bDeliveryDayNextAvailableRes\x120\n" +
+	"\x06result\x18\x01 \x01(\v2\x18.muydelcampo.DeliveryDayR\x06result\"\xac\x03\n" +
+	"\x14DeliveryDayUpdateReq\x12.\n" +
+	"\twork_date\x18\x01 \x01(\v2\x11.google.type.DateR\bworkDate\x12C\n" +
+	"\apayload\x18\x02 \x01(\v2).muydelcampo.DeliveryDayUpdateReq.PayloadR\apayload\x12;\n" +
+	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"updateMask\x1a\xe1\x01\n" +
+	"\aPayload\x12\x12\n" +
+	"\x04kind\x18\x01 \x01(\tR\x04kind\x12\x17\n" +
+	"\x04note\x18\x02 \x01(\tH\x00R\x04note\x88\x01\x01\x12\x17\n" +
+	"\ais_open\x18\x03 \x01(\bR\x06isOpen\x12\x1a\n" +
+	"\bcapacity\x18\x04 \x01(\x05R\bcapacity\x12\x1d\n" +
+	"\n" +
+	"cutoff_min\x18\x05 \x01(\x05R\tcutoffMin\x12%\n" +
+	"\x0edelivery_start\x18\x06 \x01(\x05R\rdeliveryStart\x12%\n" +
+	"\x0edelivery_until\x18\a \x01(\x05R\rdeliveryUntilB\a\n" +
+	"\x05_note\"H\n" +
+	"\x14DeliveryDayUpdateRes\x120\n" +
+	"\x06result\x18\x01 \x01(\v2\x18.muydelcampo.DeliveryDayR\x06result\"8\n" +
 	"\x0ePlaceDetailReq\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x14\n" +
 	"\x05token\x18\x02 \x01(\tR\x05token\":\n" +
@@ -5375,182 +6107,212 @@ func file_data_proto_rawDescGZIP() []byte {
 	return file_data_proto_rawDescData
 }
 
-var file_data_proto_msgTypes = make([]protoimpl.MessageInfo, 96)
+var file_data_proto_msgTypes = make([]protoimpl.MessageInfo, 109)
 var file_data_proto_goTypes = []any{
-	(*CodeReq)(nil),                    // 0: muydelcampo.CodeReq
-	(*CodeRes)(nil),                    // 1: muydelcampo.CodeRes
-	(*CodeDetailReq)(nil),              // 2: muydelcampo.CodeDetailReq
-	(*CodeDetailRes)(nil),              // 3: muydelcampo.CodeDetailRes
-	(*CodeVerifyReq)(nil),              // 4: muydelcampo.CodeVerifyReq
-	(*CodeVerifyRes)(nil),              // 5: muydelcampo.CodeVerifyRes
-	(*UsermeReq)(nil),                  // 6: muydelcampo.UsermeReq
-	(*UsermeRes)(nil),                  // 7: muydelcampo.UsermeRes
-	(*UserDetailReq)(nil),              // 8: muydelcampo.UserDetailReq
-	(*UserDetailRes)(nil),              // 9: muydelcampo.UserDetailRes
-	(*UserCreateReq)(nil),              // 10: muydelcampo.UserCreateReq
-	(*UserCreateRes)(nil),              // 11: muydelcampo.UserCreateRes
-	(*UserUpdateReq)(nil),              // 12: muydelcampo.UserUpdateReq
-	(*UserUpdateRes)(nil),              // 13: muydelcampo.UserUpdateRes
-	(*UserListAllReq)(nil),             // 14: muydelcampo.UserListAllReq
-	(*UserListAllRes)(nil),             // 15: muydelcampo.UserListAllRes
-	(*UserAddrCreateReq)(nil),          // 16: muydelcampo.UserAddrCreateReq
-	(*UserAddrCreateRes)(nil),          // 17: muydelcampo.UserAddrCreateRes
-	(*UserAddrUpdateReq)(nil),          // 18: muydelcampo.UserAddrUpdateReq
-	(*UserAddrUpdateRes)(nil),          // 19: muydelcampo.UserAddrUpdateRes
-	(*UserAddrDeleteReq)(nil),          // 20: muydelcampo.UserAddrDeleteReq
-	(*UserAddrDeleteRes)(nil),          // 21: muydelcampo.UserAddrDeleteRes
-	(*UserAddrDetailReq)(nil),          // 22: muydelcampo.UserAddrDetailReq
-	(*UserAddrDetailRes)(nil),          // 23: muydelcampo.UserAddrDetailRes
-	(*UserAddrListAllReq)(nil),         // 24: muydelcampo.UserAddrListAllReq
-	(*UserAddrListAllRes)(nil),         // 25: muydelcampo.UserAddrListAllRes
-	(*ProductDetailReq)(nil),           // 26: muydelcampo.ProductDetailReq
-	(*ProductDetailRes)(nil),           // 27: muydelcampo.ProductDetailRes
-	(*ProductCreateReq)(nil),           // 28: muydelcampo.ProductCreateReq
-	(*ProductCreateRes)(nil),           // 29: muydelcampo.ProductCreateRes
-	(*ProductUpdateReq)(nil),           // 30: muydelcampo.ProductUpdateReq
-	(*ProductUpdateRes)(nil),           // 31: muydelcampo.ProductUpdateRes
-	(*ProductDeleteReq)(nil),           // 32: muydelcampo.ProductDeleteReq
-	(*ProductDeleteRes)(nil),           // 33: muydelcampo.ProductDeleteRes
-	(*ProductListAllReq)(nil),          // 34: muydelcampo.ProductListAllReq
-	(*ProductListAllRes)(nil),          // 35: muydelcampo.ProductListAllRes
-	(*ProductReOrderReq)(nil),          // 36: muydelcampo.ProductReOrderReq
-	(*ProductReOrderRes)(nil),          // 37: muydelcampo.ProductReOrderRes
-	(*OrderCreateReq)(nil),             // 38: muydelcampo.OrderCreateReq
-	(*OrderCreateRes)(nil),             // 39: muydelcampo.OrderCreateRes
-	(*OrderUpdateReq)(nil),             // 40: muydelcampo.OrderUpdateReq
-	(*OrderUpdateRes)(nil),             // 41: muydelcampo.OrderUpdateRes
-	(*OrderDeleteReq)(nil),             // 42: muydelcampo.OrderDeleteReq
-	(*OrderDeleteRes)(nil),             // 43: muydelcampo.OrderDeleteRes
-	(*OrderDetailReq)(nil),             // 44: muydelcampo.OrderDetailReq
-	(*OrderDetailRes)(nil),             // 45: muydelcampo.OrderDetailRes
-	(*OrderListAllReq)(nil),            // 46: muydelcampo.OrderListAllReq
-	(*OrderListAllRes)(nil),            // 47: muydelcampo.OrderListAllRes
-	(*OrderChangeStatusReq)(nil),       // 48: muydelcampo.OrderChangeStatusReq
-	(*OrderChangeStatusRes)(nil),       // 49: muydelcampo.OrderChangeStatusRes
-	(*OrderNoteCreateReq)(nil),         // 50: muydelcampo.OrderNoteCreateReq
-	(*OrderNoteCreateRes)(nil),         // 51: muydelcampo.OrderNoteCreateRes
-	(*OrderNoteUpdateReq)(nil),         // 52: muydelcampo.OrderNoteUpdateReq
-	(*OrderNoteUpdateRes)(nil),         // 53: muydelcampo.OrderNoteUpdateRes
-	(*OrderNoteDeleteReq)(nil),         // 54: muydelcampo.OrderNoteDeleteReq
-	(*OrderNoteDeleteRes)(nil),         // 55: muydelcampo.OrderNoteDeleteRes
-	(*OrderNoteDetailReq)(nil),         // 56: muydelcampo.OrderNoteDetailReq
-	(*OrderNoteDetailRes)(nil),         // 57: muydelcampo.OrderNoteDetailRes
-	(*OrderNoteListAllReq)(nil),        // 58: muydelcampo.OrderNoteListAllReq
-	(*OrderNoteListAllRes)(nil),        // 59: muydelcampo.OrderNoteListAllRes
-	(*OrderLineCreateReq)(nil),         // 60: muydelcampo.OrderLineCreateReq
-	(*OrderLineCreateRes)(nil),         // 61: muydelcampo.OrderLineCreateRes
-	(*OrderLineUpdateReq)(nil),         // 62: muydelcampo.OrderLineUpdateReq
-	(*OrderLineUpdateRes)(nil),         // 63: muydelcampo.OrderLineUpdateRes
-	(*OrderLineDeleteReq)(nil),         // 64: muydelcampo.OrderLineDeleteReq
-	(*OrderLineDeleteRes)(nil),         // 65: muydelcampo.OrderLineDeleteRes
-	(*OrderLineDetailReq)(nil),         // 66: muydelcampo.OrderLineDetailReq
-	(*OrderLineDetailRes)(nil),         // 67: muydelcampo.OrderLineDetailRes
-	(*OrderLineListAllReq)(nil),        // 68: muydelcampo.OrderLineListAllReq
-	(*OrderLineListAllRes)(nil),        // 69: muydelcampo.OrderLineListAllRes
-	(*OrderDeliveryTodayReq)(nil),      // 70: muydelcampo.OrderDeliveryTodayReq
-	(*OrderDeliveryTodayRes)(nil),      // 71: muydelcampo.OrderDeliveryTodayRes
-	(*PlaceDetailReq)(nil),             // 72: muydelcampo.PlaceDetailReq
-	(*PlaceDetailRes)(nil),             // 73: muydelcampo.PlaceDetailRes
-	(*ReverseGeocodeReq)(nil),          // 74: muydelcampo.ReverseGeocodeReq
-	(*ReverseGeocodeRes)(nil),          // 75: muydelcampo.ReverseGeocodeRes
-	(*PlaceAutocompleteReq)(nil),       // 76: muydelcampo.PlaceAutocompleteReq
-	(*PlaceAutocompleteRes)(nil),       // 77: muydelcampo.PlaceAutocompleteRes
-	(*UserCreateReq_Payload)(nil),      // 78: muydelcampo.UserCreateReq.Payload
-	(*UserUpdateReq_Payload)(nil),      // 79: muydelcampo.UserUpdateReq.Payload
-	(*UserListAllReq_Filter)(nil),      // 80: muydelcampo.UserListAllReq.Filter
-	(*UserListAllReq_Paging)(nil),      // 81: muydelcampo.UserListAllReq.Paging
-	(*UserAddrCreateReq_Payload)(nil),  // 82: muydelcampo.UserAddrCreateReq.Payload
-	(*UserAddrUpdateReq_Payload)(nil),  // 83: muydelcampo.UserAddrUpdateReq.Payload
-	(*ProductCreateReq_Payload)(nil),   // 84: muydelcampo.ProductCreateReq.Payload
-	(*ProductUpdateReq_Payload)(nil),   // 85: muydelcampo.ProductUpdateReq.Payload
-	(*ProductListAllReq_Filter)(nil),   // 86: muydelcampo.ProductListAllReq.Filter
-	(*ProductReOrderReq_Payload)(nil),  // 87: muydelcampo.ProductReOrderReq.Payload
-	(*OrderCreateReq_Payload)(nil),     // 88: muydelcampo.OrderCreateReq.Payload
-	(*OrderUpdateReq_Payload)(nil),     // 89: muydelcampo.OrderUpdateReq.Payload
-	(*OrderListAllReq_Filter)(nil),     // 90: muydelcampo.OrderListAllReq.Filter
-	(*OrderListAllReq_Paging)(nil),     // 91: muydelcampo.OrderListAllReq.Paging
-	(*OrderNoteCreateReq_Payload)(nil), // 92: muydelcampo.OrderNoteCreateReq.Payload
-	(*OrderNoteUpdateReq_Payload)(nil), // 93: muydelcampo.OrderNoteUpdateReq.Payload
-	(*OrderLineCreateReq_Payload)(nil), // 94: muydelcampo.OrderLineCreateReq.Payload
-	(*OrderLineUpdateReq_Payload)(nil), // 95: muydelcampo.OrderLineUpdateReq.Payload
-	(*Code)(nil),                       // 96: muydelcampo.Code
-	(*User)(nil),                       // 97: muydelcampo.User
-	(*fieldmaskpb.FieldMask)(nil),      // 98: google.protobuf.FieldMask
-	(*UserAddr)(nil),                   // 99: muydelcampo.UserAddr
-	(*Product)(nil),                    // 100: muydelcampo.Product
-	(*Order)(nil),                      // 101: muydelcampo.Order
-	(*OrderNote)(nil),                  // 102: muydelcampo.OrderNote
-	(*OrderLine)(nil),                  // 103: muydelcampo.OrderLine
-	(*Place)(nil),                      // 104: muydelcampo.Place
-	(*Prediction)(nil),                 // 105: muydelcampo.Prediction
+	(*CodeReq)(nil),                      // 0: muydelcampo.CodeReq
+	(*CodeRes)(nil),                      // 1: muydelcampo.CodeRes
+	(*CodeDetailReq)(nil),                // 2: muydelcampo.CodeDetailReq
+	(*CodeDetailRes)(nil),                // 3: muydelcampo.CodeDetailRes
+	(*CodeVerifyReq)(nil),                // 4: muydelcampo.CodeVerifyReq
+	(*CodeVerifyRes)(nil),                // 5: muydelcampo.CodeVerifyRes
+	(*UsermeReq)(nil),                    // 6: muydelcampo.UsermeReq
+	(*UsermeRes)(nil),                    // 7: muydelcampo.UsermeRes
+	(*UserDetailReq)(nil),                // 8: muydelcampo.UserDetailReq
+	(*UserDetailRes)(nil),                // 9: muydelcampo.UserDetailRes
+	(*UserCreateReq)(nil),                // 10: muydelcampo.UserCreateReq
+	(*UserCreateRes)(nil),                // 11: muydelcampo.UserCreateRes
+	(*UserUpdateReq)(nil),                // 12: muydelcampo.UserUpdateReq
+	(*UserUpdateRes)(nil),                // 13: muydelcampo.UserUpdateRes
+	(*UserListAllReq)(nil),               // 14: muydelcampo.UserListAllReq
+	(*UserListAllRes)(nil),               // 15: muydelcampo.UserListAllRes
+	(*UserAddrCreateReq)(nil),            // 16: muydelcampo.UserAddrCreateReq
+	(*UserAddrCreateRes)(nil),            // 17: muydelcampo.UserAddrCreateRes
+	(*UserAddrUpdateReq)(nil),            // 18: muydelcampo.UserAddrUpdateReq
+	(*UserAddrUpdateRes)(nil),            // 19: muydelcampo.UserAddrUpdateRes
+	(*UserAddrDeleteReq)(nil),            // 20: muydelcampo.UserAddrDeleteReq
+	(*UserAddrDeleteRes)(nil),            // 21: muydelcampo.UserAddrDeleteRes
+	(*UserAddrDetailReq)(nil),            // 22: muydelcampo.UserAddrDetailReq
+	(*UserAddrDetailRes)(nil),            // 23: muydelcampo.UserAddrDetailRes
+	(*UserAddrListAllReq)(nil),           // 24: muydelcampo.UserAddrListAllReq
+	(*UserAddrListAllRes)(nil),           // 25: muydelcampo.UserAddrListAllRes
+	(*ProductDetailReq)(nil),             // 26: muydelcampo.ProductDetailReq
+	(*ProductDetailRes)(nil),             // 27: muydelcampo.ProductDetailRes
+	(*ProductCreateReq)(nil),             // 28: muydelcampo.ProductCreateReq
+	(*ProductCreateRes)(nil),             // 29: muydelcampo.ProductCreateRes
+	(*ProductUpdateReq)(nil),             // 30: muydelcampo.ProductUpdateReq
+	(*ProductUpdateRes)(nil),             // 31: muydelcampo.ProductUpdateRes
+	(*ProductDeleteReq)(nil),             // 32: muydelcampo.ProductDeleteReq
+	(*ProductDeleteRes)(nil),             // 33: muydelcampo.ProductDeleteRes
+	(*ProductListAllReq)(nil),            // 34: muydelcampo.ProductListAllReq
+	(*ProductListAllRes)(nil),            // 35: muydelcampo.ProductListAllRes
+	(*ProductReOrderReq)(nil),            // 36: muydelcampo.ProductReOrderReq
+	(*ProductReOrderRes)(nil),            // 37: muydelcampo.ProductReOrderRes
+	(*OrderCreateReq)(nil),               // 38: muydelcampo.OrderCreateReq
+	(*OrderCreateRes)(nil),               // 39: muydelcampo.OrderCreateRes
+	(*OrderUpdateReq)(nil),               // 40: muydelcampo.OrderUpdateReq
+	(*OrderUpdateRes)(nil),               // 41: muydelcampo.OrderUpdateRes
+	(*OrderDeleteReq)(nil),               // 42: muydelcampo.OrderDeleteReq
+	(*OrderDeleteRes)(nil),               // 43: muydelcampo.OrderDeleteRes
+	(*OrderDetailReq)(nil),               // 44: muydelcampo.OrderDetailReq
+	(*OrderDetailRes)(nil),               // 45: muydelcampo.OrderDetailRes
+	(*OrderListAllReq)(nil),              // 46: muydelcampo.OrderListAllReq
+	(*OrderListAllRes)(nil),              // 47: muydelcampo.OrderListAllRes
+	(*OrderChangeStatusReq)(nil),         // 48: muydelcampo.OrderChangeStatusReq
+	(*OrderChangeStatusRes)(nil),         // 49: muydelcampo.OrderChangeStatusRes
+	(*OrderNoteCreateReq)(nil),           // 50: muydelcampo.OrderNoteCreateReq
+	(*OrderNoteCreateRes)(nil),           // 51: muydelcampo.OrderNoteCreateRes
+	(*OrderNoteUpdateReq)(nil),           // 52: muydelcampo.OrderNoteUpdateReq
+	(*OrderNoteUpdateRes)(nil),           // 53: muydelcampo.OrderNoteUpdateRes
+	(*OrderNoteDeleteReq)(nil),           // 54: muydelcampo.OrderNoteDeleteReq
+	(*OrderNoteDeleteRes)(nil),           // 55: muydelcampo.OrderNoteDeleteRes
+	(*OrderNoteDetailReq)(nil),           // 56: muydelcampo.OrderNoteDetailReq
+	(*OrderNoteDetailRes)(nil),           // 57: muydelcampo.OrderNoteDetailRes
+	(*OrderNoteListAllReq)(nil),          // 58: muydelcampo.OrderNoteListAllReq
+	(*OrderNoteListAllRes)(nil),          // 59: muydelcampo.OrderNoteListAllRes
+	(*OrderLineCreateReq)(nil),           // 60: muydelcampo.OrderLineCreateReq
+	(*OrderLineCreateRes)(nil),           // 61: muydelcampo.OrderLineCreateRes
+	(*OrderLineUpdateReq)(nil),           // 62: muydelcampo.OrderLineUpdateReq
+	(*OrderLineUpdateRes)(nil),           // 63: muydelcampo.OrderLineUpdateRes
+	(*OrderLineDeleteReq)(nil),           // 64: muydelcampo.OrderLineDeleteReq
+	(*OrderLineDeleteRes)(nil),           // 65: muydelcampo.OrderLineDeleteRes
+	(*OrderLineDetailReq)(nil),           // 66: muydelcampo.OrderLineDetailReq
+	(*OrderLineDetailRes)(nil),           // 67: muydelcampo.OrderLineDetailRes
+	(*OrderLineListAllReq)(nil),          // 68: muydelcampo.OrderLineListAllReq
+	(*OrderLineListAllRes)(nil),          // 69: muydelcampo.OrderLineListAllRes
+	(*OrderDeliveryTodayReq)(nil),        // 70: muydelcampo.OrderDeliveryTodayReq
+	(*OrderDeliveryTodayRes)(nil),        // 71: muydelcampo.OrderDeliveryTodayRes
+	(*DeliveryDayDetailReq)(nil),         // 72: muydelcampo.DeliveryDayDetailReq
+	(*DeliveryDayDetailRes)(nil),         // 73: muydelcampo.DeliveryDayDetailRes
+	(*DeliveryDayListAllReq)(nil),        // 74: muydelcampo.DeliveryDayListAllReq
+	(*DeliveryDayListAllRes)(nil),        // 75: muydelcampo.DeliveryDayListAllRes
+	(*DeliveryDayListAvailableReq)(nil),  // 76: muydelcampo.DeliveryDayListAvailableReq
+	(*DeliveryDayListAvailableRes)(nil),  // 77: muydelcampo.DeliveryDayListAvailableRes
+	(*DeliveryDayNextAvailableReq)(nil),  // 78: muydelcampo.DeliveryDayNextAvailableReq
+	(*DeliveryDayNextAvailableRes)(nil),  // 79: muydelcampo.DeliveryDayNextAvailableRes
+	(*DeliveryDayUpdateReq)(nil),         // 80: muydelcampo.DeliveryDayUpdateReq
+	(*DeliveryDayUpdateRes)(nil),         // 81: muydelcampo.DeliveryDayUpdateRes
+	(*PlaceDetailReq)(nil),               // 82: muydelcampo.PlaceDetailReq
+	(*PlaceDetailRes)(nil),               // 83: muydelcampo.PlaceDetailRes
+	(*ReverseGeocodeReq)(nil),            // 84: muydelcampo.ReverseGeocodeReq
+	(*ReverseGeocodeRes)(nil),            // 85: muydelcampo.ReverseGeocodeRes
+	(*PlaceAutocompleteReq)(nil),         // 86: muydelcampo.PlaceAutocompleteReq
+	(*PlaceAutocompleteRes)(nil),         // 87: muydelcampo.PlaceAutocompleteRes
+	(*UserCreateReq_Payload)(nil),        // 88: muydelcampo.UserCreateReq.Payload
+	(*UserUpdateReq_Payload)(nil),        // 89: muydelcampo.UserUpdateReq.Payload
+	(*UserListAllReq_Filter)(nil),        // 90: muydelcampo.UserListAllReq.Filter
+	(*UserListAllReq_Paging)(nil),        // 91: muydelcampo.UserListAllReq.Paging
+	(*UserAddrCreateReq_Payload)(nil),    // 92: muydelcampo.UserAddrCreateReq.Payload
+	(*UserAddrUpdateReq_Payload)(nil),    // 93: muydelcampo.UserAddrUpdateReq.Payload
+	(*ProductCreateReq_Payload)(nil),     // 94: muydelcampo.ProductCreateReq.Payload
+	(*ProductUpdateReq_Payload)(nil),     // 95: muydelcampo.ProductUpdateReq.Payload
+	(*ProductListAllReq_Filter)(nil),     // 96: muydelcampo.ProductListAllReq.Filter
+	(*ProductReOrderReq_Payload)(nil),    // 97: muydelcampo.ProductReOrderReq.Payload
+	(*OrderCreateReq_Payload)(nil),       // 98: muydelcampo.OrderCreateReq.Payload
+	(*OrderUpdateReq_Payload)(nil),       // 99: muydelcampo.OrderUpdateReq.Payload
+	(*OrderListAllReq_Filter)(nil),       // 100: muydelcampo.OrderListAllReq.Filter
+	(*OrderListAllReq_Paging)(nil),       // 101: muydelcampo.OrderListAllReq.Paging
+	(*OrderNoteCreateReq_Payload)(nil),   // 102: muydelcampo.OrderNoteCreateReq.Payload
+	(*OrderNoteUpdateReq_Payload)(nil),   // 103: muydelcampo.OrderNoteUpdateReq.Payload
+	(*OrderLineCreateReq_Payload)(nil),   // 104: muydelcampo.OrderLineCreateReq.Payload
+	(*OrderLineUpdateReq_Payload)(nil),   // 105: muydelcampo.OrderLineUpdateReq.Payload
+	(*DeliveryDayListAllReq_Filter)(nil), // 106: muydelcampo.DeliveryDayListAllReq.Filter
+	(*DeliveryDayListAllReq_Paging)(nil), // 107: muydelcampo.DeliveryDayListAllReq.Paging
+	(*DeliveryDayUpdateReq_Payload)(nil), // 108: muydelcampo.DeliveryDayUpdateReq.Payload
+	(*Code)(nil),                         // 109: muydelcampo.Code
+	(*User)(nil),                         // 110: muydelcampo.User
+	(*fieldmaskpb.FieldMask)(nil),        // 111: google.protobuf.FieldMask
+	(*UserAddr)(nil),                     // 112: muydelcampo.UserAddr
+	(*Product)(nil),                      // 113: muydelcampo.Product
+	(*Order)(nil),                        // 114: muydelcampo.Order
+	(*OrderNote)(nil),                    // 115: muydelcampo.OrderNote
+	(*OrderLine)(nil),                    // 116: muydelcampo.OrderLine
+	(*date.Date)(nil),                    // 117: google.type.Date
+	(*DeliveryDay)(nil),                  // 118: muydelcampo.DeliveryDay
+	(*Place)(nil),                        // 119: muydelcampo.Place
+	(*Prediction)(nil),                   // 120: muydelcampo.Prediction
 }
 var file_data_proto_depIdxs = []int32{
-	96,  // 0: muydelcampo.CodeDetailRes.code:type_name -> muydelcampo.Code
-	97,  // 1: muydelcampo.UsermeRes.user:type_name -> muydelcampo.User
-	97,  // 2: muydelcampo.UserDetailRes.user:type_name -> muydelcampo.User
-	78,  // 3: muydelcampo.UserCreateReq.payload:type_name -> muydelcampo.UserCreateReq.Payload
-	97,  // 4: muydelcampo.UserCreateRes.user:type_name -> muydelcampo.User
-	79,  // 5: muydelcampo.UserUpdateReq.payload:type_name -> muydelcampo.UserUpdateReq.Payload
-	98,  // 6: muydelcampo.UserUpdateReq.updateMask:type_name -> google.protobuf.FieldMask
-	97,  // 7: muydelcampo.UserUpdateRes.user:type_name -> muydelcampo.User
-	80,  // 8: muydelcampo.UserListAllReq.filter:type_name -> muydelcampo.UserListAllReq.Filter
-	81,  // 9: muydelcampo.UserListAllReq.paging:type_name -> muydelcampo.UserListAllReq.Paging
-	97,  // 10: muydelcampo.UserListAllRes.users:type_name -> muydelcampo.User
-	82,  // 11: muydelcampo.UserAddrCreateReq.payload:type_name -> muydelcampo.UserAddrCreateReq.Payload
-	99,  // 12: muydelcampo.UserAddrCreateRes.user_addr:type_name -> muydelcampo.UserAddr
-	83,  // 13: muydelcampo.UserAddrUpdateReq.payload:type_name -> muydelcampo.UserAddrUpdateReq.Payload
-	98,  // 14: muydelcampo.UserAddrUpdateReq.updateMask:type_name -> google.protobuf.FieldMask
-	99,  // 15: muydelcampo.UserAddrUpdateRes.user_addr:type_name -> muydelcampo.UserAddr
-	99,  // 16: muydelcampo.UserAddrDeleteRes.user_addr:type_name -> muydelcampo.UserAddr
-	99,  // 17: muydelcampo.UserAddrDetailRes.result:type_name -> muydelcampo.UserAddr
-	99,  // 18: muydelcampo.UserAddrListAllRes.results:type_name -> muydelcampo.UserAddr
-	100, // 19: muydelcampo.ProductDetailRes.product:type_name -> muydelcampo.Product
-	84,  // 20: muydelcampo.ProductCreateReq.payload:type_name -> muydelcampo.ProductCreateReq.Payload
-	100, // 21: muydelcampo.ProductCreateRes.product:type_name -> muydelcampo.Product
-	85,  // 22: muydelcampo.ProductUpdateReq.payload:type_name -> muydelcampo.ProductUpdateReq.Payload
-	98,  // 23: muydelcampo.ProductUpdateReq.update_mask:type_name -> google.protobuf.FieldMask
-	100, // 24: muydelcampo.ProductUpdateRes.product:type_name -> muydelcampo.Product
-	100, // 25: muydelcampo.ProductDeleteRes.product:type_name -> muydelcampo.Product
-	86,  // 26: muydelcampo.ProductListAllReq.filter:type_name -> muydelcampo.ProductListAllReq.Filter
-	100, // 27: muydelcampo.ProductListAllRes.products:type_name -> muydelcampo.Product
-	87,  // 28: muydelcampo.ProductReOrderReq.updates:type_name -> muydelcampo.ProductReOrderReq.Payload
-	100, // 29: muydelcampo.ProductReOrderRes.results:type_name -> muydelcampo.Product
-	88,  // 30: muydelcampo.OrderCreateReq.payload:type_name -> muydelcampo.OrderCreateReq.Payload
-	101, // 31: muydelcampo.OrderCreateRes.result:type_name -> muydelcampo.Order
-	89,  // 32: muydelcampo.OrderUpdateReq.payload:type_name -> muydelcampo.OrderUpdateReq.Payload
-	98,  // 33: muydelcampo.OrderUpdateReq.update_mask:type_name -> google.protobuf.FieldMask
-	101, // 34: muydelcampo.OrderUpdateRes.result:type_name -> muydelcampo.Order
-	101, // 35: muydelcampo.OrderDeleteRes.result:type_name -> muydelcampo.Order
-	101, // 36: muydelcampo.OrderDetailRes.result:type_name -> muydelcampo.Order
-	90,  // 37: muydelcampo.OrderListAllReq.filter:type_name -> muydelcampo.OrderListAllReq.Filter
-	91,  // 38: muydelcampo.OrderListAllReq.paging:type_name -> muydelcampo.OrderListAllReq.Paging
-	101, // 39: muydelcampo.OrderListAllRes.results:type_name -> muydelcampo.Order
-	101, // 40: muydelcampo.OrderChangeStatusRes.result:type_name -> muydelcampo.Order
-	92,  // 41: muydelcampo.OrderNoteCreateReq.payload:type_name -> muydelcampo.OrderNoteCreateReq.Payload
-	102, // 42: muydelcampo.OrderNoteCreateRes.result:type_name -> muydelcampo.OrderNote
-	93,  // 43: muydelcampo.OrderNoteUpdateReq.payload:type_name -> muydelcampo.OrderNoteUpdateReq.Payload
-	98,  // 44: muydelcampo.OrderNoteUpdateReq.updateMask:type_name -> google.protobuf.FieldMask
-	102, // 45: muydelcampo.OrderNoteUpdateRes.result:type_name -> muydelcampo.OrderNote
-	102, // 46: muydelcampo.OrderNoteDeleteRes.result:type_name -> muydelcampo.OrderNote
-	102, // 47: muydelcampo.OrderNoteDetailRes.result:type_name -> muydelcampo.OrderNote
-	102, // 48: muydelcampo.OrderNoteListAllRes.results:type_name -> muydelcampo.OrderNote
-	94,  // 49: muydelcampo.OrderLineCreateReq.payload:type_name -> muydelcampo.OrderLineCreateReq.Payload
-	103, // 50: muydelcampo.OrderLineCreateRes.result:type_name -> muydelcampo.OrderLine
-	95,  // 51: muydelcampo.OrderLineUpdateReq.payload:type_name -> muydelcampo.OrderLineUpdateReq.Payload
-	98,  // 52: muydelcampo.OrderLineUpdateReq.updateMask:type_name -> google.protobuf.FieldMask
-	103, // 53: muydelcampo.OrderLineUpdateRes.result:type_name -> muydelcampo.OrderLine
-	103, // 54: muydelcampo.OrderLineDeleteRes.result:type_name -> muydelcampo.OrderLine
-	103, // 55: muydelcampo.OrderLineDetailRes.result:type_name -> muydelcampo.OrderLine
-	103, // 56: muydelcampo.OrderLineListAllRes.results:type_name -> muydelcampo.OrderLine
-	101, // 57: muydelcampo.OrderDeliveryTodayRes.results:type_name -> muydelcampo.Order
-	104, // 58: muydelcampo.PlaceDetailRes.place:type_name -> muydelcampo.Place
-	104, // 59: muydelcampo.ReverseGeocodeRes.place:type_name -> muydelcampo.Place
-	105, // 60: muydelcampo.PlaceAutocompleteRes.predictions:type_name -> muydelcampo.Prediction
-	61,  // [61:61] is the sub-list for method output_type
-	61,  // [61:61] is the sub-list for method input_type
-	61,  // [61:61] is the sub-list for extension type_name
-	61,  // [61:61] is the sub-list for extension extendee
-	0,   // [0:61] is the sub-list for field type_name
+	109, // 0: muydelcampo.CodeDetailRes.code:type_name -> muydelcampo.Code
+	110, // 1: muydelcampo.UsermeRes.user:type_name -> muydelcampo.User
+	110, // 2: muydelcampo.UserDetailRes.user:type_name -> muydelcampo.User
+	88,  // 3: muydelcampo.UserCreateReq.payload:type_name -> muydelcampo.UserCreateReq.Payload
+	110, // 4: muydelcampo.UserCreateRes.user:type_name -> muydelcampo.User
+	89,  // 5: muydelcampo.UserUpdateReq.payload:type_name -> muydelcampo.UserUpdateReq.Payload
+	111, // 6: muydelcampo.UserUpdateReq.updateMask:type_name -> google.protobuf.FieldMask
+	110, // 7: muydelcampo.UserUpdateRes.user:type_name -> muydelcampo.User
+	90,  // 8: muydelcampo.UserListAllReq.filter:type_name -> muydelcampo.UserListAllReq.Filter
+	91,  // 9: muydelcampo.UserListAllReq.paging:type_name -> muydelcampo.UserListAllReq.Paging
+	110, // 10: muydelcampo.UserListAllRes.users:type_name -> muydelcampo.User
+	92,  // 11: muydelcampo.UserAddrCreateReq.payload:type_name -> muydelcampo.UserAddrCreateReq.Payload
+	112, // 12: muydelcampo.UserAddrCreateRes.user_addr:type_name -> muydelcampo.UserAddr
+	93,  // 13: muydelcampo.UserAddrUpdateReq.payload:type_name -> muydelcampo.UserAddrUpdateReq.Payload
+	111, // 14: muydelcampo.UserAddrUpdateReq.updateMask:type_name -> google.protobuf.FieldMask
+	112, // 15: muydelcampo.UserAddrUpdateRes.user_addr:type_name -> muydelcampo.UserAddr
+	112, // 16: muydelcampo.UserAddrDeleteRes.user_addr:type_name -> muydelcampo.UserAddr
+	112, // 17: muydelcampo.UserAddrDetailRes.result:type_name -> muydelcampo.UserAddr
+	112, // 18: muydelcampo.UserAddrListAllRes.results:type_name -> muydelcampo.UserAddr
+	113, // 19: muydelcampo.ProductDetailRes.product:type_name -> muydelcampo.Product
+	94,  // 20: muydelcampo.ProductCreateReq.payload:type_name -> muydelcampo.ProductCreateReq.Payload
+	113, // 21: muydelcampo.ProductCreateRes.product:type_name -> muydelcampo.Product
+	95,  // 22: muydelcampo.ProductUpdateReq.payload:type_name -> muydelcampo.ProductUpdateReq.Payload
+	111, // 23: muydelcampo.ProductUpdateReq.update_mask:type_name -> google.protobuf.FieldMask
+	113, // 24: muydelcampo.ProductUpdateRes.product:type_name -> muydelcampo.Product
+	113, // 25: muydelcampo.ProductDeleteRes.product:type_name -> muydelcampo.Product
+	96,  // 26: muydelcampo.ProductListAllReq.filter:type_name -> muydelcampo.ProductListAllReq.Filter
+	113, // 27: muydelcampo.ProductListAllRes.products:type_name -> muydelcampo.Product
+	97,  // 28: muydelcampo.ProductReOrderReq.updates:type_name -> muydelcampo.ProductReOrderReq.Payload
+	113, // 29: muydelcampo.ProductReOrderRes.results:type_name -> muydelcampo.Product
+	98,  // 30: muydelcampo.OrderCreateReq.payload:type_name -> muydelcampo.OrderCreateReq.Payload
+	114, // 31: muydelcampo.OrderCreateRes.result:type_name -> muydelcampo.Order
+	99,  // 32: muydelcampo.OrderUpdateReq.payload:type_name -> muydelcampo.OrderUpdateReq.Payload
+	111, // 33: muydelcampo.OrderUpdateReq.update_mask:type_name -> google.protobuf.FieldMask
+	114, // 34: muydelcampo.OrderUpdateRes.result:type_name -> muydelcampo.Order
+	114, // 35: muydelcampo.OrderDeleteRes.result:type_name -> muydelcampo.Order
+	114, // 36: muydelcampo.OrderDetailRes.result:type_name -> muydelcampo.Order
+	100, // 37: muydelcampo.OrderListAllReq.filter:type_name -> muydelcampo.OrderListAllReq.Filter
+	101, // 38: muydelcampo.OrderListAllReq.paging:type_name -> muydelcampo.OrderListAllReq.Paging
+	114, // 39: muydelcampo.OrderListAllRes.results:type_name -> muydelcampo.Order
+	114, // 40: muydelcampo.OrderChangeStatusRes.result:type_name -> muydelcampo.Order
+	102, // 41: muydelcampo.OrderNoteCreateReq.payload:type_name -> muydelcampo.OrderNoteCreateReq.Payload
+	115, // 42: muydelcampo.OrderNoteCreateRes.result:type_name -> muydelcampo.OrderNote
+	103, // 43: muydelcampo.OrderNoteUpdateReq.payload:type_name -> muydelcampo.OrderNoteUpdateReq.Payload
+	111, // 44: muydelcampo.OrderNoteUpdateReq.updateMask:type_name -> google.protobuf.FieldMask
+	115, // 45: muydelcampo.OrderNoteUpdateRes.result:type_name -> muydelcampo.OrderNote
+	115, // 46: muydelcampo.OrderNoteDeleteRes.result:type_name -> muydelcampo.OrderNote
+	115, // 47: muydelcampo.OrderNoteDetailRes.result:type_name -> muydelcampo.OrderNote
+	115, // 48: muydelcampo.OrderNoteListAllRes.results:type_name -> muydelcampo.OrderNote
+	104, // 49: muydelcampo.OrderLineCreateReq.payload:type_name -> muydelcampo.OrderLineCreateReq.Payload
+	116, // 50: muydelcampo.OrderLineCreateRes.result:type_name -> muydelcampo.OrderLine
+	105, // 51: muydelcampo.OrderLineUpdateReq.payload:type_name -> muydelcampo.OrderLineUpdateReq.Payload
+	111, // 52: muydelcampo.OrderLineUpdateReq.updateMask:type_name -> google.protobuf.FieldMask
+	116, // 53: muydelcampo.OrderLineUpdateRes.result:type_name -> muydelcampo.OrderLine
+	116, // 54: muydelcampo.OrderLineDeleteRes.result:type_name -> muydelcampo.OrderLine
+	116, // 55: muydelcampo.OrderLineDetailRes.result:type_name -> muydelcampo.OrderLine
+	116, // 56: muydelcampo.OrderLineListAllRes.results:type_name -> muydelcampo.OrderLine
+	114, // 57: muydelcampo.OrderDeliveryTodayRes.results:type_name -> muydelcampo.Order
+	117, // 58: muydelcampo.DeliveryDayDetailReq.work_date:type_name -> google.type.Date
+	118, // 59: muydelcampo.DeliveryDayDetailRes.result:type_name -> muydelcampo.DeliveryDay
+	106, // 60: muydelcampo.DeliveryDayListAllReq.filter:type_name -> muydelcampo.DeliveryDayListAllReq.Filter
+	107, // 61: muydelcampo.DeliveryDayListAllReq.paging:type_name -> muydelcampo.DeliveryDayListAllReq.Paging
+	118, // 62: muydelcampo.DeliveryDayListAllRes.results:type_name -> muydelcampo.DeliveryDay
+	117, // 63: muydelcampo.DeliveryDayListAvailableReq.from_date:type_name -> google.type.Date
+	118, // 64: muydelcampo.DeliveryDayListAvailableRes.results:type_name -> muydelcampo.DeliveryDay
+	117, // 65: muydelcampo.DeliveryDayNextAvailableReq.from_date:type_name -> google.type.Date
+	118, // 66: muydelcampo.DeliveryDayNextAvailableRes.result:type_name -> muydelcampo.DeliveryDay
+	117, // 67: muydelcampo.DeliveryDayUpdateReq.work_date:type_name -> google.type.Date
+	108, // 68: muydelcampo.DeliveryDayUpdateReq.payload:type_name -> muydelcampo.DeliveryDayUpdateReq.Payload
+	111, // 69: muydelcampo.DeliveryDayUpdateReq.update_mask:type_name -> google.protobuf.FieldMask
+	118, // 70: muydelcampo.DeliveryDayUpdateRes.result:type_name -> muydelcampo.DeliveryDay
+	119, // 71: muydelcampo.PlaceDetailRes.place:type_name -> muydelcampo.Place
+	119, // 72: muydelcampo.ReverseGeocodeRes.place:type_name -> muydelcampo.Place
+	120, // 73: muydelcampo.PlaceAutocompleteRes.predictions:type_name -> muydelcampo.Prediction
+	117, // 74: muydelcampo.DeliveryDayListAllReq.Filter.from_date:type_name -> google.type.Date
+	117, // 75: muydelcampo.DeliveryDayListAllReq.Filter.until_date:type_name -> google.type.Date
+	76,  // [76:76] is the sub-list for method output_type
+	76,  // [76:76] is the sub-list for method input_type
+	76,  // [76:76] is the sub-list for extension type_name
+	76,  // [76:76] is the sub-list for extension extendee
+	0,   // [0:76] is the sub-list for field type_name
 }
 
 func init() { file_data_proto_init() }
@@ -5559,18 +6321,20 @@ func file_data_proto_init() {
 		return
 	}
 	file_domain_proto_init()
-	file_data_proto_msgTypes[80].OneofWrappers = []any{}
-	file_data_proto_msgTypes[84].OneofWrappers = []any{}
-	file_data_proto_msgTypes[85].OneofWrappers = []any{}
-	file_data_proto_msgTypes[86].OneofWrappers = []any{}
 	file_data_proto_msgTypes[90].OneofWrappers = []any{}
+	file_data_proto_msgTypes[94].OneofWrappers = []any{}
+	file_data_proto_msgTypes[95].OneofWrappers = []any{}
+	file_data_proto_msgTypes[96].OneofWrappers = []any{}
+	file_data_proto_msgTypes[100].OneofWrappers = []any{}
+	file_data_proto_msgTypes[106].OneofWrappers = []any{}
+	file_data_proto_msgTypes[108].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_data_proto_rawDesc), len(file_data_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   96,
+			NumMessages:   109,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

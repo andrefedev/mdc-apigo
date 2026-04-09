@@ -570,3 +570,197 @@ func (r *OrderLineUpdateData) Validate(paths []string) error {
 
 	return nil
 }
+
+// DELIVERY_DAY__
+
+type DeliveryDayFilterData struct {
+	FromDate  *time.Time
+	UntilDate *time.Time
+	IsOpen    *bool
+	Kind      *string
+}
+
+func NewDeliveryDayFilterData(input *DeliveryDayFilterInput) *DeliveryDayFilterData {
+	if input == nil {
+		return &DeliveryDayFilterData{}
+	}
+
+	return &DeliveryDayFilterData{
+		FromDate:  input.FromDate,
+		UntilDate: input.UntilDate,
+		IsOpen:    input.IsOpen,
+		Kind:      input.Kind,
+	}
+}
+
+func (r *DeliveryDayFilterData) Validate() error {
+	const op = "App.DeliveryDayFilterData.Validate"
+
+	if r.Kind != nil {
+		value := strings.TrimSpace(*r.Kind)
+		if value == "" {
+			r.Kind = nil
+		} else {
+			r.Kind = &value
+		}
+	}
+
+	if r.FromDate != nil && r.UntilDate != nil && r.UntilDate.Before(*r.FromDate) {
+		return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayRange)
+	}
+
+	return nil
+}
+
+type DeliveryDayPagingData struct {
+	Limit  int32
+	Offset int32
+}
+
+func NewDeliveryDayPagingData(input *DeliveryDayPagingInput) *DeliveryDayPagingData {
+	if input == nil {
+		return &DeliveryDayPagingData{}
+	}
+
+	return &DeliveryDayPagingData{
+		Limit:  input.Limit,
+		Offset: input.Offset,
+	}
+}
+
+func (r *DeliveryDayPagingData) Validate() error {
+	const limit int32 = 90
+	if r.Limit <= 0 {
+		r.Limit = 30
+	}
+	if r.Limit > limit {
+		r.Limit = limit
+	}
+	if r.Offset < 0 {
+		r.Offset = 0
+	}
+
+	return nil
+}
+
+type DeliveryDayListAvailableData struct {
+	FromDate time.Time
+	Limit    int32
+}
+
+func NewDeliveryDayListAvailableData(input *DeliveryDayListAvailableInput) *DeliveryDayListAvailableData {
+	if input == nil {
+		return &DeliveryDayListAvailableData{}
+	}
+
+	return &DeliveryDayListAvailableData{
+		FromDate: input.FromDate,
+		Limit:    input.Limit,
+	}
+}
+
+func (r *DeliveryDayListAvailableData) Validate() error {
+	if r.FromDate.IsZero() {
+		now := time.Now().UTC()
+		r.FromDate = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	}
+
+	if r.Limit <= 0 {
+		r.Limit = 14
+	}
+	if r.Limit > 31 {
+		r.Limit = 31
+	}
+
+	return nil
+}
+
+type DeliveryDayNextAvailableData struct {
+	FromDate time.Time
+}
+
+func NewDeliveryDayNextAvailableData(input *DeliveryDayNextAvailableInput) *DeliveryDayNextAvailableData {
+	if input == nil {
+		return &DeliveryDayNextAvailableData{}
+	}
+
+	return &DeliveryDayNextAvailableData{
+		FromDate: input.FromDate,
+	}
+}
+
+func (r *DeliveryDayNextAvailableData) Validate() error {
+	if r.FromDate.IsZero() {
+		now := time.Now().UTC()
+		r.FromDate = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	}
+
+	return nil
+}
+
+type DeliveryDayUpdateData struct {
+	Kind          string  `db:"kind"`
+	Note          *string `db:"note"`
+	IsOpen        bool    `db:"is_open"`
+	Capacity      int32   `db:"capacity"`
+	CutoffMin     int32   `db:"cutoff_min"`
+	DeliveryStart int32   `db:"delivery_start"`
+	DeliveryUntil int32   `db:"delivery_until"`
+}
+
+func NewDeliveryDayUpdateData(input *DeliveryDayUpdateInput) *DeliveryDayUpdateData {
+	if input == nil {
+		return &DeliveryDayUpdateData{}
+	}
+
+	return &DeliveryDayUpdateData{
+		Kind:          input.Kind,
+		Note:          input.Note,
+		IsOpen:        input.IsOpen,
+		Capacity:      input.Capacity,
+		CutoffMin:     input.CutoffMin,
+		DeliveryStart: input.DeliveryStart,
+		DeliveryUntil: input.DeliveryUntil,
+	}
+}
+
+func (r *DeliveryDayUpdateData) Validate(paths []string) error {
+	const op = "App.DeliveryDayUpdateData.Validate"
+
+	for _, path := range paths {
+		switch strings.TrimSpace(path) {
+		case "kind":
+			r.Kind = strings.TrimSpace(r.Kind)
+			if r.Kind == "" {
+				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayKind)
+			}
+		case "note":
+			if r.Note != nil {
+				value := strings.TrimSpace(*r.Note)
+				if value == "" {
+					r.Note = nil
+				} else {
+					r.Note = &value
+				}
+			}
+		case "capacity":
+			if r.Capacity < 0 {
+				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayCap)
+			}
+		case "cutoff_min":
+			if r.CutoffMin < 0 || r.CutoffMin >= 1440 {
+				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayCutoff)
+			}
+		case "delivery_start":
+			if r.DeliveryStart < 0 || r.DeliveryStart >= 1440 {
+				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayRange)
+			}
+		case "delivery_until":
+			if r.DeliveryUntil < 0 || r.DeliveryUntil >= 1440 {
+				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayRange)
+			}
+		}
+	}
+
+	return nil
+}

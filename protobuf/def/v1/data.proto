@@ -7,6 +7,7 @@ option go_package = 'apigo/protobuf/gen/v1;';
 option java_package = "com.muydelcampo.apigo";
 
 import 'google/protobuf/field_mask.proto';
+import 'google/type/date.proto';
 
 import "domain.proto";
 
@@ -481,6 +482,74 @@ message OrderDeliveryTodayReq {}
 
 message OrderDeliveryTodayRes {
   repeated Order results = 1;
+}
+
+// DELIVERY_DAY__
+
+message DeliveryDayDetailReq {
+  google.type.Date work_date = 1;
+}
+
+message DeliveryDayDetailRes {
+  DeliveryDay result = 1;
+}
+
+message DeliveryDayListAllReq {
+  Filter filter = 1;
+  Paging paging = 2;
+
+  message Filter {
+    google.type.Date from_date = 1;
+    google.type.Date until_date = 2;
+    optional bool is_open = 3;
+    optional string kind = 4;
+  }
+
+  message Paging {
+    int32 limit = 1;
+    int32 offset = 2;
+  }
+}
+
+message DeliveryDayListAllRes {
+  repeated DeliveryDay results = 1;
+}
+
+message DeliveryDayListAvailableReq {
+  google.type.Date from_date = 1;
+  int32 limit = 2;
+}
+
+message DeliveryDayListAvailableRes {
+  repeated DeliveryDay results = 1;
+}
+
+message DeliveryDayNextAvailableReq {
+  google.type.Date from_date = 1;
+}
+
+message DeliveryDayNextAvailableRes {
+  DeliveryDay result = 1;
+}
+
+message DeliveryDayUpdateReq {
+  google.type.Date work_date = 1;
+  Payload payload = 2;
+  google.protobuf.FieldMask update_mask = 3;
+
+  message Payload {
+    string kind = 1;
+    optional string note = 2;
+    bool is_open = 3;
+    int32 capacity = 4;
+    int32 cutoff_min = 5;
+    int32 delivery_start = 6;
+    int32 delivery_until = 7;
+  }
+}
+
+message DeliveryDayUpdateRes {
+  DeliveryDay result = 1;
 }
 
 // GOOGLE_MAPS__

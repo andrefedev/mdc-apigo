@@ -52,3 +52,14 @@ var (
 	ErrInvalidOrderLineOfferPrice = errors.New("invalid order line offer price")
 	ErrInvalidOrderLinePriceRange = errors.New("invalid order line price range")
 )
+
+// DELIVERY_DAY__
+
+var (
+	ErrDeliveryDayNotFound      = errors.New("delivery day not found")
+	ErrInvalidDeliveryDayDate   = errors.New("invalid delivery day date")
+	ErrInvalidDeliveryDayKind   = errors.New("invalid delivery day kind")
+	ErrInvalidDeliveryDayRange  = errors.New("invalid delivery day range")
+	ErrInvalidDeliveryDayCutoff = errors.New("invalid delivery day cutoff")
+	ErrInvalidDeliveryDayCap    = errors.New("invalid delivery day capacity")
+)

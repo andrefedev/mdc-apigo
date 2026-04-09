@@ -4,13 +4,50 @@ import (
 	"apigo/internal/platforms/validatex/normalizex"
 	"fmt"
 	"strings"
+	"time"
 
 	v1 "apigo/protobuf/gen/v1"
 
 	"apigo/internal/platforms/validatex/validationx"
 
 	"github.com/google/uuid"
+	datepb "google.golang.org/genproto/googleapis/type/date"
 )
+
+func protoDateToTime(day *datepb.Date) (time.Time, error) {
+	if day == nil {
+		return time.Time{}, WrapInvalidDeliveryDayDate(nil)
+	}
+
+	result := time.Date(
+		int(day.GetYear()),
+		time.Month(day.GetMonth()),
+		int(day.GetDay()),
+		0, 0, 0, 0,
+		time.UTC,
+	)
+
+	if result.Year() != int(day.GetYear()) ||
+		int(result.Month()) != int(day.GetMonth()) ||
+		result.Day() != int(day.GetDay()) {
+		return time.Time{}, WrapInvalidDeliveryDayDate(nil)
+	}
+
+	return result, nil
+}
+
+func protoDateToTimePtr(day *datepb.Date) (*time.Time, error) {
+	if day == nil {
+		return nil, nil
+	}
+
+	result, err := protoDateToTime(day)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
 
 // CODE__
 
@@ -631,6 +668,230 @@ func (r *OrderLineUpdateInput) Validate(paths []string) error {
 	if priceRange == 2 {
 		if r.BasePrice < r.OfferPrice {
 			return fmt.Errorf("%s: %w", op, ErrInvalidOrderLinePriceRange)
+		}
+	}
+
+	return nil
+}
+
+// DELIVERY_DAY__
+
+type DeliveryDayDateInput struct {
+	WorkDate time.Time
+}
+
+func NewDeliveryDayDateInput(day *datepb.Date) *DeliveryDayDateInput {
+	if day == nil {
+		return &DeliveryDayDateInput{}
+	}
+
+	workDate, _ := protoDateToTime(day)
+	return &DeliveryDayDateInput{
+		WorkDate: workDate,
+	}
+}
+
+func (r *DeliveryDayDateInput) Validate() error {
+	const op = "App.DeliveryDayDateInput.Validate"
+
+	if r.WorkDate.IsZero() {
+		return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayDate)
+	}
+
+	return nil
+}
+
+type DeliveryDayFilterInput struct {
+	FromDate  *time.Time
+	UntilDate *time.Time
+	IsOpen    *bool
+	Kind      *string
+}
+
+func NewDeliveryDayFilterInput(req *v1.DeliveryDayListAllReq_Filter) *DeliveryDayFilterInput {
+	if req == nil {
+		return &DeliveryDayFilterInput{}
+	}
+
+	fromDate, _ := protoDateToTimePtr(req.GetFromDate())
+	untilDate, _ := protoDateToTimePtr(req.GetUntilDate())
+
+	return &DeliveryDayFilterInput{
+		FromDate:  fromDate,
+		UntilDate: untilDate,
+		IsOpen:    req.IsOpen,
+		Kind:      req.Kind,
+	}
+}
+
+func (r *DeliveryDayFilterInput) Validate() error {
+	const op = "App.DeliveryDayFilterInput.Validate"
+
+	if r.Kind != nil {
+		value := strings.TrimSpace(*r.Kind)
+		if value == "" {
+			r.Kind = nil
+		} else {
+			r.Kind = &value
+		}
+	}
+
+	if r.FromDate != nil && r.UntilDate != nil && r.UntilDate.Before(*r.FromDate) {
+		return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayRange)
+	}
+
+	return nil
+}
+
+type DeliveryDayPagingInput struct {
+	Limit  int32
+	Offset int32
+}
+
+func NewDeliveryDayPagingInput(req *v1.DeliveryDayListAllReq_Paging) *DeliveryDayPagingInput {
+	if req == nil {
+		return &DeliveryDayPagingInput{}
+	}
+
+	return &DeliveryDayPagingInput{
+		Limit:  req.GetLimit(),
+		Offset: req.GetOffset(),
+	}
+}
+
+func (r *DeliveryDayPagingInput) Validate() error {
+	const limit int32 = 90
+	if r.Limit <= 0 {
+		r.Limit = 30
+	}
+	if r.Limit > limit {
+		r.Limit = limit
+	}
+	if r.Offset < 0 {
+		r.Offset = 0
+	}
+
+	return nil
+}
+
+type DeliveryDayListAvailableInput struct {
+	FromDate time.Time
+	Limit    int32
+}
+
+func NewDeliveryDayListAvailableInput(req *v1.DeliveryDayListAvailableReq) *DeliveryDayListAvailableInput {
+	if req == nil {
+		return &DeliveryDayListAvailableInput{}
+	}
+
+	fromDate, _ := protoDateToTime(req.GetFromDate())
+	return &DeliveryDayListAvailableInput{
+		FromDate: fromDate,
+		Limit:    req.GetLimit(),
+	}
+}
+
+func (r *DeliveryDayListAvailableInput) Validate() error {
+	if r.FromDate.IsZero() {
+		now := time.Now().UTC()
+		r.FromDate = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	}
+
+	if r.Limit <= 0 {
+		r.Limit = 14
+	}
+	if r.Limit > 31 {
+		r.Limit = 31
+	}
+
+	return nil
+}
+
+type DeliveryDayNextAvailableInput struct {
+	FromDate time.Time
+}
+
+func NewDeliveryDayNextAvailableInput(req *v1.DeliveryDayNextAvailableReq) *DeliveryDayNextAvailableInput {
+	if req == nil {
+		return &DeliveryDayNextAvailableInput{}
+	}
+
+	fromDate, _ := protoDateToTime(req.GetFromDate())
+	return &DeliveryDayNextAvailableInput{
+		FromDate: fromDate,
+	}
+}
+
+func (r *DeliveryDayNextAvailableInput) Validate() error {
+	if r.FromDate.IsZero() {
+		now := time.Now().UTC()
+		r.FromDate = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	}
+
+	return nil
+}
+
+type DeliveryDayUpdateInput struct {
+	Kind          string
+	Note          *string
+	IsOpen        bool
+	Capacity      int32
+	CutoffMin     int32
+	DeliveryStart int32
+	DeliveryUntil int32
+}
+
+func NewDeliveryDayUpdateInput(payload *v1.DeliveryDayUpdateReq_Payload) *DeliveryDayUpdateInput {
+	if payload == nil {
+		return &DeliveryDayUpdateInput{}
+	}
+
+	return &DeliveryDayUpdateInput{
+		Kind:          payload.GetKind(),
+		Note:          payload.Note,
+		IsOpen:        payload.GetIsOpen(),
+		Capacity:      payload.GetCapacity(),
+		CutoffMin:     payload.GetCutoffMin(),
+		DeliveryStart: payload.GetDeliveryStart(),
+		DeliveryUntil: payload.GetDeliveryUntil(),
+	}
+}
+
+func (r *DeliveryDayUpdateInput) Validate(paths []string) error {
+	const op = "App.DeliveryDayUpdateInput.Validate"
+
+	for _, path := range paths {
+		switch strings.TrimSpace(path) {
+		case "kind":
+			r.Kind = strings.TrimSpace(r.Kind)
+			if r.Kind == "" {
+				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayKind)
+			}
+		case "capacity":
+			if r.Capacity < 0 {
+				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayCap)
+			}
+		case "cutoff_min":
+			if r.CutoffMin < 0 || r.CutoffMin >= 1440 {
+				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayCutoff)
+			}
+		case "delivery_start":
+			if r.DeliveryStart < 0 || r.DeliveryStart >= 1440 {
+				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayRange)
+			}
+		case "delivery_until":
+			if r.DeliveryUntil < 0 || r.DeliveryUntil >= 1440 {
+				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayRange)
+			}
+		case "note":
+			if r.Note != nil {
+				value := strings.TrimSpace(*r.Note)
+				if value == "" {
+					r.Note = nil
+				} else {
+					r.Note = &value
+				}
+			}
 		}
 	}
 

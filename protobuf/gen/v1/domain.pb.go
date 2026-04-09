@@ -948,15 +948,15 @@ type DeliveryDay struct {
 	Ref           string                 `protobuf:"bytes,1,opt,name=ref,proto3" json:"ref,omitempty"`
 	Kind          string                 `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
 	Note          *string                `protobuf:"bytes,3,opt,name=note,proto3,oneof" json:"note,omitempty"`
-	Wday          *date.Date             `protobuf:"bytes,4,opt,name=wday,proto3" json:"wday,omitempty"`
+	WorkDate      *date.Date             `protobuf:"bytes,4,opt,name=work_date,json=workDate,proto3" json:"work_date,omitempty"`
 	IsOpen        bool                   `protobuf:"varint,5,opt,name=is_open,json=isOpen,proto3" json:"is_open,omitempty"`
 	Capacity      int32                  `protobuf:"varint,6,opt,name=capacity,proto3" json:"capacity,omitempty"`
 	Reserved      int32                  `protobuf:"varint,7,opt,name=reserved,proto3" json:"reserved,omitempty"`
-	CutoffMin     int64                  `protobuf:"varint,8,opt,name=cutoff_min,json=cutoffMin,proto3" json:"cutoff_min,omitempty"` // segundos epoch
+	CutoffMin     int64                  `protobuf:"varint,8,opt,name=cutoff_min,json=cutoffMin,proto3" json:"cutoff_min,omitempty"` // minutos desde medianoche
 	DateCreated   *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=date_created,json=dateCreated,proto3" json:"date_created,omitempty"`
-	DateUpdated   *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=date_updated,json=dateUpdated,proto3" json:"date_updated,omitempty"`
-	DeliveryStart int64                  `protobuf:"varint,11,opt,name=delivery_start,json=deliveryStart,proto3" json:"delivery_start,omitempty"` // segundos epoch
-	DeliveryUntil int64                  `protobuf:"varint,12,opt,name=delivery_until,json=deliveryUntil,proto3" json:"delivery_until,omitempty"` // segundos epoch
+	DateUpdated   *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=date_updated,json=dateUpdated,proto3,oneof" json:"date_updated,omitempty"`
+	DeliveryStart int64                  `protobuf:"varint,11,opt,name=delivery_start,json=deliveryStart,proto3" json:"delivery_start,omitempty"` // minutos desde medianoche
+	DeliveryUntil int64                  `protobuf:"varint,12,opt,name=delivery_until,json=deliveryUntil,proto3" json:"delivery_until,omitempty"` // minutos desde medianoche
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1012,9 +1012,9 @@ func (x *DeliveryDay) GetNote() string {
 	return ""
 }
 
-func (x *DeliveryDay) GetWday() *date.Date {
+func (x *DeliveryDay) GetWorkDate() *date.Date {
 	if x != nil {
-		return x.Wday
+		return x.WorkDate
 	}
 	return nil
 }
@@ -1405,23 +1405,24 @@ const file_domain_proto_rawDesc = "" +
 	"\tOrderNote\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
 	"\x04note\x18\x02 \x01(\tR\x04note\x12=\n" +
-	"\fdate_created\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\"\xb8\x03\n" +
+	"\fdate_created\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\"\xd7\x03\n" +
 	"\vDeliveryDay\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x12\n" +
 	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x17\n" +
-	"\x04note\x18\x03 \x01(\tH\x00R\x04note\x88\x01\x01\x12%\n" +
-	"\x04wday\x18\x04 \x01(\v2\x11.google.type.DateR\x04wday\x12\x17\n" +
+	"\x04note\x18\x03 \x01(\tH\x00R\x04note\x88\x01\x01\x12.\n" +
+	"\twork_date\x18\x04 \x01(\v2\x11.google.type.DateR\bworkDate\x12\x17\n" +
 	"\ais_open\x18\x05 \x01(\bR\x06isOpen\x12\x1a\n" +
 	"\bcapacity\x18\x06 \x01(\x05R\bcapacity\x12\x1a\n" +
 	"\breserved\x18\a \x01(\x05R\breserved\x12\x1d\n" +
 	"\n" +
 	"cutoff_min\x18\b \x01(\x03R\tcutoffMin\x12=\n" +
-	"\fdate_created\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\x12=\n" +
+	"\fdate_created\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\vdateCreated\x12B\n" +
 	"\fdate_updated\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\vdateUpdated\x12%\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampH\x01R\vdateUpdated\x88\x01\x01\x12%\n" +
 	"\x0edelivery_start\x18\v \x01(\x03R\rdeliveryStart\x12%\n" +
 	"\x0edelivery_until\x18\f \x01(\x03R\rdeliveryUntilB\a\n" +
-	"\x05_note\"\xc0\x02\n" +
+	"\x05_noteB\x0f\n" +
+	"\r_date_updated\"\xc0\x02\n" +
 	"\x05Place\x12\x10\n" +
 	"\x03ref\x18\x01 \x01(\tR\x03ref\x12\x10\n" +
 	"\x03lat\x18\x02 \x01(\x01R\x03lat\x12\x10\n" +
@@ -1493,7 +1494,7 @@ var file_domain_proto_depIdxs = []int32{
 	12, // 14: muydelcampo.Order.delivery_date:type_name -> google.type.Date
 	4,  // 15: muydelcampo.OrderLine.item:type_name -> muydelcampo.Product
 	11, // 16: muydelcampo.OrderNote.date_created:type_name -> google.protobuf.Timestamp
-	12, // 17: muydelcampo.DeliveryDay.wday:type_name -> google.type.Date
+	12, // 17: muydelcampo.DeliveryDay.work_date:type_name -> google.type.Date
 	11, // 18: muydelcampo.DeliveryDay.date_created:type_name -> google.protobuf.Timestamp
 	11, // 19: muydelcampo.DeliveryDay.date_updated:type_name -> google.protobuf.Timestamp
 	20, // [20:20] is the sub-list for method output_type
