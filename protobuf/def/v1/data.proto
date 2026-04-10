@@ -365,6 +365,16 @@ message OrderChangeStatusRes {
   Order result = 1;
 }
 
+message OrderChangePaymentReq {
+  string ref = 1;
+  optional string payment_status = 2;
+  optional string payment_method = 3;
+}
+
+message OrderChangePaymentRes {
+  Order result = 1;
+}
+
 // # ORDER_NOTE #
 
 message OrderNoteCreateReq {

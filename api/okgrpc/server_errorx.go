@@ -78,8 +78,17 @@ func grpcStatusError(err error) error {
 	if errors.Is(err, app.ErrInvalidOrderStatus) {
 		return status.Error(codes.InvalidArgument, "El estado del pedido no es válido")
 	}
+	if errors.Is(err, app.ErrInvalidOrderPaymentStatus) {
+		return status.Error(codes.InvalidArgument, "El estado del pago del pedido no es válido")
+	}
+	if errors.Is(err, app.ErrInvalidOrderPaymentMethod) {
+		return status.Error(codes.InvalidArgument, "El método de pago del pedido no es válido")
+	}
 	if errors.Is(err, app.ErrOrderInvalidTransition) {
 		return status.Error(codes.FailedPrecondition, "La transición de estado del pedido no es válida")
+	}
+	if errors.Is(err, app.ErrOrderPaymentInvalidTransition) {
+		return status.Error(codes.FailedPrecondition, "La transición del pago del pedido no es válida")
 	}
 	if errors.Is(err, app.ErrOrderLineEmpty) {
 		return status.Error(codes.FailedPrecondition, "El pedido no tiene líneas para cambiar a ese estado")

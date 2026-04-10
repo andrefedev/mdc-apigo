@@ -491,14 +491,13 @@ func NewOrderChangeStatusInput(req *v1.OrderChangeStatusReq) *OrderChangeStatusI
 func (r *OrderChangeStatusInput) Validate() error {
 	const op = "App.OrderChangeStatusInput.Validate"
 
-	status := strings.TrimSpace(r.Status)
-	switch status {
-	case "pending", "acepted", "canceled", "dispatched", "successfully":
-		r.Status = status
-		return nil
-	default:
-		return fmt.Errorf("%s: %w", op, ErrInvalidOrderStatus)
+	status, err := normalizeOrderStatus(r.Status)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
 	}
+
+	r.Status = status
+	return nil
 }
 
 // ORDER_FILTER_INPUT__
@@ -743,6 +742,8 @@ func (r *DeliveryDayFilterInput) Validate() error {
 	return nil
 }
 
+// DELIVERY_DAY_PAGING_INPUT__
+
 type DeliveryDayPagingInput struct {
 	Limit  int32
 	Offset int32
@@ -773,6 +774,8 @@ func (r *DeliveryDayPagingInput) Validate() error {
 
 	return nil
 }
+
+// DELIVERY_DAY_LIST_AVAIBLE_INPUT__
 
 type DeliveryDayListAvailableInput struct {
 	FromDate time.Time
@@ -807,29 +810,7 @@ func (r *DeliveryDayListAvailableInput) Validate() error {
 	return nil
 }
 
-type DeliveryDayNextAvailableInput struct {
-	FromDate time.Time
-}
-
-func NewDeliveryDayNextAvailableInput(req *v1.DeliveryDayNextAvailableReq) *DeliveryDayNextAvailableInput {
-	if req == nil {
-		return &DeliveryDayNextAvailableInput{}
-	}
-
-	fromDate, _ := protoDateToTime(req.GetFromDate())
-	return &DeliveryDayNextAvailableInput{
-		FromDate: fromDate,
-	}
-}
-
-func (r *DeliveryDayNextAvailableInput) Validate() error {
-	if r.FromDate.IsZero() {
-		now := time.Now().UTC()
-		r.FromDate = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-	}
-
-	return nil
-}
+// DELIVERY_DAY_UPDATE_INPUT__
 
 type DeliveryDayUpdateInput struct {
 	Kind          string
@@ -893,6 +874,32 @@ func (r *DeliveryDayUpdateInput) Validate(paths []string) error {
 				}
 			}
 		}
+	}
+
+	return nil
+}
+
+// DELIVERY_DAY_NEXT_AVAILABLE_INPUT__
+
+type DeliveryDayNextAvailableInput struct {
+	FromDate time.Time
+}
+
+func NewDeliveryDayNextAvailableInput(req *v1.DeliveryDayNextAvailableReq) *DeliveryDayNextAvailableInput {
+	if req == nil {
+		return &DeliveryDayNextAvailableInput{}
+	}
+
+	fromDate, _ := protoDateToTime(req.GetFromDate())
+	return &DeliveryDayNextAvailableInput{
+		FromDate: fromDate,
+	}
+}
+
+func (r *DeliveryDayNextAvailableInput) Validate() error {
+	if r.FromDate.IsZero() {
+		now := time.Now().UTC()
+		r.FromDate = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 	}
 
 	return nil

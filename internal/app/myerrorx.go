@@ -135,11 +135,32 @@ func WrapInvalidOrderStatus(cause error) error {
 	return errors.Join(ErrInvalidOrderStatus, cause)
 }
 
+func WrapInvalidOrderPaymentStatus(cause error) error {
+	if cause == nil {
+		return ErrInvalidOrderPaymentStatus
+	}
+	return errors.Join(ErrInvalidOrderPaymentStatus, cause)
+}
+
+func WrapInvalidOrderPaymentMethod(cause error) error {
+	if cause == nil {
+		return ErrInvalidOrderPaymentMethod
+	}
+	return errors.Join(ErrInvalidOrderPaymentMethod, cause)
+}
+
 func WrapOrderInvalidTransition(cause error) error {
 	if cause == nil {
 		return ErrOrderInvalidTransition
 	}
 	return errors.Join(ErrOrderInvalidTransition, cause)
+}
+
+func WrapOrderPaymentInvalidTransition(cause error) error {
+	if cause == nil {
+		return ErrOrderPaymentInvalidTransition
+	}
+	return errors.Join(ErrOrderPaymentInvalidTransition, cause)
 }
 
 func WrapOrderLineEmpty(cause error) error {

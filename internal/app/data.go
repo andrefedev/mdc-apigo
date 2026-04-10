@@ -387,14 +387,56 @@ func NewOrderChangeStatusData(input *OrderChangeStatusInput) *OrderChangeStatusD
 func (r *OrderChangeStatusData) Validate() error {
 	const op = "App.OrderChangeStatusData.Validate"
 
-	status := strings.TrimSpace(r.Status)
-	switch status {
-	case "pending", "acepted", "canceled", "dispatched", "successfully":
-		r.Status = status
-		return nil
-	default:
-		return fmt.Errorf("%s: %w", op, ErrInvalidOrderStatus)
+	status, err := normalizeOrderStatus(r.Status)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
 	}
+
+	r.Status = status
+	return nil
+}
+
+// ORDER_CHANGE_PAYMENT_DATA__
+
+type OrderChangePaymentData struct {
+	PaymentStatus *string
+	PaymentMethod *string
+}
+
+func NewOrderChangePaymentData(input *OrderChangePaymentInput) *OrderChangePaymentData {
+	if input == nil {
+		return &OrderChangePaymentData{}
+	}
+	return &OrderChangePaymentData{
+		PaymentStatus: input.PaymentStatus,
+		PaymentMethod: input.PaymentMethod,
+	}
+}
+
+func (r *OrderChangePaymentData) Validate() error {
+	const op = "App.OrderChangePaymentData.Validate"
+
+	if r.PaymentStatus == nil && r.PaymentMethod == nil {
+		return fmt.Errorf("%s: %w", op, ErrInvalidMaskPath)
+	}
+
+	if r.PaymentStatus != nil {
+		value, err := normalizeOrderPaymentStatus(*r.PaymentStatus)
+		if err != nil {
+			return fmt.Errorf("%s: %w", op, err)
+		}
+		r.PaymentStatus = &value
+	}
+
+	if r.PaymentMethod != nil {
+		value, err := normalizeOrderPaymentMethod(*r.PaymentMethod)
+		if err != nil {
+			return fmt.Errorf("%s: %w", op, err)
+		}
+		r.PaymentMethod = &value
+	}
+
+	return nil
 }
 
 // ORDER_FILTER_DATA__

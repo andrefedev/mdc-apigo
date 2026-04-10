@@ -37,6 +37,7 @@ const (
 	ApiService_OrderDetail_FullMethodName        = "/muydelcampo.ApiService/OrderDetail"
 	ApiService_OrderListAll_FullMethodName       = "/muydelcampo.ApiService/OrderListAll"
 	ApiService_OrderChangeStatus_FullMethodName  = "/muydelcampo.ApiService/OrderChangeStatus"
+	ApiService_OrderChangePayment_FullMethodName = "/muydelcampo.ApiService/OrderChangePayment"
 	ApiService_OrderLineUpdate_FullMethodName    = "/muydelcampo.ApiService/OrderLineUpdate"
 	ApiService_OrderLineCreate_FullMethodName    = "/muydelcampo.ApiService/OrderLineCreate"
 	ApiService_OrderLineDelete_FullMethodName    = "/muydelcampo.ApiService/OrderLineDelete"
@@ -75,6 +76,7 @@ type ApiServiceClient interface {
 	OrderDetail(ctx context.Context, in *OrderDetailReq, opts ...grpc.CallOption) (*OrderDetailRes, error)
 	OrderListAll(ctx context.Context, in *OrderListAllReq, opts ...grpc.CallOption) (*OrderListAllRes, error)
 	OrderChangeStatus(ctx context.Context, in *OrderChangeStatusReq, opts ...grpc.CallOption) (*OrderChangeStatusRes, error)
+	OrderChangePayment(ctx context.Context, in *OrderChangePaymentReq, opts ...grpc.CallOption) (*OrderChangePaymentRes, error)
 	// ORDER_LINE
 	OrderLineUpdate(ctx context.Context, in *OrderLineUpdateReq, opts ...grpc.CallOption) (*OrderLineUpdateRes, error)
 	OrderLineCreate(ctx context.Context, in *OrderLineCreateReq, opts ...grpc.CallOption) (*OrderLineCreateRes, error)
@@ -278,6 +280,16 @@ func (c *apiServiceClient) OrderChangeStatus(ctx context.Context, in *OrderChang
 	return out, nil
 }
 
+func (c *apiServiceClient) OrderChangePayment(ctx context.Context, in *OrderChangePaymentReq, opts ...grpc.CallOption) (*OrderChangePaymentRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrderChangePaymentRes)
+	err := c.cc.Invoke(ctx, ApiService_OrderChangePayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *apiServiceClient) OrderLineUpdate(ctx context.Context, in *OrderLineUpdateReq, opts ...grpc.CallOption) (*OrderLineUpdateRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OrderLineUpdateRes)
@@ -395,6 +407,7 @@ type ApiServiceServer interface {
 	OrderDetail(context.Context, *OrderDetailReq) (*OrderDetailRes, error)
 	OrderListAll(context.Context, *OrderListAllReq) (*OrderListAllRes, error)
 	OrderChangeStatus(context.Context, *OrderChangeStatusReq) (*OrderChangeStatusRes, error)
+	OrderChangePayment(context.Context, *OrderChangePaymentReq) (*OrderChangePaymentRes, error)
 	// ORDER_LINE
 	OrderLineUpdate(context.Context, *OrderLineUpdateReq) (*OrderLineUpdateRes, error)
 	OrderLineCreate(context.Context, *OrderLineCreateReq) (*OrderLineCreateRes, error)
@@ -471,6 +484,9 @@ func (UnimplementedApiServiceServer) OrderListAll(context.Context, *OrderListAll
 }
 func (UnimplementedApiServiceServer) OrderChangeStatus(context.Context, *OrderChangeStatusReq) (*OrderChangeStatusRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method OrderChangeStatus not implemented")
+}
+func (UnimplementedApiServiceServer) OrderChangePayment(context.Context, *OrderChangePaymentReq) (*OrderChangePaymentRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method OrderChangePayment not implemented")
 }
 func (UnimplementedApiServiceServer) OrderLineUpdate(context.Context, *OrderLineUpdateReq) (*OrderLineUpdateRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method OrderLineUpdate not implemented")
@@ -844,6 +860,24 @@ func _ApiService_OrderChangeStatus_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ApiService_OrderChangePayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderChangePaymentReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).OrderChangePayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_OrderChangePayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).OrderChangePayment(ctx, req.(*OrderChangePaymentReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ApiService_OrderLineUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OrderLineUpdateReq)
 	if err := dec(in); err != nil {
@@ -1084,6 +1118,10 @@ var ApiService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OrderChangeStatus",
 			Handler:    _ApiService_OrderChangeStatus_Handler,
+		},
+		{
+			MethodName: "OrderChangePayment",
+			Handler:    _ApiService_OrderChangePayment_Handler,
 		},
 		{
 			MethodName: "OrderLineUpdate",

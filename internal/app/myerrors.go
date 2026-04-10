@@ -38,12 +38,15 @@ var (
 )
 
 var (
-	ErrOrderNotFound          = errors.New("order not found")
-	ErrOrderDeleteNotAllowed  = errors.New("order delete not allowed")
-	ErrInvalidOrderStatus     = errors.New("invalid order status")
-	ErrOrderInvalidTransition = errors.New("order invalid transition")
-	ErrOrderLineEmpty         = errors.New("order line empty")
-	ErrInvalidFlatQuery       = errors.New("invalid flat query")
+	ErrOrderNotFound                 = errors.New("order not found")
+	ErrOrderDeleteNotAllowed         = errors.New("order delete not allowed")
+	ErrInvalidOrderStatus            = errors.New("invalid order status")
+	ErrInvalidOrderPaymentStatus     = errors.New("invalid order payment status")
+	ErrInvalidOrderPaymentMethod     = errors.New("invalid order payment method")
+	ErrOrderInvalidTransition        = errors.New("order invalid transition")
+	ErrOrderPaymentInvalidTransition = errors.New("order payment invalid transition")
+	ErrOrderLineEmpty                = errors.New("order line empty")
+	ErrInvalidFlatQuery              = errors.New("invalid flat query")
 
 	ErrOrderLineNotFound          = errors.New("order line not found")
 	ErrInvalidOrderLinePid        = errors.New("invalid order line pid")

@@ -37,6 +37,7 @@ service ApiService {
   rpc OrderDetail(OrderDetailReq) returns (OrderDetailRes);
   rpc OrderListAll(OrderListAllReq) returns (OrderListAllRes);
   rpc OrderChangeStatus(OrderChangeStatusReq) returns (OrderChangeStatusRes);
+  rpc OrderChangePayment(OrderChangePaymentReq) returns (OrderChangePaymentRes);
 
   // ORDER_LINE
   rpc OrderLineUpdate(OrderLineUpdateReq) returns (OrderLineUpdateRes);

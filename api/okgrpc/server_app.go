@@ -569,25 +569,6 @@ func (s Server) OrderLineListAll(ctx context.Context, req *v1.OrderLineListAllRe
 
 // DELIVERY_DAY__
 
-func (s Server) DeliveryDayDetail(ctx context.Context, req *v1.DeliveryDayDetailReq) (*v1.DeliveryDayDetailRes, error) {
-	_, err := requireStaffUser(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	input := app.NewDeliveryDayDateInput(req.GetWorkDate())
-	if err := input.Validate(); err != nil {
-		return nil, err
-	}
-
-	result, err := s.useservice.DeliveryDayDetail(ctx, input)
-	if err != nil {
-		return nil, err
-	}
-
-	return &v1.DeliveryDayDetailRes{Result: result.ToProto()}, nil
-}
-
 func (s Server) DeliveryDayListAll(ctx context.Context, req *v1.DeliveryDayListAllReq) (*v1.DeliveryDayListAllRes, error) {
 	_, err := requireStaffUser(ctx)
 	if err != nil {
@@ -615,85 +596,6 @@ func (s Server) DeliveryDayListAll(ctx context.Context, req *v1.DeliveryDayListA
 	}
 
 	return &v1.DeliveryDayListAllRes{Results: results}, nil
-}
-
-func (s Server) DeliveryDayListAvailable(ctx context.Context, req *v1.DeliveryDayListAvailableReq) (*v1.DeliveryDayListAvailableRes, error) {
-	_, err := requireLogin(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	input := app.NewDeliveryDayListAvailableInput(req)
-	if err := input.Validate(); err != nil {
-		return nil, err
-	}
-
-	result, err := s.useservice.DeliveryDayListAvailable(ctx, input)
-	if err != nil {
-		return nil, err
-	}
-
-	results := make([]*v1.DeliveryDay, 0, len(result))
-	for i := range result {
-		results = append(results, result[i].ToProto())
-	}
-
-	return &v1.DeliveryDayListAvailableRes{Results: results}, nil
-}
-
-func (s Server) DeliveryDayNextAvailable(ctx context.Context, req *v1.DeliveryDayNextAvailableReq) (*v1.DeliveryDayNextAvailableRes, error) {
-	_, err := requireLogin(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	input := app.NewDeliveryDayNextAvailableInput(req)
-	if err := input.Validate(); err != nil {
-		return nil, err
-	}
-
-	result, err := s.useservice.DeliveryDayNextAvailable(ctx, input)
-	if err != nil {
-		return nil, err
-	}
-
-	return &v1.DeliveryDayNextAvailableRes{Result: result.ToProto()}, nil
-}
-
-func (s Server) DeliveryDayUpdate(ctx context.Context, req *v1.DeliveryDayUpdateReq) (*v1.DeliveryDayUpdateRes, error) {
-	_, err := requireStaffUser(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	payload := req.GetPayload()
-	if payload == nil {
-		return nil, ErrInvalidPayload
-	}
-
-	updateMask := req.GetUpdateMask()
-	updateMask.Normalize()
-	if !updateMask.IsValid(payload) {
-		return nil, ErrInvalidUpdateMask
-	}
-
-	dateInput := app.NewDeliveryDayDateInput(req.GetWorkDate())
-	if err := dateInput.Validate(); err != nil {
-		return nil, err
-	}
-
-	paths := updateMask.GetPaths()
-	input := app.NewDeliveryDayUpdateInput(payload)
-	if err := input.Validate(paths); err != nil {
-		return nil, err
-	}
-
-	result, err := s.useservice.DeliveryDayUpdate(ctx, dateInput, paths, input)
-	if err != nil {
-		return nil, err
-	}
-
-	return &v1.DeliveryDayUpdateRes{Result: result.ToProto()}, nil
 }
 
 // GOOGLE_MAPS__
