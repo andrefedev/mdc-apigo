@@ -25,7 +25,7 @@ var File_api_proto protoreflect.FileDescriptor
 const file_api_proto_rawDesc = "" +
 	"\n" +
 	"\tapi.proto\x12\vmuydelcampo\x1a\n" +
-	"data.proto2\x95\x11\n" +
+	"data.proto2\xdb\x11\n" +
 	"\n" +
 	"ApiService\x122\n" +
 	"\x04Code\x12\x14.muydelcampo.CodeReq\x1a\x14.muydelcampo.CodeRes\x12D\n" +
@@ -44,81 +44,84 @@ const file_api_proto_rawDesc = "" +
 	"\x0eUserAddrDetail\x12\x1e.muydelcampo.UserAddrDetailReq\x1a\x1e.muydelcampo.UserAddrDetailRes\x12P\n" +
 	"\x0eUserAddrCreate\x12\x1e.muydelcampo.UserAddrCreateReq\x1a\x1e.muydelcampo.UserAddrCreateRes\x12P\n" +
 	"\x0eUserAddrUpdate\x12\x1e.muydelcampo.UserAddrUpdateReq\x1a\x1e.muydelcampo.UserAddrUpdateRes\x12S\n" +
-	"\x0fUserAddrListAll\x12\x1f.muydelcampo.UserAddrListAllReq\x1a\x1f.muydelcampo.UserAddrListAllRes\x12G\n" +
+	"\x0fUserAddrListAll\x12\x1f.muydelcampo.UserAddrListAllReq\x1a\x1f.muydelcampo.UserAddrListAllRes\x12M\n" +
+	"\rProductDetail\x12\x1d.muydelcampo.ProductDetailReq\x1a\x1d.muydelcampo.ProductDetailRes\x12P\n" +
+	"\x0eProductListAll\x12\x1e.muydelcampo.ProductListAllReq\x1a\x1e.muydelcampo.ProductListAllRes\x12G\n" +
 	"\vOrderCreate\x12\x1b.muydelcampo.OrderCreateReq\x1a\x1b.muydelcampo.OrderCreateRes\x12G\n" +
 	"\vOrderUpdate\x12\x1b.muydelcampo.OrderUpdateReq\x1a\x1b.muydelcampo.OrderUpdateRes\x12G\n" +
 	"\vOrderDelete\x12\x1b.muydelcampo.OrderDeleteReq\x1a\x1b.muydelcampo.OrderDeleteRes\x12G\n" +
 	"\vOrderDetail\x12\x1b.muydelcampo.OrderDetailReq\x1a\x1b.muydelcampo.OrderDetailRes\x12J\n" +
 	"\fOrderListAll\x12\x1c.muydelcampo.OrderListAllReq\x1a\x1c.muydelcampo.OrderListAllRes\x12Y\n" +
-	"\x11OrderChangeStatus\x12!.muydelcampo.OrderChangeStatusReq\x1a!.muydelcampo.OrderChangeStatusRes\x12\\\n" +
-	"\x12OrderChangePayment\x12\".muydelcampo.OrderChangePaymentReq\x1a\".muydelcampo.OrderChangePaymentRes\x12S\n" +
+	"\x11OrderChangeStatus\x12!.muydelcampo.OrderChangeStatusReq\x1a!.muydelcampo.OrderChangeStatusRes\x12S\n" +
 	"\x0fOrderLineUpdate\x12\x1f.muydelcampo.OrderLineUpdateReq\x1a\x1f.muydelcampo.OrderLineUpdateRes\x12S\n" +
 	"\x0fOrderLineCreate\x12\x1f.muydelcampo.OrderLineCreateReq\x1a\x1f.muydelcampo.OrderLineCreateRes\x12S\n" +
 	"\x0fOrderLineDelete\x12\x1f.muydelcampo.OrderLineDeleteReq\x1a\x1f.muydelcampo.OrderLineDeleteRes\x12S\n" +
 	"\x0fOrderLineDetail\x12\x1f.muydelcampo.OrderLineDetailReq\x1a\x1f.muydelcampo.OrderLineDetailRes\x12V\n" +
-	"\x10OrderLineListAll\x12 .muydelcampo.OrderLineListAllReq\x1a .muydelcampo.OrderLineListAllRes\x12\\\n" +
-	"\x12DeliveryDayListAll\x12\".muydelcampo.DeliveryDayListAllReq\x1a\".muydelcampo.DeliveryDayListAllRes\x12G\n" +
+	"\x10OrderLineListAll\x12 .muydelcampo.OrderLineListAllReq\x1a .muydelcampo.OrderLineListAllRes\x12_\n" +
+	"\x13DeliverySlotListAll\x12#.muydelcampo.DeliverySlotListAllReq\x1a#.muydelcampo.DeliverySlotListAllRes\x12G\n" +
 	"\vPlaceDetail\x12\x1b.muydelcampo.PlaceDetailReq\x1a\x1b.muydelcampo.PlaceDetailRes\x12P\n" +
 	"\x0eReverseGeocode\x12\x1e.muydelcampo.ReverseGeocodeReq\x1a\x1e.muydelcampo.ReverseGeocodeRes\x12Y\n" +
 	"\x11PlaceAutocomplete\x12!.muydelcampo.PlaceAutocompleteReq\x1a!.muydelcampo.PlaceAutocompleteResB\x18Z\x16apigo/protobuf/gen/v1;b\x06proto3"
 
 var file_api_proto_goTypes = []any{
-	(*CodeReq)(nil),               // 0: muydelcampo.CodeReq
-	(*CodeDetailReq)(nil),         // 1: muydelcampo.CodeDetailReq
-	(*CodeVerifyReq)(nil),         // 2: muydelcampo.CodeVerifyReq
-	(*UsermeReq)(nil),             // 3: muydelcampo.UsermeReq
-	(*UserDetailReq)(nil),         // 4: muydelcampo.UserDetailReq
-	(*UserCreateReq)(nil),         // 5: muydelcampo.UserCreateReq
-	(*UserUpdateReq)(nil),         // 6: muydelcampo.UserUpdateReq
-	(*UserListAllReq)(nil),        // 7: muydelcampo.UserListAllReq
-	(*UserAddrDetailReq)(nil),     // 8: muydelcampo.UserAddrDetailReq
-	(*UserAddrCreateReq)(nil),     // 9: muydelcampo.UserAddrCreateReq
-	(*UserAddrUpdateReq)(nil),     // 10: muydelcampo.UserAddrUpdateReq
-	(*UserAddrListAllReq)(nil),    // 11: muydelcampo.UserAddrListAllReq
-	(*OrderCreateReq)(nil),        // 12: muydelcampo.OrderCreateReq
-	(*OrderUpdateReq)(nil),        // 13: muydelcampo.OrderUpdateReq
-	(*OrderDeleteReq)(nil),        // 14: muydelcampo.OrderDeleteReq
-	(*OrderDetailReq)(nil),        // 15: muydelcampo.OrderDetailReq
-	(*OrderListAllReq)(nil),       // 16: muydelcampo.OrderListAllReq
-	(*OrderChangeStatusReq)(nil),  // 17: muydelcampo.OrderChangeStatusReq
-	(*OrderChangePaymentReq)(nil), // 18: muydelcampo.OrderChangePaymentReq
-	(*OrderLineUpdateReq)(nil),    // 19: muydelcampo.OrderLineUpdateReq
-	(*OrderLineCreateReq)(nil),    // 20: muydelcampo.OrderLineCreateReq
-	(*OrderLineDeleteReq)(nil),    // 21: muydelcampo.OrderLineDeleteReq
-	(*OrderLineDetailReq)(nil),    // 22: muydelcampo.OrderLineDetailReq
-	(*OrderLineListAllReq)(nil),   // 23: muydelcampo.OrderLineListAllReq
-	(*DeliveryDayListAllReq)(nil), // 24: muydelcampo.DeliveryDayListAllReq
-	(*PlaceDetailReq)(nil),        // 25: muydelcampo.PlaceDetailReq
-	(*ReverseGeocodeReq)(nil),     // 26: muydelcampo.ReverseGeocodeReq
-	(*PlaceAutocompleteReq)(nil),  // 27: muydelcampo.PlaceAutocompleteReq
-	(*CodeRes)(nil),               // 28: muydelcampo.CodeRes
-	(*CodeDetailRes)(nil),         // 29: muydelcampo.CodeDetailRes
-	(*CodeVerifyRes)(nil),         // 30: muydelcampo.CodeVerifyRes
-	(*UsermeRes)(nil),             // 31: muydelcampo.UsermeRes
-	(*UserDetailRes)(nil),         // 32: muydelcampo.UserDetailRes
-	(*UserCreateRes)(nil),         // 33: muydelcampo.UserCreateRes
-	(*UserUpdateRes)(nil),         // 34: muydelcampo.UserUpdateRes
-	(*UserListAllRes)(nil),        // 35: muydelcampo.UserListAllRes
-	(*UserAddrDetailRes)(nil),     // 36: muydelcampo.UserAddrDetailRes
-	(*UserAddrCreateRes)(nil),     // 37: muydelcampo.UserAddrCreateRes
-	(*UserAddrUpdateRes)(nil),     // 38: muydelcampo.UserAddrUpdateRes
-	(*UserAddrListAllRes)(nil),    // 39: muydelcampo.UserAddrListAllRes
-	(*OrderCreateRes)(nil),        // 40: muydelcampo.OrderCreateRes
-	(*OrderUpdateRes)(nil),        // 41: muydelcampo.OrderUpdateRes
-	(*OrderDeleteRes)(nil),        // 42: muydelcampo.OrderDeleteRes
-	(*OrderDetailRes)(nil),        // 43: muydelcampo.OrderDetailRes
-	(*OrderListAllRes)(nil),       // 44: muydelcampo.OrderListAllRes
-	(*OrderChangeStatusRes)(nil),  // 45: muydelcampo.OrderChangeStatusRes
-	(*OrderChangePaymentRes)(nil), // 46: muydelcampo.OrderChangePaymentRes
-	(*OrderLineUpdateRes)(nil),    // 47: muydelcampo.OrderLineUpdateRes
-	(*OrderLineCreateRes)(nil),    // 48: muydelcampo.OrderLineCreateRes
-	(*OrderLineDeleteRes)(nil),    // 49: muydelcampo.OrderLineDeleteRes
-	(*OrderLineDetailRes)(nil),    // 50: muydelcampo.OrderLineDetailRes
-	(*OrderLineListAllRes)(nil),   // 51: muydelcampo.OrderLineListAllRes
-	(*DeliveryDayListAllRes)(nil), // 52: muydelcampo.DeliveryDayListAllRes
-	(*PlaceDetailRes)(nil),        // 53: muydelcampo.PlaceDetailRes
-	(*ReverseGeocodeRes)(nil),     // 54: muydelcampo.ReverseGeocodeRes
-	(*PlaceAutocompleteRes)(nil),  // 55: muydelcampo.PlaceAutocompleteRes
+	(*CodeReq)(nil),                // 0: muydelcampo.CodeReq
+	(*CodeDetailReq)(nil),          // 1: muydelcampo.CodeDetailReq
+	(*CodeVerifyReq)(nil),          // 2: muydelcampo.CodeVerifyReq
+	(*UsermeReq)(nil),              // 3: muydelcampo.UsermeReq
+	(*UserDetailReq)(nil),          // 4: muydelcampo.UserDetailReq
+	(*UserCreateReq)(nil),          // 5: muydelcampo.UserCreateReq
+	(*UserUpdateReq)(nil),          // 6: muydelcampo.UserUpdateReq
+	(*UserListAllReq)(nil),         // 7: muydelcampo.UserListAllReq
+	(*UserAddrDetailReq)(nil),      // 8: muydelcampo.UserAddrDetailReq
+	(*UserAddrCreateReq)(nil),      // 9: muydelcampo.UserAddrCreateReq
+	(*UserAddrUpdateReq)(nil),      // 10: muydelcampo.UserAddrUpdateReq
+	(*UserAddrListAllReq)(nil),     // 11: muydelcampo.UserAddrListAllReq
+	(*ProductDetailReq)(nil),       // 12: muydelcampo.ProductDetailReq
+	(*ProductListAllReq)(nil),      // 13: muydelcampo.ProductListAllReq
+	(*OrderCreateReq)(nil),         // 14: muydelcampo.OrderCreateReq
+	(*OrderUpdateReq)(nil),         // 15: muydelcampo.OrderUpdateReq
+	(*OrderDeleteReq)(nil),         // 16: muydelcampo.OrderDeleteReq
+	(*OrderDetailReq)(nil),         // 17: muydelcampo.OrderDetailReq
+	(*OrderListAllReq)(nil),        // 18: muydelcampo.OrderListAllReq
+	(*OrderChangeStatusReq)(nil),   // 19: muydelcampo.OrderChangeStatusReq
+	(*OrderLineUpdateReq)(nil),     // 20: muydelcampo.OrderLineUpdateReq
+	(*OrderLineCreateReq)(nil),     // 21: muydelcampo.OrderLineCreateReq
+	(*OrderLineDeleteReq)(nil),     // 22: muydelcampo.OrderLineDeleteReq
+	(*OrderLineDetailReq)(nil),     // 23: muydelcampo.OrderLineDetailReq
+	(*OrderLineListAllReq)(nil),    // 24: muydelcampo.OrderLineListAllReq
+	(*DeliverySlotListAllReq)(nil), // 25: muydelcampo.DeliverySlotListAllReq
+	(*PlaceDetailReq)(nil),         // 26: muydelcampo.PlaceDetailReq
+	(*ReverseGeocodeReq)(nil),      // 27: muydelcampo.ReverseGeocodeReq
+	(*PlaceAutocompleteReq)(nil),   // 28: muydelcampo.PlaceAutocompleteReq
+	(*CodeRes)(nil),                // 29: muydelcampo.CodeRes
+	(*CodeDetailRes)(nil),          // 30: muydelcampo.CodeDetailRes
+	(*CodeVerifyRes)(nil),          // 31: muydelcampo.CodeVerifyRes
+	(*UsermeRes)(nil),              // 32: muydelcampo.UsermeRes
+	(*UserDetailRes)(nil),          // 33: muydelcampo.UserDetailRes
+	(*UserCreateRes)(nil),          // 34: muydelcampo.UserCreateRes
+	(*UserUpdateRes)(nil),          // 35: muydelcampo.UserUpdateRes
+	(*UserListAllRes)(nil),         // 36: muydelcampo.UserListAllRes
+	(*UserAddrDetailRes)(nil),      // 37: muydelcampo.UserAddrDetailRes
+	(*UserAddrCreateRes)(nil),      // 38: muydelcampo.UserAddrCreateRes
+	(*UserAddrUpdateRes)(nil),      // 39: muydelcampo.UserAddrUpdateRes
+	(*UserAddrListAllRes)(nil),     // 40: muydelcampo.UserAddrListAllRes
+	(*ProductDetailRes)(nil),       // 41: muydelcampo.ProductDetailRes
+	(*ProductListAllRes)(nil),      // 42: muydelcampo.ProductListAllRes
+	(*OrderCreateRes)(nil),         // 43: muydelcampo.OrderCreateRes
+	(*OrderUpdateRes)(nil),         // 44: muydelcampo.OrderUpdateRes
+	(*OrderDeleteRes)(nil),         // 45: muydelcampo.OrderDeleteRes
+	(*OrderDetailRes)(nil),         // 46: muydelcampo.OrderDetailRes
+	(*OrderListAllRes)(nil),        // 47: muydelcampo.OrderListAllRes
+	(*OrderChangeStatusRes)(nil),   // 48: muydelcampo.OrderChangeStatusRes
+	(*OrderLineUpdateRes)(nil),     // 49: muydelcampo.OrderLineUpdateRes
+	(*OrderLineCreateRes)(nil),     // 50: muydelcampo.OrderLineCreateRes
+	(*OrderLineDeleteRes)(nil),     // 51: muydelcampo.OrderLineDeleteRes
+	(*OrderLineDetailRes)(nil),     // 52: muydelcampo.OrderLineDetailRes
+	(*OrderLineListAllRes)(nil),    // 53: muydelcampo.OrderLineListAllRes
+	(*DeliverySlotListAllRes)(nil), // 54: muydelcampo.DeliverySlotListAllRes
+	(*PlaceDetailRes)(nil),         // 55: muydelcampo.PlaceDetailRes
+	(*ReverseGeocodeRes)(nil),      // 56: muydelcampo.ReverseGeocodeRes
+	(*PlaceAutocompleteRes)(nil),   // 57: muydelcampo.PlaceAutocompleteRes
 }
 var file_api_proto_depIdxs = []int32{
 	0,  // 0: muydelcampo.ApiService.Code:input_type -> muydelcampo.CodeReq
@@ -133,52 +136,54 @@ var file_api_proto_depIdxs = []int32{
 	9,  // 9: muydelcampo.ApiService.UserAddrCreate:input_type -> muydelcampo.UserAddrCreateReq
 	10, // 10: muydelcampo.ApiService.UserAddrUpdate:input_type -> muydelcampo.UserAddrUpdateReq
 	11, // 11: muydelcampo.ApiService.UserAddrListAll:input_type -> muydelcampo.UserAddrListAllReq
-	12, // 12: muydelcampo.ApiService.OrderCreate:input_type -> muydelcampo.OrderCreateReq
-	13, // 13: muydelcampo.ApiService.OrderUpdate:input_type -> muydelcampo.OrderUpdateReq
-	14, // 14: muydelcampo.ApiService.OrderDelete:input_type -> muydelcampo.OrderDeleteReq
-	15, // 15: muydelcampo.ApiService.OrderDetail:input_type -> muydelcampo.OrderDetailReq
-	16, // 16: muydelcampo.ApiService.OrderListAll:input_type -> muydelcampo.OrderListAllReq
-	17, // 17: muydelcampo.ApiService.OrderChangeStatus:input_type -> muydelcampo.OrderChangeStatusReq
-	18, // 18: muydelcampo.ApiService.OrderChangePayment:input_type -> muydelcampo.OrderChangePaymentReq
-	19, // 19: muydelcampo.ApiService.OrderLineUpdate:input_type -> muydelcampo.OrderLineUpdateReq
-	20, // 20: muydelcampo.ApiService.OrderLineCreate:input_type -> muydelcampo.OrderLineCreateReq
-	21, // 21: muydelcampo.ApiService.OrderLineDelete:input_type -> muydelcampo.OrderLineDeleteReq
-	22, // 22: muydelcampo.ApiService.OrderLineDetail:input_type -> muydelcampo.OrderLineDetailReq
-	23, // 23: muydelcampo.ApiService.OrderLineListAll:input_type -> muydelcampo.OrderLineListAllReq
-	24, // 24: muydelcampo.ApiService.DeliveryDayListAll:input_type -> muydelcampo.DeliveryDayListAllReq
-	25, // 25: muydelcampo.ApiService.PlaceDetail:input_type -> muydelcampo.PlaceDetailReq
-	26, // 26: muydelcampo.ApiService.ReverseGeocode:input_type -> muydelcampo.ReverseGeocodeReq
-	27, // 27: muydelcampo.ApiService.PlaceAutocomplete:input_type -> muydelcampo.PlaceAutocompleteReq
-	28, // 28: muydelcampo.ApiService.Code:output_type -> muydelcampo.CodeRes
-	29, // 29: muydelcampo.ApiService.CodeDetail:output_type -> muydelcampo.CodeDetailRes
-	30, // 30: muydelcampo.ApiService.CodeVerify:output_type -> muydelcampo.CodeVerifyRes
-	31, // 31: muydelcampo.ApiService.Userme:output_type -> muydelcampo.UsermeRes
-	32, // 32: muydelcampo.ApiService.UserDetail:output_type -> muydelcampo.UserDetailRes
-	33, // 33: muydelcampo.ApiService.UserCreate:output_type -> muydelcampo.UserCreateRes
-	34, // 34: muydelcampo.ApiService.UserUpdate:output_type -> muydelcampo.UserUpdateRes
-	35, // 35: muydelcampo.ApiService.UserListAll:output_type -> muydelcampo.UserListAllRes
-	36, // 36: muydelcampo.ApiService.UserAddrDetail:output_type -> muydelcampo.UserAddrDetailRes
-	37, // 37: muydelcampo.ApiService.UserAddrCreate:output_type -> muydelcampo.UserAddrCreateRes
-	38, // 38: muydelcampo.ApiService.UserAddrUpdate:output_type -> muydelcampo.UserAddrUpdateRes
-	39, // 39: muydelcampo.ApiService.UserAddrListAll:output_type -> muydelcampo.UserAddrListAllRes
-	40, // 40: muydelcampo.ApiService.OrderCreate:output_type -> muydelcampo.OrderCreateRes
-	41, // 41: muydelcampo.ApiService.OrderUpdate:output_type -> muydelcampo.OrderUpdateRes
-	42, // 42: muydelcampo.ApiService.OrderDelete:output_type -> muydelcampo.OrderDeleteRes
-	43, // 43: muydelcampo.ApiService.OrderDetail:output_type -> muydelcampo.OrderDetailRes
-	44, // 44: muydelcampo.ApiService.OrderListAll:output_type -> muydelcampo.OrderListAllRes
-	45, // 45: muydelcampo.ApiService.OrderChangeStatus:output_type -> muydelcampo.OrderChangeStatusRes
-	46, // 46: muydelcampo.ApiService.OrderChangePayment:output_type -> muydelcampo.OrderChangePaymentRes
-	47, // 47: muydelcampo.ApiService.OrderLineUpdate:output_type -> muydelcampo.OrderLineUpdateRes
-	48, // 48: muydelcampo.ApiService.OrderLineCreate:output_type -> muydelcampo.OrderLineCreateRes
-	49, // 49: muydelcampo.ApiService.OrderLineDelete:output_type -> muydelcampo.OrderLineDeleteRes
-	50, // 50: muydelcampo.ApiService.OrderLineDetail:output_type -> muydelcampo.OrderLineDetailRes
-	51, // 51: muydelcampo.ApiService.OrderLineListAll:output_type -> muydelcampo.OrderLineListAllRes
-	52, // 52: muydelcampo.ApiService.DeliveryDayListAll:output_type -> muydelcampo.DeliveryDayListAllRes
-	53, // 53: muydelcampo.ApiService.PlaceDetail:output_type -> muydelcampo.PlaceDetailRes
-	54, // 54: muydelcampo.ApiService.ReverseGeocode:output_type -> muydelcampo.ReverseGeocodeRes
-	55, // 55: muydelcampo.ApiService.PlaceAutocomplete:output_type -> muydelcampo.PlaceAutocompleteRes
-	28, // [28:56] is the sub-list for method output_type
-	0,  // [0:28] is the sub-list for method input_type
+	12, // 12: muydelcampo.ApiService.ProductDetail:input_type -> muydelcampo.ProductDetailReq
+	13, // 13: muydelcampo.ApiService.ProductListAll:input_type -> muydelcampo.ProductListAllReq
+	14, // 14: muydelcampo.ApiService.OrderCreate:input_type -> muydelcampo.OrderCreateReq
+	15, // 15: muydelcampo.ApiService.OrderUpdate:input_type -> muydelcampo.OrderUpdateReq
+	16, // 16: muydelcampo.ApiService.OrderDelete:input_type -> muydelcampo.OrderDeleteReq
+	17, // 17: muydelcampo.ApiService.OrderDetail:input_type -> muydelcampo.OrderDetailReq
+	18, // 18: muydelcampo.ApiService.OrderListAll:input_type -> muydelcampo.OrderListAllReq
+	19, // 19: muydelcampo.ApiService.OrderChangeStatus:input_type -> muydelcampo.OrderChangeStatusReq
+	20, // 20: muydelcampo.ApiService.OrderLineUpdate:input_type -> muydelcampo.OrderLineUpdateReq
+	21, // 21: muydelcampo.ApiService.OrderLineCreate:input_type -> muydelcampo.OrderLineCreateReq
+	22, // 22: muydelcampo.ApiService.OrderLineDelete:input_type -> muydelcampo.OrderLineDeleteReq
+	23, // 23: muydelcampo.ApiService.OrderLineDetail:input_type -> muydelcampo.OrderLineDetailReq
+	24, // 24: muydelcampo.ApiService.OrderLineListAll:input_type -> muydelcampo.OrderLineListAllReq
+	25, // 25: muydelcampo.ApiService.DeliverySlotListAll:input_type -> muydelcampo.DeliverySlotListAllReq
+	26, // 26: muydelcampo.ApiService.PlaceDetail:input_type -> muydelcampo.PlaceDetailReq
+	27, // 27: muydelcampo.ApiService.ReverseGeocode:input_type -> muydelcampo.ReverseGeocodeReq
+	28, // 28: muydelcampo.ApiService.PlaceAutocomplete:input_type -> muydelcampo.PlaceAutocompleteReq
+	29, // 29: muydelcampo.ApiService.Code:output_type -> muydelcampo.CodeRes
+	30, // 30: muydelcampo.ApiService.CodeDetail:output_type -> muydelcampo.CodeDetailRes
+	31, // 31: muydelcampo.ApiService.CodeVerify:output_type -> muydelcampo.CodeVerifyRes
+	32, // 32: muydelcampo.ApiService.Userme:output_type -> muydelcampo.UsermeRes
+	33, // 33: muydelcampo.ApiService.UserDetail:output_type -> muydelcampo.UserDetailRes
+	34, // 34: muydelcampo.ApiService.UserCreate:output_type -> muydelcampo.UserCreateRes
+	35, // 35: muydelcampo.ApiService.UserUpdate:output_type -> muydelcampo.UserUpdateRes
+	36, // 36: muydelcampo.ApiService.UserListAll:output_type -> muydelcampo.UserListAllRes
+	37, // 37: muydelcampo.ApiService.UserAddrDetail:output_type -> muydelcampo.UserAddrDetailRes
+	38, // 38: muydelcampo.ApiService.UserAddrCreate:output_type -> muydelcampo.UserAddrCreateRes
+	39, // 39: muydelcampo.ApiService.UserAddrUpdate:output_type -> muydelcampo.UserAddrUpdateRes
+	40, // 40: muydelcampo.ApiService.UserAddrListAll:output_type -> muydelcampo.UserAddrListAllRes
+	41, // 41: muydelcampo.ApiService.ProductDetail:output_type -> muydelcampo.ProductDetailRes
+	42, // 42: muydelcampo.ApiService.ProductListAll:output_type -> muydelcampo.ProductListAllRes
+	43, // 43: muydelcampo.ApiService.OrderCreate:output_type -> muydelcampo.OrderCreateRes
+	44, // 44: muydelcampo.ApiService.OrderUpdate:output_type -> muydelcampo.OrderUpdateRes
+	45, // 45: muydelcampo.ApiService.OrderDelete:output_type -> muydelcampo.OrderDeleteRes
+	46, // 46: muydelcampo.ApiService.OrderDetail:output_type -> muydelcampo.OrderDetailRes
+	47, // 47: muydelcampo.ApiService.OrderListAll:output_type -> muydelcampo.OrderListAllRes
+	48, // 48: muydelcampo.ApiService.OrderChangeStatus:output_type -> muydelcampo.OrderChangeStatusRes
+	49, // 49: muydelcampo.ApiService.OrderLineUpdate:output_type -> muydelcampo.OrderLineUpdateRes
+	50, // 50: muydelcampo.ApiService.OrderLineCreate:output_type -> muydelcampo.OrderLineCreateRes
+	51, // 51: muydelcampo.ApiService.OrderLineDelete:output_type -> muydelcampo.OrderLineDeleteRes
+	52, // 52: muydelcampo.ApiService.OrderLineDetail:output_type -> muydelcampo.OrderLineDetailRes
+	53, // 53: muydelcampo.ApiService.OrderLineListAll:output_type -> muydelcampo.OrderLineListAllRes
+	54, // 54: muydelcampo.ApiService.DeliverySlotListAll:output_type -> muydelcampo.DeliverySlotListAllRes
+	55, // 55: muydelcampo.ApiService.PlaceDetail:output_type -> muydelcampo.PlaceDetailRes
+	56, // 56: muydelcampo.ApiService.ReverseGeocode:output_type -> muydelcampo.ReverseGeocodeRes
+	57, // 57: muydelcampo.ApiService.PlaceAutocomplete:output_type -> muydelcampo.PlaceAutocompleteRes
+	29, // [29:58] is the sub-list for method output_type
+	0,  // [0:29] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

@@ -241,23 +241,25 @@ func (p *Product) ToProto() *v1.Product {
 // ORDER__
 
 type Order struct {
-	Ref           string `db:"id"`
+	Ref           string
 	User          *User
 	Addr          *UserAddr
-	Number        int32      `db:"number"`
-	Status        string     `db:"status"`
-	BasePrice     int32      `db:"base_price"`
-	DiscPrice     int32      `db:"disc_price"`
-	DateCreated   time.Time  `db:"date_created"`
-	DateUpdated   *time.Time `db:"date_updated"`
-	DeliveryDate  time.Time  `db:"delivery_date"`
-	PaymentStatus string     `db:"payment_status"`
-	PaymentMethod string     `db:"payment_method"`
+	Slot          *DeliverySlot
+	Number        int32
+	Status        string
+	BasePrice     int32
+	DiscPrice     int32
+	DateCreated   time.Time
+	DateUpdated   *time.Time
+	DeliveryDate  time.Time
+	PaymentStatus string
+	PaymentMethod string
 }
 
 func (p *Order) ToProto() *v1.Order {
 	user := p.User.ToProto()
 	addr := p.Addr.ToProto()
+	slot := p.Slot.ToProto()
 
 	var dateCreated *timestamp.Timestamp
 	if !p.DateCreated.IsZero() {
@@ -269,21 +271,15 @@ func (p *Order) ToProto() *v1.Order {
 		dateCreated = timestamppb.New(*p.DateUpdated)
 	}
 
-	deliveryDate := &date.Date{
-		Day:   int32(p.DeliveryDate.Day()),
-		Year:  int32(p.DeliveryDate.Year()),
-		Month: int32(p.DeliveryDate.Month()),
-	}
-
 	return &v1.Order{
 		Ref:           p.Ref,
 		User:          user,
 		Addr:          addr,
+		Slot:          slot,
 		Number:        p.Number,
 		Status:        p.Status,
 		DateCreated:   dateCreated,
 		DateUpdated:   dateUpdated,
-		DeliveryDate:  deliveryDate,
 		PaymentStatus: p.PaymentStatus,
 		PaymentMethod: p.PaymentMethod,
 	}
@@ -294,12 +290,12 @@ func (p *Order) ToProto() *v1.Order {
 // ORDER_LINE__
 
 type OrderLine struct {
-	Ref        string
+	Ref        string `db:"id"`
 	Item       *Product
-	Status     string
-	Quantity   int32
-	BasePrice  int32
-	TotalPrice int32
+	Status     string `db:"status"`
+	Quantity   int32  `db:"quantity"`
+	BasePrice  int32  `db:"base_price"`
+	TotalPrice int32  `db:"total_price"`
 }
 
 func (p *OrderLine) ToProto() *v1.OrderLine {
@@ -317,11 +313,11 @@ func (p *OrderLine) ToProto() *v1.OrderLine {
 
 // DELIVERY_DAY__
 
-type DeliveryDay struct {
+type DeliverySlot struct {
 	Ref           string     `db:"id"`
 	Kind          string     `db:"kind"`
 	Note          *string    `db:"note"`
-	Wday          time.Time  `db:"work_date"`
+	Wday          time.Time  `db:"wday"`
 	IsOpen        bool       `db:"is_open"`
 	Capacity      int32      `db:"capacity"`
 	Reserved      int32      `db:"reserved"`
@@ -332,8 +328,8 @@ type DeliveryDay struct {
 	DeliveryUntil int32      `db:"delivery_until"`
 }
 
-func (p *DeliveryDay) ToProto() *v1.DeliveryDay {
-	workDate := &date.Date{
+func (p *DeliverySlot) ToProto() *v1.DeliverySlot {
+	workDay := &date.Date{
 		Day:   int32(p.Wday.Day()),
 		Year:  int32(p.Wday.Year()),
 		Month: int32(p.Wday.Month()),
@@ -349,18 +345,18 @@ func (p *DeliveryDay) ToProto() *v1.DeliveryDay {
 		dateUpdated = timestamppb.New(*p.DateUpdated)
 	}
 
-	return &v1.DeliveryDay{
+	return &v1.DeliverySlot{
 		Ref:           p.Ref,
 		Kind:          p.Kind,
 		Note:          p.Note,
-		WorkDate:      workDate,
+		Wday:          workDay,
 		IsOpen:        p.IsOpen,
 		Capacity:      p.Capacity,
 		Reserved:      p.Reserved,
-		CutoffMin:     int64(p.CutoffMin),
+		CutoffMin:     p.CutoffMin,
 		DateCreated:   dateCreated,
 		DateUpdated:   dateUpdated,
-		DeliveryStart: int64(p.DeliveryStart),
-		DeliveryUntil: int64(p.DeliveryUntil),
+		DeliveryStart: p.DeliveryStart,
+		DeliveryUntil: p.DeliveryUntil,
 	}
 }

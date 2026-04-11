@@ -28,6 +28,17 @@ service ApiService {
   // rpc UserAddrDelete(UserAddrDeleteReq) returns (UserAddrDeleteRes);
   rpc UserAddrListAll(UserAddrListAllReq) returns (UserAddrListAllRes);
 
+  // CATLG__
+
+  // ITEMS__
+
+  // rpc ProductCreate(ProductCreateReq) returns (ProductCreateRes);
+  // rpc ProductUpdate(ProductUpdateReq) returns (ProductUpdateRes);
+  // rpc ProductDelete(ProductDeleteReq) returns (ProductDeleteRes);
+  rpc ProductDetail(ProductDetailReq) returns (ProductDetailRes);
+  rpc ProductListAll(ProductListAllReq) returns (ProductListAllRes);
+  // rpc ProductReOrder(ProductReOrderReq) returns (ProductReOrderRes);
+
   // SALES__
 
   // ORDER
@@ -37,7 +48,6 @@ service ApiService {
   rpc OrderDetail(OrderDetailReq) returns (OrderDetailRes);
   rpc OrderListAll(OrderListAllReq) returns (OrderListAllRes);
   rpc OrderChangeStatus(OrderChangeStatusReq) returns (OrderChangeStatusRes);
-  rpc OrderChangePayment(OrderChangePaymentReq) returns (OrderChangePaymentRes);
 
   // ORDER_LINE
   rpc OrderLineUpdate(OrderLineUpdateReq) returns (OrderLineUpdateRes);
@@ -58,7 +68,7 @@ service ApiService {
 
   // DELIVERY_DAY
   // rpc DeliveryDayDetail(DeliveryDayDetailReq) returns (DeliveryDayDetailRes);
-  rpc DeliveryDayListAll(DeliveryDayListAllReq) returns (DeliveryDayListAllRes);
+  rpc DeliverySlotListAll(DeliverySlotListAllReq) returns (DeliverySlotListAllRes);
   // rpc DeliveryDayListAvailable(DeliveryDayListAvailableReq) returns (DeliveryDayListAvailableRes);
   // rpc DeliveryDayNextAvailable(DeliveryDayNextAvailableReq) returns (DeliveryDayNextAvailableRes);
   // rpc DeliveryDayUpdate(DeliveryDayUpdateReq) returns (DeliveryDayUpdateRes);

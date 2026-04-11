@@ -288,6 +288,51 @@ func (s Server) UserAddrListAll(ctx context.Context, req *v1.UserAddrListAllReq)
 	return &v1.UserAddrListAllRes{Results: addrs}, nil
 }
 
+// CATLG__
+
+func (s Server) ProductDetail(ctx context.Context, req *v1.ProductDetailReq) (*v1.ProductDetailRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ref := req.GetRef()
+	if err := uuid.Validate(ref); err != nil {
+		return nil, err
+	}
+
+	result, err := s.useservice.ProductDetail(ctx, ref)
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.ProductDetailRes{Product: result.ToProto()}, nil
+}
+
+func (s Server) ProductListAll(ctx context.Context, req *v1.ProductListAllReq) (*v1.ProductListAllRes, error) {
+	_, err := requireStaffUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := app.NewProductFilterInput(req.GetFilter())
+	if err := filter.Validate(); err != nil {
+		return nil, err
+	}
+
+	results, err := s.useservice.ProductListAll(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	productspb := make([]*v1.Product, 0, len(results))
+	for i := range results {
+		productspb = append(productspb, results[i].ToProto())
+	}
+
+	return &v1.ProductListAllRes{Products: productspb}, nil
+}
+
 // SALES__
 
 func (s Server) OrderCreate(ctx context.Context, req *v1.OrderCreateReq) (*v1.OrderCreateRes, error) {
@@ -298,7 +343,7 @@ func (s Server) OrderCreate(ctx context.Context, req *v1.OrderCreateReq) (*v1.Or
 
 	payload := req.GetPayload()
 	input := app.NewOrderInsertInput(payload)
-	if err := input.Validation(nil); err != nil {
+	if err := input.Validate(); err != nil {
 		return nil, err
 	}
 
@@ -569,7 +614,7 @@ func (s Server) OrderLineListAll(ctx context.Context, req *v1.OrderLineListAllRe
 
 // DELIVERY_DAY__
 
-func (s Server) DeliveryDayListAll(ctx context.Context, req *v1.DeliveryDayListAllReq) (*v1.DeliveryDayListAllRes, error) {
+func (s Server) DeliverySlotListAll(ctx context.Context, req *v1.DeliverySlotListAllReq) (*v1.DeliverySlotListAllRes, error) {
 	_, err := requireStaffUser(ctx)
 	if err != nil {
 		return nil, err
@@ -590,12 +635,12 @@ func (s Server) DeliveryDayListAll(ctx context.Context, req *v1.DeliveryDayListA
 		return nil, err
 	}
 
-	results := make([]*v1.DeliveryDay, 0, len(result))
+	results := make([]*v1.DeliverySlot, 0, len(result))
 	for i := range result {
 		results = append(results, result[i].ToProto())
 	}
 
-	return &v1.DeliveryDayListAllRes{Results: results}, nil
+	return &v1.DeliverySlotListAllRes{Results: results}, nil
 }
 
 // GOOGLE_MAPS__

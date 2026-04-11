@@ -366,6 +366,7 @@ type OrderInsertInput struct {
 	Addr          string
 	Slot          string
 	Status        string
+	DeliveryDay   time.Time
 	PaymentStatus string
 	PaymentMethod string
 }
@@ -374,46 +375,50 @@ func NewOrderInsertInput(payload *v1.OrderCreateReq_Payload) *OrderInsertInput {
 	if payload == nil {
 		return &OrderInsertInput{}
 	}
+
 	return &OrderInsertInput{
 		User:          payload.GetUser(),
 		Addr:          payload.GetAddr(),
 		Slot:          payload.GetSlot(),
 		Status:        payload.GetStatus(),
 		PaymentStatus: payload.GetPaymentStatus(),
+		PaymentMethod: payload.GetPaymentMethod(),
 	}
 }
 
-func (r *OrderInsertInput) Validation(paths []string) error {
-	//for _, path := range paths {
-	//	switch strings.TrimSpace(path) {
-	//	case "user":
-	//		if r.User == "" {
-	//			return errors.New("la referencia del usuario es un campo obligatorio")
-	//		}
-	//	case "addr":
-	//		if r.Addr == "" {
-	//			return errors.New("la referencia de la dirección de envío es un campo obligatorio")
-	//		}
-	//	case "slot":
-	//		if r.Slot == "" {
-	//			return errors.New("la referencia del día y franja horaria es un campo obligatorio")
-	//		}
-	//	case "status":
-	//		// validar opciones del status
-	//		if r.Status == "" {
-	//			return errors.New("el estado del pedido es un campo obligatorio")
-	//		}
-	//	case "payment_status":
-	//		if r.PaymentStatus == "" {
-	//			return errors.New("el estado del pago del pedido es un obligatorio")
-	//		}
-	//	case "payment_method":
-	//		if r.PaymentMethod == "" {
-	//			return errors.New("el método del pago del pedido es un obligatorio")
-	//		}
-	//	}
-	//}
+func (r *OrderInsertInput) Validate() error {
+	const op = "App.OrderInsertInput.Validate"
 
+	r.User = strings.TrimSpace(r.User)
+	r.Addr = strings.TrimSpace(r.Addr)
+	r.Slot = strings.TrimSpace(r.Slot)
+
+	if err := uuid.Validate(r.User); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	if err := uuid.Validate(r.Addr); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	if err := uuid.Validate(r.Slot); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	status, err := normalizeOrderStatus(r.Status)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	paymentStatus, err := normalizeOrderPaymentStatus(r.PaymentStatus)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	paymentMethod, err := normalizeOrderPaymentMethod(r.PaymentMethod)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	r.Status = status
+	r.PaymentStatus = paymentStatus
+	r.PaymentMethod = paymentMethod
 	return nil
 }
 
@@ -436,39 +441,45 @@ func NewOrderUpdateInput(payload *v1.OrderUpdateReq_Payload) *OrderUpdateInput {
 		Slot:          payload.GetSlot(),
 		Status:        payload.GetStatus(),
 		PaymentStatus: payload.GetPaymentStatus(),
+		PaymentMethod: payload.GetPaymentMethod(),
 	}
 }
 
 func (r *OrderUpdateInput) Validation(paths []string) error {
-	//for _, path := range paths {
-	//	switch strings.TrimSpace(path) {
-	//	case "user":
-	//		if r.User == "" {
-	//			return errors.New("la referencia del usuario es un campo obligatorio")
-	//		}
-	//	case "addr":
-	//		if r.Addr == "" {
-	//			return errors.New("la referencia de la dirección de envío es un campo obligatorio")
-	//		}
-	//	case "slot":
-	//		if r.Slot == "" {
-	//			return errors.New("la referencia del día y franja horaria es un campo obligatorio")
-	//		}
-	//	case "status":
-	//		// validar opciones del status
-	//		if r.Status == "" {
-	//			return errors.New("el estado del pedido es un campo obligatorio")
-	//		}
-	//	case "payment_status":
-	//		if r.PaymentStatus == "" {
-	//			return errors.New("el estado del pago del pedido es un obligatorio")
-	//		}
-	//	case "payment_method":
-	//		if r.PaymentMethod == "" {
-	//			return errors.New("el método del pago del pedido es un obligatorio")
-	//		}
-	//	}
-	//}
+	const op = "App.OrderUpdateInput.Validation"
+
+	for _, path := range paths {
+		switch strings.TrimSpace(path) {
+		case "addr":
+			r.Addr = strings.TrimSpace(r.Addr)
+			if err := uuid.Validate(r.Addr); err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+		case "slot":
+			r.Slot = strings.TrimSpace(r.Slot)
+			if err := uuid.Validate(r.Slot); err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+		case "status":
+			status, err := normalizeOrderStatus(r.Status)
+			if err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+			r.Status = status
+		case "payment_status":
+			status, err := normalizeOrderPaymentStatus(r.PaymentStatus)
+			if err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+			r.PaymentStatus = status
+		case "payment_method":
+			method, err := normalizeOrderPaymentMethod(r.PaymentMethod)
+			if err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+			r.PaymentMethod = method
+		}
+	}
 
 	return nil
 }
@@ -614,10 +625,6 @@ func (r *OrderLineCreateInput) Validate() error {
 		return fmt.Errorf("%s, %w", op, ErrInvalidOrderLineBasePrice)
 	}
 
-	if r.OfferPrice == 0 {
-		return fmt.Errorf("%s: %w", op, ErrInvalidOrderLineOfferPrice)
-	}
-
 	// BASE_PRICE < OFFER_PRICE
 	if r.BasePrice < r.OfferPrice {
 		return fmt.Errorf("%s: %w", op, ErrInvalidOrderLinePriceRange) // nombrar..
@@ -707,7 +714,7 @@ type DeliveryDayFilterInput struct {
 	Kind      *string
 }
 
-func NewDeliveryDayFilterInput(req *v1.DeliveryDayListAllReq_Filter) *DeliveryDayFilterInput {
+func NewDeliveryDayFilterInput(req *v1.DeliverySlotListAllReq_Filter) *DeliveryDayFilterInput {
 	if req == nil {
 		return &DeliveryDayFilterInput{}
 	}
@@ -749,7 +756,7 @@ type DeliveryDayPagingInput struct {
 	Offset int32
 }
 
-func NewDeliveryDayPagingInput(req *v1.DeliveryDayListAllReq_Paging) *DeliveryDayPagingInput {
+func NewDeliveryDayPagingInput(req *v1.DeliverySlotListAllReq_Paging) *DeliveryDayPagingInput {
 	if req == nil {
 		return &DeliveryDayPagingInput{}
 	}
@@ -775,131 +782,51 @@ func (r *DeliveryDayPagingInput) Validate() error {
 	return nil
 }
 
-// DELIVERY_DAY_LIST_AVAIBLE_INPUT__
+// CATLG__
 
-type DeliveryDayListAvailableInput struct {
-	FromDate time.Time
-	Limit    int32
+type ProductFilterInput struct {
+	Query    *string
+	Genre    *string
+	IsActive *bool
+	IsPublic *bool
 }
 
-func NewDeliveryDayListAvailableInput(req *v1.DeliveryDayListAvailableReq) *DeliveryDayListAvailableInput {
+func NewProductFilterInput(req *v1.ProductListAllReq_Filter) *ProductFilterInput {
 	if req == nil {
-		return &DeliveryDayListAvailableInput{}
+		return &ProductFilterInput{}
 	}
 
-	fromDate, _ := protoDateToTime(req.GetFromDate())
-	return &DeliveryDayListAvailableInput{
-		FromDate: fromDate,
-		Limit:    req.GetLimit(),
-	}
-}
-
-func (r *DeliveryDayListAvailableInput) Validate() error {
-	if r.FromDate.IsZero() {
-		now := time.Now().UTC()
-		r.FromDate = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-	}
-
-	if r.Limit <= 0 {
-		r.Limit = 14
-	}
-	if r.Limit > 31 {
-		r.Limit = 31
-	}
-
-	return nil
-}
-
-// DELIVERY_DAY_UPDATE_INPUT__
-
-type DeliveryDayUpdateInput struct {
-	Kind          string
-	Note          *string
-	IsOpen        bool
-	Capacity      int32
-	CutoffMin     int32
-	DeliveryStart int32
-	DeliveryUntil int32
-}
-
-func NewDeliveryDayUpdateInput(payload *v1.DeliveryDayUpdateReq_Payload) *DeliveryDayUpdateInput {
-	if payload == nil {
-		return &DeliveryDayUpdateInput{}
-	}
-
-	return &DeliveryDayUpdateInput{
-		Kind:          payload.GetKind(),
-		Note:          payload.Note,
-		IsOpen:        payload.GetIsOpen(),
-		Capacity:      payload.GetCapacity(),
-		CutoffMin:     payload.GetCutoffMin(),
-		DeliveryStart: payload.GetDeliveryStart(),
-		DeliveryUntil: payload.GetDeliveryUntil(),
+	return &ProductFilterInput{
+		Query:    req.Query,
+		Genre:    req.Genre,
+		IsActive: req.IsActive,
+		IsPublic: req.IsPublic,
 	}
 }
 
-func (r *DeliveryDayUpdateInput) Validate(paths []string) error {
-	const op = "App.DeliveryDayUpdateInput.Validate"
+func (r *ProductFilterInput) Validate() error {
+	const op = "App.ProductFilterInput.Validate"
 
-	for _, path := range paths {
-		switch strings.TrimSpace(path) {
-		case "kind":
-			r.Kind = strings.TrimSpace(r.Kind)
-			if r.Kind == "" {
-				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayKind)
-			}
-		case "capacity":
-			if r.Capacity < 0 {
-				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayCap)
-			}
-		case "cutoff_min":
-			if r.CutoffMin < 0 || r.CutoffMin >= 1440 {
-				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayCutoff)
-			}
-		case "delivery_start":
-			if r.DeliveryStart < 0 || r.DeliveryStart >= 1440 {
-				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayRange)
-			}
-		case "delivery_until":
-			if r.DeliveryUntil < 0 || r.DeliveryUntil >= 1440 {
-				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayRange)
-			}
-		case "note":
-			if r.Note != nil {
-				value := strings.TrimSpace(*r.Note)
-				if value == "" {
-					r.Note = nil
-				} else {
-					r.Note = &value
-				}
-			}
+	if r.Query != nil {
+		value := strings.TrimSpace(*r.Query)
+		if value == "" {
+			r.Query = nil
+		} else {
+			value = normalizex.NormalizeName(value)
+			r.Query = &value
 		}
 	}
 
-	return nil
-}
-
-// DELIVERY_DAY_NEXT_AVAILABLE_INPUT__
-
-type DeliveryDayNextAvailableInput struct {
-	FromDate time.Time
-}
-
-func NewDeliveryDayNextAvailableInput(req *v1.DeliveryDayNextAvailableReq) *DeliveryDayNextAvailableInput {
-	if req == nil {
-		return &DeliveryDayNextAvailableInput{}
-	}
-
-	fromDate, _ := protoDateToTime(req.GetFromDate())
-	return &DeliveryDayNextAvailableInput{
-		FromDate: fromDate,
-	}
-}
-
-func (r *DeliveryDayNextAvailableInput) Validate() error {
-	if r.FromDate.IsZero() {
-		now := time.Now().UTC()
-		r.FromDate = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	if r.Genre != nil {
+		value := strings.TrimSpace(*r.Genre)
+		if value == "" {
+			r.Genre = nil
+		} else {
+			if err := uuid.Validate(value); err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+			r.Genre = &value
+		}
 	}
 
 	return nil

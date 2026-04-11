@@ -19,34 +19,35 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ApiService_Code_FullMethodName               = "/muydelcampo.ApiService/Code"
-	ApiService_CodeDetail_FullMethodName         = "/muydelcampo.ApiService/CodeDetail"
-	ApiService_CodeVerify_FullMethodName         = "/muydelcampo.ApiService/CodeVerify"
-	ApiService_Userme_FullMethodName             = "/muydelcampo.ApiService/Userme"
-	ApiService_UserDetail_FullMethodName         = "/muydelcampo.ApiService/UserDetail"
-	ApiService_UserCreate_FullMethodName         = "/muydelcampo.ApiService/UserCreate"
-	ApiService_UserUpdate_FullMethodName         = "/muydelcampo.ApiService/UserUpdate"
-	ApiService_UserListAll_FullMethodName        = "/muydelcampo.ApiService/UserListAll"
-	ApiService_UserAddrDetail_FullMethodName     = "/muydelcampo.ApiService/UserAddrDetail"
-	ApiService_UserAddrCreate_FullMethodName     = "/muydelcampo.ApiService/UserAddrCreate"
-	ApiService_UserAddrUpdate_FullMethodName     = "/muydelcampo.ApiService/UserAddrUpdate"
-	ApiService_UserAddrListAll_FullMethodName    = "/muydelcampo.ApiService/UserAddrListAll"
-	ApiService_OrderCreate_FullMethodName        = "/muydelcampo.ApiService/OrderCreate"
-	ApiService_OrderUpdate_FullMethodName        = "/muydelcampo.ApiService/OrderUpdate"
-	ApiService_OrderDelete_FullMethodName        = "/muydelcampo.ApiService/OrderDelete"
-	ApiService_OrderDetail_FullMethodName        = "/muydelcampo.ApiService/OrderDetail"
-	ApiService_OrderListAll_FullMethodName       = "/muydelcampo.ApiService/OrderListAll"
-	ApiService_OrderChangeStatus_FullMethodName  = "/muydelcampo.ApiService/OrderChangeStatus"
-	ApiService_OrderChangePayment_FullMethodName = "/muydelcampo.ApiService/OrderChangePayment"
-	ApiService_OrderLineUpdate_FullMethodName    = "/muydelcampo.ApiService/OrderLineUpdate"
-	ApiService_OrderLineCreate_FullMethodName    = "/muydelcampo.ApiService/OrderLineCreate"
-	ApiService_OrderLineDelete_FullMethodName    = "/muydelcampo.ApiService/OrderLineDelete"
-	ApiService_OrderLineDetail_FullMethodName    = "/muydelcampo.ApiService/OrderLineDetail"
-	ApiService_OrderLineListAll_FullMethodName   = "/muydelcampo.ApiService/OrderLineListAll"
-	ApiService_DeliveryDayListAll_FullMethodName = "/muydelcampo.ApiService/DeliveryDayListAll"
-	ApiService_PlaceDetail_FullMethodName        = "/muydelcampo.ApiService/PlaceDetail"
-	ApiService_ReverseGeocode_FullMethodName     = "/muydelcampo.ApiService/ReverseGeocode"
-	ApiService_PlaceAutocomplete_FullMethodName  = "/muydelcampo.ApiService/PlaceAutocomplete"
+	ApiService_Code_FullMethodName                = "/muydelcampo.ApiService/Code"
+	ApiService_CodeDetail_FullMethodName          = "/muydelcampo.ApiService/CodeDetail"
+	ApiService_CodeVerify_FullMethodName          = "/muydelcampo.ApiService/CodeVerify"
+	ApiService_Userme_FullMethodName              = "/muydelcampo.ApiService/Userme"
+	ApiService_UserDetail_FullMethodName          = "/muydelcampo.ApiService/UserDetail"
+	ApiService_UserCreate_FullMethodName          = "/muydelcampo.ApiService/UserCreate"
+	ApiService_UserUpdate_FullMethodName          = "/muydelcampo.ApiService/UserUpdate"
+	ApiService_UserListAll_FullMethodName         = "/muydelcampo.ApiService/UserListAll"
+	ApiService_UserAddrDetail_FullMethodName      = "/muydelcampo.ApiService/UserAddrDetail"
+	ApiService_UserAddrCreate_FullMethodName      = "/muydelcampo.ApiService/UserAddrCreate"
+	ApiService_UserAddrUpdate_FullMethodName      = "/muydelcampo.ApiService/UserAddrUpdate"
+	ApiService_UserAddrListAll_FullMethodName     = "/muydelcampo.ApiService/UserAddrListAll"
+	ApiService_ProductDetail_FullMethodName       = "/muydelcampo.ApiService/ProductDetail"
+	ApiService_ProductListAll_FullMethodName      = "/muydelcampo.ApiService/ProductListAll"
+	ApiService_OrderCreate_FullMethodName         = "/muydelcampo.ApiService/OrderCreate"
+	ApiService_OrderUpdate_FullMethodName         = "/muydelcampo.ApiService/OrderUpdate"
+	ApiService_OrderDelete_FullMethodName         = "/muydelcampo.ApiService/OrderDelete"
+	ApiService_OrderDetail_FullMethodName         = "/muydelcampo.ApiService/OrderDetail"
+	ApiService_OrderListAll_FullMethodName        = "/muydelcampo.ApiService/OrderListAll"
+	ApiService_OrderChangeStatus_FullMethodName   = "/muydelcampo.ApiService/OrderChangeStatus"
+	ApiService_OrderLineUpdate_FullMethodName     = "/muydelcampo.ApiService/OrderLineUpdate"
+	ApiService_OrderLineCreate_FullMethodName     = "/muydelcampo.ApiService/OrderLineCreate"
+	ApiService_OrderLineDelete_FullMethodName     = "/muydelcampo.ApiService/OrderLineDelete"
+	ApiService_OrderLineDetail_FullMethodName     = "/muydelcampo.ApiService/OrderLineDetail"
+	ApiService_OrderLineListAll_FullMethodName    = "/muydelcampo.ApiService/OrderLineListAll"
+	ApiService_DeliverySlotListAll_FullMethodName = "/muydelcampo.ApiService/DeliverySlotListAll"
+	ApiService_PlaceDetail_FullMethodName         = "/muydelcampo.ApiService/PlaceDetail"
+	ApiService_ReverseGeocode_FullMethodName      = "/muydelcampo.ApiService/ReverseGeocode"
+	ApiService_PlaceAutocomplete_FullMethodName   = "/muydelcampo.ApiService/PlaceAutocomplete"
 )
 
 // ApiServiceClient is the client API for ApiService service.
@@ -69,6 +70,11 @@ type ApiServiceClient interface {
 	UserAddrUpdate(ctx context.Context, in *UserAddrUpdateReq, opts ...grpc.CallOption) (*UserAddrUpdateRes, error)
 	// rpc UserAddrDelete(UserAddrDeleteReq) returns (UserAddrDeleteRes);
 	UserAddrListAll(ctx context.Context, in *UserAddrListAllReq, opts ...grpc.CallOption) (*UserAddrListAllRes, error)
+	// rpc ProductCreate(ProductCreateReq) returns (ProductCreateRes);
+	// rpc ProductUpdate(ProductUpdateReq) returns (ProductUpdateRes);
+	// rpc ProductDelete(ProductDeleteReq) returns (ProductDeleteRes);
+	ProductDetail(ctx context.Context, in *ProductDetailReq, opts ...grpc.CallOption) (*ProductDetailRes, error)
+	ProductListAll(ctx context.Context, in *ProductListAllReq, opts ...grpc.CallOption) (*ProductListAllRes, error)
 	// ORDER
 	OrderCreate(ctx context.Context, in *OrderCreateReq, opts ...grpc.CallOption) (*OrderCreateRes, error)
 	OrderUpdate(ctx context.Context, in *OrderUpdateReq, opts ...grpc.CallOption) (*OrderUpdateRes, error)
@@ -76,7 +82,6 @@ type ApiServiceClient interface {
 	OrderDetail(ctx context.Context, in *OrderDetailReq, opts ...grpc.CallOption) (*OrderDetailRes, error)
 	OrderListAll(ctx context.Context, in *OrderListAllReq, opts ...grpc.CallOption) (*OrderListAllRes, error)
 	OrderChangeStatus(ctx context.Context, in *OrderChangeStatusReq, opts ...grpc.CallOption) (*OrderChangeStatusRes, error)
-	OrderChangePayment(ctx context.Context, in *OrderChangePaymentReq, opts ...grpc.CallOption) (*OrderChangePaymentRes, error)
 	// ORDER_LINE
 	OrderLineUpdate(ctx context.Context, in *OrderLineUpdateReq, opts ...grpc.CallOption) (*OrderLineUpdateRes, error)
 	OrderLineCreate(ctx context.Context, in *OrderLineCreateReq, opts ...grpc.CallOption) (*OrderLineCreateRes, error)
@@ -85,7 +90,7 @@ type ApiServiceClient interface {
 	OrderLineListAll(ctx context.Context, in *OrderLineListAllReq, opts ...grpc.CallOption) (*OrderLineListAllRes, error)
 	// DELIVERY_DAY
 	// rpc DeliveryDayDetail(DeliveryDayDetailReq) returns (DeliveryDayDetailRes);
-	DeliveryDayListAll(ctx context.Context, in *DeliveryDayListAllReq, opts ...grpc.CallOption) (*DeliveryDayListAllRes, error)
+	DeliverySlotListAll(ctx context.Context, in *DeliverySlotListAllReq, opts ...grpc.CallOption) (*DeliverySlotListAllRes, error)
 	// GOOGLE_MAPS__
 	PlaceDetail(ctx context.Context, in *PlaceDetailReq, opts ...grpc.CallOption) (*PlaceDetailRes, error)
 	ReverseGeocode(ctx context.Context, in *ReverseGeocodeReq, opts ...grpc.CallOption) (*ReverseGeocodeRes, error)
@@ -220,6 +225,26 @@ func (c *apiServiceClient) UserAddrListAll(ctx context.Context, in *UserAddrList
 	return out, nil
 }
 
+func (c *apiServiceClient) ProductDetail(ctx context.Context, in *ProductDetailReq, opts ...grpc.CallOption) (*ProductDetailRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProductDetailRes)
+	err := c.cc.Invoke(ctx, ApiService_ProductDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiServiceClient) ProductListAll(ctx context.Context, in *ProductListAllReq, opts ...grpc.CallOption) (*ProductListAllRes, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProductListAllRes)
+	err := c.cc.Invoke(ctx, ApiService_ProductListAll_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *apiServiceClient) OrderCreate(ctx context.Context, in *OrderCreateReq, opts ...grpc.CallOption) (*OrderCreateRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OrderCreateRes)
@@ -280,16 +305,6 @@ func (c *apiServiceClient) OrderChangeStatus(ctx context.Context, in *OrderChang
 	return out, nil
 }
 
-func (c *apiServiceClient) OrderChangePayment(ctx context.Context, in *OrderChangePaymentReq, opts ...grpc.CallOption) (*OrderChangePaymentRes, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrderChangePaymentRes)
-	err := c.cc.Invoke(ctx, ApiService_OrderChangePayment_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *apiServiceClient) OrderLineUpdate(ctx context.Context, in *OrderLineUpdateReq, opts ...grpc.CallOption) (*OrderLineUpdateRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OrderLineUpdateRes)
@@ -340,10 +355,10 @@ func (c *apiServiceClient) OrderLineListAll(ctx context.Context, in *OrderLineLi
 	return out, nil
 }
 
-func (c *apiServiceClient) DeliveryDayListAll(ctx context.Context, in *DeliveryDayListAllReq, opts ...grpc.CallOption) (*DeliveryDayListAllRes, error) {
+func (c *apiServiceClient) DeliverySlotListAll(ctx context.Context, in *DeliverySlotListAllReq, opts ...grpc.CallOption) (*DeliverySlotListAllRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeliveryDayListAllRes)
-	err := c.cc.Invoke(ctx, ApiService_DeliveryDayListAll_FullMethodName, in, out, cOpts...)
+	out := new(DeliverySlotListAllRes)
+	err := c.cc.Invoke(ctx, ApiService_DeliverySlotListAll_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -400,6 +415,11 @@ type ApiServiceServer interface {
 	UserAddrUpdate(context.Context, *UserAddrUpdateReq) (*UserAddrUpdateRes, error)
 	// rpc UserAddrDelete(UserAddrDeleteReq) returns (UserAddrDeleteRes);
 	UserAddrListAll(context.Context, *UserAddrListAllReq) (*UserAddrListAllRes, error)
+	// rpc ProductCreate(ProductCreateReq) returns (ProductCreateRes);
+	// rpc ProductUpdate(ProductUpdateReq) returns (ProductUpdateRes);
+	// rpc ProductDelete(ProductDeleteReq) returns (ProductDeleteRes);
+	ProductDetail(context.Context, *ProductDetailReq) (*ProductDetailRes, error)
+	ProductListAll(context.Context, *ProductListAllReq) (*ProductListAllRes, error)
 	// ORDER
 	OrderCreate(context.Context, *OrderCreateReq) (*OrderCreateRes, error)
 	OrderUpdate(context.Context, *OrderUpdateReq) (*OrderUpdateRes, error)
@@ -407,7 +427,6 @@ type ApiServiceServer interface {
 	OrderDetail(context.Context, *OrderDetailReq) (*OrderDetailRes, error)
 	OrderListAll(context.Context, *OrderListAllReq) (*OrderListAllRes, error)
 	OrderChangeStatus(context.Context, *OrderChangeStatusReq) (*OrderChangeStatusRes, error)
-	OrderChangePayment(context.Context, *OrderChangePaymentReq) (*OrderChangePaymentRes, error)
 	// ORDER_LINE
 	OrderLineUpdate(context.Context, *OrderLineUpdateReq) (*OrderLineUpdateRes, error)
 	OrderLineCreate(context.Context, *OrderLineCreateReq) (*OrderLineCreateRes, error)
@@ -416,7 +435,7 @@ type ApiServiceServer interface {
 	OrderLineListAll(context.Context, *OrderLineListAllReq) (*OrderLineListAllRes, error)
 	// DELIVERY_DAY
 	// rpc DeliveryDayDetail(DeliveryDayDetailReq) returns (DeliveryDayDetailRes);
-	DeliveryDayListAll(context.Context, *DeliveryDayListAllReq) (*DeliveryDayListAllRes, error)
+	DeliverySlotListAll(context.Context, *DeliverySlotListAllReq) (*DeliverySlotListAllRes, error)
 	// GOOGLE_MAPS__
 	PlaceDetail(context.Context, *PlaceDetailReq) (*PlaceDetailRes, error)
 	ReverseGeocode(context.Context, *ReverseGeocodeReq) (*ReverseGeocodeRes, error)
@@ -467,6 +486,12 @@ func (UnimplementedApiServiceServer) UserAddrUpdate(context.Context, *UserAddrUp
 func (UnimplementedApiServiceServer) UserAddrListAll(context.Context, *UserAddrListAllReq) (*UserAddrListAllRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method UserAddrListAll not implemented")
 }
+func (UnimplementedApiServiceServer) ProductDetail(context.Context, *ProductDetailReq) (*ProductDetailRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method ProductDetail not implemented")
+}
+func (UnimplementedApiServiceServer) ProductListAll(context.Context, *ProductListAllReq) (*ProductListAllRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method ProductListAll not implemented")
+}
 func (UnimplementedApiServiceServer) OrderCreate(context.Context, *OrderCreateReq) (*OrderCreateRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method OrderCreate not implemented")
 }
@@ -485,9 +510,6 @@ func (UnimplementedApiServiceServer) OrderListAll(context.Context, *OrderListAll
 func (UnimplementedApiServiceServer) OrderChangeStatus(context.Context, *OrderChangeStatusReq) (*OrderChangeStatusRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method OrderChangeStatus not implemented")
 }
-func (UnimplementedApiServiceServer) OrderChangePayment(context.Context, *OrderChangePaymentReq) (*OrderChangePaymentRes, error) {
-	return nil, status.Error(codes.Unimplemented, "method OrderChangePayment not implemented")
-}
 func (UnimplementedApiServiceServer) OrderLineUpdate(context.Context, *OrderLineUpdateReq) (*OrderLineUpdateRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method OrderLineUpdate not implemented")
 }
@@ -503,8 +525,8 @@ func (UnimplementedApiServiceServer) OrderLineDetail(context.Context, *OrderLine
 func (UnimplementedApiServiceServer) OrderLineListAll(context.Context, *OrderLineListAllReq) (*OrderLineListAllRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method OrderLineListAll not implemented")
 }
-func (UnimplementedApiServiceServer) DeliveryDayListAll(context.Context, *DeliveryDayListAllReq) (*DeliveryDayListAllRes, error) {
-	return nil, status.Error(codes.Unimplemented, "method DeliveryDayListAll not implemented")
+func (UnimplementedApiServiceServer) DeliverySlotListAll(context.Context, *DeliverySlotListAllReq) (*DeliverySlotListAllRes, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeliverySlotListAll not implemented")
 }
 func (UnimplementedApiServiceServer) PlaceDetail(context.Context, *PlaceDetailReq) (*PlaceDetailRes, error) {
 	return nil, status.Error(codes.Unimplemented, "method PlaceDetail not implemented")
@@ -752,6 +774,42 @@ func _ApiService_UserAddrListAll_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ApiService_ProductDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProductDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).ProductDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_ProductDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).ProductDetail(ctx, req.(*ProductDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApiService_ProductListAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProductListAllReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServiceServer).ProductListAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApiService_ProductListAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServiceServer).ProductListAll(ctx, req.(*ProductListAllReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ApiService_OrderCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OrderCreateReq)
 	if err := dec(in); err != nil {
@@ -860,24 +918,6 @@ func _ApiService_OrderChangeStatus_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApiService_OrderChangePayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrderChangePaymentReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ApiServiceServer).OrderChangePayment(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ApiService_OrderChangePayment_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiServiceServer).OrderChangePayment(ctx, req.(*OrderChangePaymentReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ApiService_OrderLineUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OrderLineUpdateReq)
 	if err := dec(in); err != nil {
@@ -968,20 +1008,20 @@ func _ApiService_OrderLineListAll_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApiService_DeliveryDayListAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeliveryDayListAllReq)
+func _ApiService_DeliverySlotListAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeliverySlotListAllReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApiServiceServer).DeliveryDayListAll(ctx, in)
+		return srv.(ApiServiceServer).DeliverySlotListAll(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ApiService_DeliveryDayListAll_FullMethodName,
+		FullMethod: ApiService_DeliverySlotListAll_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApiServiceServer).DeliveryDayListAll(ctx, req.(*DeliveryDayListAllReq))
+		return srv.(ApiServiceServer).DeliverySlotListAll(ctx, req.(*DeliverySlotListAllReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1096,6 +1136,14 @@ var ApiService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ApiService_UserAddrListAll_Handler,
 		},
 		{
+			MethodName: "ProductDetail",
+			Handler:    _ApiService_ProductDetail_Handler,
+		},
+		{
+			MethodName: "ProductListAll",
+			Handler:    _ApiService_ProductListAll_Handler,
+		},
+		{
 			MethodName: "OrderCreate",
 			Handler:    _ApiService_OrderCreate_Handler,
 		},
@@ -1120,10 +1168,6 @@ var ApiService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ApiService_OrderChangeStatus_Handler,
 		},
 		{
-			MethodName: "OrderChangePayment",
-			Handler:    _ApiService_OrderChangePayment_Handler,
-		},
-		{
 			MethodName: "OrderLineUpdate",
 			Handler:    _ApiService_OrderLineUpdate_Handler,
 		},
@@ -1144,8 +1188,8 @@ var ApiService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ApiService_OrderLineListAll_Handler,
 		},
 		{
-			MethodName: "DeliveryDayListAll",
-			Handler:    _ApiService_DeliveryDayListAll_Handler,
+			MethodName: "DeliverySlotListAll",
+			Handler:    _ApiService_DeliverySlotListAll_Handler,
 		},
 		{
 			MethodName: "PlaceDetail",

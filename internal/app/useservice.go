@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -27,10 +28,13 @@ func NewUseService(deps UseServiceDeps) *UseService {
 	return &UseService{deps: deps}
 }
 
-func isSameDate(a, b time.Time) bool {
-	return a.Year() == b.Year() &&
-		a.Month() == b.Month() &&
-		a.Day() == b.Day()
+func slicesContains(values []string, target string) bool {
+	for _, value := range values {
+		if value == target {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *UseService) Code(ctx context.Context, input *CodeInput) (string, string, error) {
@@ -401,6 +405,39 @@ func (s *UseService) UserAddrListAll(ctx context.Context, uid string) ([]*UserAd
 	return result, nil
 }
 
+// CATLG__
+
+func (s *UseService) ProductDetail(ctx context.Context, ref string) (*Product, error) {
+	const op = "App.UseService.ProductDetail"
+
+	if err := uuid.Validate(ref); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	result, err := s.deps.Repository.ProductSelect(ctx, ref, false)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (s *UseService) ProductListAll(ctx context.Context, filter *ProductFilterInput) ([]*Product, error) {
+	const op = "App.UseService.ProductListAll"
+
+	f := NewProductFilterData(filter)
+	if err := f.Validate(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	results, err := s.deps.Repository.ProductSelectAll(ctx, f)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return results, nil
+}
+
 // ORDER__
 
 func (s *UseService) OrderCreate(ctx context.Context, input *OrderInsertInput) (*Order, error) {
@@ -434,6 +471,9 @@ func (s *UseService) OrderCreate(ctx context.Context, input *OrderInsertInput) (
 func (s *UseService) OrderUpdate(ctx context.Context, ref string, paths []string, input *OrderUpdateInput) (*Order, error) {
 	const op = "App.UseService.OrderUpdate"
 
+	log.Println("paths", paths)
+	log.Println("input", input)
+	
 	if err := uuid.Validate(ref); err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -449,7 +489,12 @@ func (s *UseService) OrderUpdate(ctx context.Context, ref string, paths []string
 	}
 
 	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
-		_, err := s.deps.Repository.OrderUpdate(ctx, ref, paths, updata)
+		result, err = s.deps.Repository.OrderSelect(ctx, ref, true)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.deps.Repository.OrderUpdate(ctx, ref, paths, updata)
 		if err != nil {
 			return err
 		}
@@ -484,6 +529,14 @@ func (s *UseService) OrderDelete(ctx context.Context, ref string) (*Order, error
 	}
 
 	if err := s.deps.Repository.db.WithTx(ctx, func(ctx context.Context) error {
+		current, err := s.deps.Repository.OrderSelect(ctx, ref, true)
+		if err != nil {
+			return err
+		}
+		if current.Status != orderStatusPending {
+			return WrapOrderDeleteNotAllowed(nil)
+		}
+
 		affected, err := s.deps.Repository.OrderDelete(ctx, ref)
 		if err != nil {
 			return err
@@ -731,7 +784,7 @@ func (s *UseService) OrderLineListAll(ctx context.Context, oid string) ([]*Order
 
 // DELIVERY_DAY__
 
-func (s *UseService) DeliveryDayListAll(ctx context.Context, filter *DeliveryDayFilterInput, paging *DeliveryDayPagingInput) ([]*DeliveryDay, error) {
+func (s *UseService) DeliveryDayListAll(ctx context.Context, filter *DeliveryDayFilterInput, paging *DeliveryDayPagingInput) ([]*DeliverySlot, error) {
 	const op = "App.UseService.DeliveryDayListAll"
 
 	f := NewDeliveryDayFilterData(filter)

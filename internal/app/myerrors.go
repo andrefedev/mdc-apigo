@@ -60,9 +60,16 @@ var (
 
 var (
 	ErrDeliveryDayNotFound      = errors.New("delivery day not found")
+	ErrDeliveryDayClosed        = errors.New("delivery day closed")
+	ErrDeliveryDayCapacityFull  = errors.New("delivery day capacity full")
 	ErrInvalidDeliveryDayDate   = errors.New("invalid delivery day date")
 	ErrInvalidDeliveryDayKind   = errors.New("invalid delivery day kind")
 	ErrInvalidDeliveryDayRange  = errors.New("invalid delivery day range")
 	ErrInvalidDeliveryDayCutoff = errors.New("invalid delivery day cutoff")
 	ErrInvalidDeliveryDayCap    = errors.New("invalid delivery day capacity")
+)
+
+var (
+	ErrGenreNotFound   = errors.New("genre not found")
+	ErrProductNotFound = errors.New("product not found")
 )

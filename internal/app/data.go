@@ -281,6 +281,58 @@ func (r *UserAddrUpdateData) Validate(paths []string) error {
 	return nil
 }
 
+// CATLG__
+
+// ITEM__
+
+type ProductFilterData struct {
+	Query    *string
+	Genre    *string
+	IsActive *bool
+	IsPublic *bool
+}
+
+func NewProductFilterData(input *ProductFilterInput) *ProductFilterData {
+	if input == nil {
+		return &ProductFilterData{}
+	}
+
+	return &ProductFilterData{
+		Query:    input.Query,
+		Genre:    input.Genre,
+		IsActive: input.IsActive,
+		IsPublic: input.IsPublic,
+	}
+}
+
+func (r *ProductFilterData) Validate() error {
+	const op = "App.ProductFilterData.Validate"
+
+	if r.Query != nil {
+		value := strings.TrimSpace(*r.Query)
+		if value == "" {
+			r.Query = nil
+		} else {
+			value = normalizex.NormalizeName(value)
+			r.Query = &value
+		}
+	}
+
+	if r.Genre != nil {
+		value := strings.TrimSpace(*r.Genre)
+		if value == "" {
+			r.Genre = nil
+		} else {
+			if err := uuid.Validate(value); err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+			r.Genre = &value
+		}
+	}
+
+	return nil
+}
+
 // SALES__
 
 // ORDER_INSERT_INPUT__
@@ -309,36 +361,38 @@ func NewOrderInsertData(input *OrderInsertInput) *OrderInsertData {
 }
 
 func (r *OrderInsertData) Validate() error {
-	//for _, path := range paths {
-	//	switch strings.TrimSpace(path) {
-	//	case "user":
-	//		if r.User == "" {
-	//			return errors.New("la referencia del usuario es un campo obligatorio")
-	//		}
-	//	case "addr":
-	//		if r.Addr == "" {
-	//			return errors.New("la referencia de la dirección de envío es un campo obligatorio")
-	//		}
-	//	case "slot":
-	//		if r.Slot == "" {
-	//			return errors.New("la referencia del día y franja horaria es un campo obligatorio")
-	//		}
-	//	case "status":
-	//		// validar opciones del status
-	//		if r.Status == "" {
-	//			return errors.New("el estado del pedido es un campo obligatorio")
-	//		}
-	//	case "payment_status":
-	//		if r.PaymentStatus == "" {
-	//			return errors.New("el estado del pago del pedido es un obligatorio")
-	//		}
-	//	case "payment_method":
-	//		if r.PaymentMethod == "" {
-	//			return errors.New("el método del pago del pedido es un obligatorio")
-	//		}
-	//	}
-	//}
+	const op = "App.OrderInsertData.Validate"
 
+	r.User = strings.TrimSpace(r.User)
+	r.Addr = strings.TrimSpace(r.Addr)
+	r.Slot = strings.TrimSpace(r.Slot)
+
+	if err := uuid.Validate(r.User); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	if err := uuid.Validate(r.Addr); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	if err := uuid.Validate(r.Slot); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	status, err := normalizeOrderStatus(r.Status)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	paymentStatus, err := normalizeOrderPaymentStatus(r.PaymentStatus)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	paymentMethod, err := normalizeOrderPaymentMethod(r.PaymentMethod)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	r.Status = status
+	r.PaymentStatus = paymentStatus
+	r.PaymentMethod = paymentMethod
 	return nil
 }
 
@@ -366,6 +420,41 @@ func NewOrderUpdateData(input *OrderUpdateInput) *OrderUpdateData {
 }
 
 func (r *OrderUpdateData) Validate(paths []string) error {
+	const op = "App.OrderUpdateData.Validate"
+
+	for _, path := range paths {
+		switch strings.TrimSpace(path) {
+		case "addr":
+			r.Addr = strings.TrimSpace(r.Addr)
+			if err := uuid.Validate(r.Addr); err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+		case "slot":
+			r.Slot = strings.TrimSpace(r.Slot)
+			if err := uuid.Validate(r.Slot); err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+		case "status":
+			status, err := normalizeOrderStatus(r.Status)
+			if err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+			r.Status = status
+		case "payment_status":
+			status, err := normalizeOrderPaymentStatus(r.PaymentStatus)
+			if err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+			r.PaymentStatus = status
+		case "payment_method":
+			method, err := normalizeOrderPaymentMethod(r.PaymentMethod)
+			if err != nil {
+				return fmt.Errorf("%s: %w", op, err)
+			}
+			r.PaymentMethod = method
+		}
+	}
+
 	return nil
 }
 
@@ -393,49 +482,6 @@ func (r *OrderChangeStatusData) Validate() error {
 	}
 
 	r.Status = status
-	return nil
-}
-
-// ORDER_CHANGE_PAYMENT_DATA__
-
-type OrderChangePaymentData struct {
-	PaymentStatus *string
-	PaymentMethod *string
-}
-
-func NewOrderChangePaymentData(input *OrderChangePaymentInput) *OrderChangePaymentData {
-	if input == nil {
-		return &OrderChangePaymentData{}
-	}
-	return &OrderChangePaymentData{
-		PaymentStatus: input.PaymentStatus,
-		PaymentMethod: input.PaymentMethod,
-	}
-}
-
-func (r *OrderChangePaymentData) Validate() error {
-	const op = "App.OrderChangePaymentData.Validate"
-
-	if r.PaymentStatus == nil && r.PaymentMethod == nil {
-		return fmt.Errorf("%s: %w", op, ErrInvalidMaskPath)
-	}
-
-	if r.PaymentStatus != nil {
-		value, err := normalizeOrderPaymentStatus(*r.PaymentStatus)
-		if err != nil {
-			return fmt.Errorf("%s: %w", op, err)
-		}
-		r.PaymentStatus = &value
-	}
-
-	if r.PaymentMethod != nil {
-		value, err := normalizeOrderPaymentMethod(*r.PaymentMethod)
-		if err != nil {
-			return fmt.Errorf("%s: %w", op, err)
-		}
-		r.PaymentMethod = &value
-	}
-
 	return nil
 }
 
@@ -557,10 +603,6 @@ func (r *OrderLineInsertData) Validate() error {
 		return fmt.Errorf("%s, %w", op, ErrInvalidOrderLineBasePrice)
 	}
 
-	if r.OfferPrice == 0 {
-		return fmt.Errorf("%s: %w", op, ErrInvalidOrderLineOfferPrice)
-	}
-
 	// BASE_PRICE < OFFER_PRICE
 	if r.BasePrice < r.OfferPrice {
 		return fmt.Errorf("%s: %w", op, ErrInvalidOrderLinePriceRange) // nombrar..
@@ -616,10 +658,10 @@ func (r *OrderLineUpdateData) Validate(paths []string) error {
 // DELIVERY_DAY__
 
 type DeliveryDayFilterData struct {
+	Kind      *string
+	IsOpen    *bool
 	FromDate  *time.Time
 	UntilDate *time.Time
-	IsOpen    *bool
-	Kind      *string
 }
 
 func NewDeliveryDayFilterData(input *DeliveryDayFilterInput) *DeliveryDayFilterData {
@@ -680,128 +722,6 @@ func (r *DeliveryDayPagingData) Validate() error {
 	}
 	if r.Offset < 0 {
 		r.Offset = 0
-	}
-
-	return nil
-}
-
-type DeliveryDayListAvailableData struct {
-	FromDate time.Time
-	Limit    int32
-}
-
-func NewDeliveryDayListAvailableData(input *DeliveryDayListAvailableInput) *DeliveryDayListAvailableData {
-	if input == nil {
-		return &DeliveryDayListAvailableData{}
-	}
-
-	return &DeliveryDayListAvailableData{
-		FromDate: input.FromDate,
-		Limit:    input.Limit,
-	}
-}
-
-func (r *DeliveryDayListAvailableData) Validate() error {
-	if r.FromDate.IsZero() {
-		now := time.Now().UTC()
-		r.FromDate = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-	}
-
-	if r.Limit <= 0 {
-		r.Limit = 14
-	}
-	if r.Limit > 31 {
-		r.Limit = 31
-	}
-
-	return nil
-}
-
-type DeliveryDayNextAvailableData struct {
-	FromDate time.Time
-}
-
-func NewDeliveryDayNextAvailableData(input *DeliveryDayNextAvailableInput) *DeliveryDayNextAvailableData {
-	if input == nil {
-		return &DeliveryDayNextAvailableData{}
-	}
-
-	return &DeliveryDayNextAvailableData{
-		FromDate: input.FromDate,
-	}
-}
-
-func (r *DeliveryDayNextAvailableData) Validate() error {
-	if r.FromDate.IsZero() {
-		now := time.Now().UTC()
-		r.FromDate = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-	}
-
-	return nil
-}
-
-type DeliveryDayUpdateData struct {
-	Kind          string  `db:"kind"`
-	Note          *string `db:"note"`
-	IsOpen        bool    `db:"is_open"`
-	Capacity      int32   `db:"capacity"`
-	CutoffMin     int32   `db:"cutoff_min"`
-	DeliveryStart int32   `db:"delivery_start"`
-	DeliveryUntil int32   `db:"delivery_until"`
-}
-
-func NewDeliveryDayUpdateData(input *DeliveryDayUpdateInput) *DeliveryDayUpdateData {
-	if input == nil {
-		return &DeliveryDayUpdateData{}
-	}
-
-	return &DeliveryDayUpdateData{
-		Kind:          input.Kind,
-		Note:          input.Note,
-		IsOpen:        input.IsOpen,
-		Capacity:      input.Capacity,
-		CutoffMin:     input.CutoffMin,
-		DeliveryStart: input.DeliveryStart,
-		DeliveryUntil: input.DeliveryUntil,
-	}
-}
-
-func (r *DeliveryDayUpdateData) Validate(paths []string) error {
-	const op = "App.DeliveryDayUpdateData.Validate"
-
-	for _, path := range paths {
-		switch strings.TrimSpace(path) {
-		case "kind":
-			r.Kind = strings.TrimSpace(r.Kind)
-			if r.Kind == "" {
-				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayKind)
-			}
-		case "note":
-			if r.Note != nil {
-				value := strings.TrimSpace(*r.Note)
-				if value == "" {
-					r.Note = nil
-				} else {
-					r.Note = &value
-				}
-			}
-		case "capacity":
-			if r.Capacity < 0 {
-				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayCap)
-			}
-		case "cutoff_min":
-			if r.CutoffMin < 0 || r.CutoffMin >= 1440 {
-				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayCutoff)
-			}
-		case "delivery_start":
-			if r.DeliveryStart < 0 || r.DeliveryStart >= 1440 {
-				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayRange)
-			}
-		case "delivery_until":
-			if r.DeliveryUntil < 0 || r.DeliveryUntil >= 1440 {
-				return fmt.Errorf("%s: %w", op, ErrInvalidDeliveryDayRange)
-			}
-		}
 	}
 
 	return nil

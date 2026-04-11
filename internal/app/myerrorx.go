@@ -216,11 +216,25 @@ func WrapInvalidOrderLinePriceRange(cause error) error {
 
 // DELIVERY_DAY__
 
-func WrapDeliveryDayNotFound(cause error) error {
+func WrapDeliverySlotNotFound(cause error) error {
 	if cause == nil {
 		return ErrDeliveryDayNotFound
 	}
 	return errors.Join(ErrDeliveryDayNotFound, cause)
+}
+
+func WrapDeliveryDayClosed(cause error) error {
+	if cause == nil {
+		return ErrDeliveryDayClosed
+	}
+	return errors.Join(ErrDeliveryDayClosed, cause)
+}
+
+func WrapDeliveryDayCapacityFull(cause error) error {
+	if cause == nil {
+		return ErrDeliveryDayCapacityFull
+	}
+	return errors.Join(ErrDeliveryDayCapacityFull, cause)
 }
 
 func WrapInvalidDeliveryDayDate(cause error) error {
@@ -256,4 +270,20 @@ func WrapInvalidDeliveryDayCap(cause error) error {
 		return ErrInvalidDeliveryDayCap
 	}
 	return errors.Join(ErrInvalidDeliveryDayCap, cause)
+}
+
+// CATLG__
+
+func WrapGenreNotFound(cause error) error {
+	if cause == nil {
+		return ErrGenreNotFound
+	}
+	return errors.Join(ErrGenreNotFound, cause)
+}
+
+func WrapProductNotFound(cause error) error {
+	if cause == nil {
+		return ErrProductNotFound
+	}
+	return errors.Join(ErrProductNotFound, cause)
 }

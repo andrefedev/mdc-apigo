@@ -519,6 +519,174 @@ func (r Repository) UserAddrSelectAll(ctx context.Context, uid string) ([]*UserA
 	return results, nil
 }
 
+// CATLG__
+
+// GENRE__
+
+func (r Repository) GenreSelect(ctx context.Context, ref string) (*Genre, error) {
+	const op = "App.Repository.GenreSelect"
+
+	qry := `
+	SELECT
+	g.id, g.name, g.descr, g.imurl, g.display, g.is_public, g.date_created
+	-- FROM GENRES && WHERE --
+	FROM genres AS g WHERE g.id = $1
+	`
+
+	rows, err := r.db.Query(ctx, qry, ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[Genre])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			err = WrapGenreNotFound(err)
+		}
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (r Repository) GenreSelectAll(ctx context.Context) ([]*Genre, error) {
+	const op = "App.Repository.GenreSelectAll"
+
+	qry := `
+	SELECT
+	g.id, g.name, g.descr, g.imurl, g.display, g.is_public, g.date_created
+	-- COUNT(g.id) AS product_count -- COUNT PRODUCTS --
+	-- FROM GENRES --
+	FROM genres AS g
+	-- LEFT JOIN PRODUCTS --
+	-- LEFT JOIN products AS p ON p.gid = g.id
+	-- GROUP BY --
+	-- GROUP BY g.id, g.name, g.imurl, g.descr, g.display, g.is_public, g.date_created
+	-- ORDER BY DESC --
+	ORDER BY g.display, g.date_created DESC;
+	`
+
+	rows, err := r.db.Query(ctx, qry)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[Genre])
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return results, nil
+}
+
+// ITEMS__
+
+func (r Repository) ProductSelect(ctx context.Context, ref string, forUpdate bool) (*Product, error) {
+	const op = "App.Repository.ProductSelect"
+
+	qry := `
+	SELECT
+	p.id, p.upc, p.code, p.name, p.descr, p.imurl, p.display, p.weight, p.unitype, p.quantity, p.is_active,
+	p.is_public, p.cost_price, p.base_price, p.num_in_alloc, p.num_in_stock, p.date_created, p.date_updated,
+	-- GENRE --
+	g.id AS genre_ref, g.name AS genre_name, g.descr AS genre_descr, g.imurl AS genre_imurl,
+	g.display AS genre_display, g.is_public AS genre_is_public, g.date_created AS genre_date_created
+	-- FROM --
+	FROM products AS p
+	-- JOIN GENRE --
+	JOIN genres AS g ON g.id = p.gid
+	-- WHERE --
+	WHERE p.id = $1
+	`
+	if forUpdate {
+		qry += " FOR UPDATE"
+	}
+
+	rows, err := r.db.Query(ctx, qry, ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[ProductRaw])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			err = WrapProductNotFound(err)
+		}
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result.ToProduct(), nil
+}
+
+func (r Repository) ProductSelectAll(ctx context.Context, filter *ProductFilterData) ([]*Product, error) {
+	const op = "App.Repository.ProductSelectAll"
+
+	qry := `
+	SELECT
+	p.id, p.upc, p.code, p.name, p.descr, p.imurl, p.display, p.weight, p.unitype, p.quantity, p.is_active,
+	p.is_public, p.cost_price, p.base_price, p.num_in_alloc, p.num_in_stock, p.date_created, p.date_updated,
+	-- GENRE --
+	g.id AS genre_ref, g.name AS genre_name, g.descr AS genre_descr, g.imurl AS genre_imurl,
+	g.display AS genre_display, g.is_public AS genre_is_public, g.date_created AS genre_date_created
+	-- FROM --
+	FROM products AS p
+	-- JOIN GENRE --
+	JOIN genres AS g ON g.id = p.gid
+	`
+
+	var values []any
+	var clauses []string
+
+	if filter != nil {
+		if filter.Query != nil {
+			values = append(values, *filter.Query)
+			clauses = append(clauses, fmt.Sprintf(
+				`(unaccent(p.name) ILIKE unaccent('%%' || $%d || '%%') OR CAST(p.code AS TEXT) ILIKE '%%' || $%d || '%%')`,
+				len(values), len(values),
+			))
+		}
+		if filter.Genre != nil {
+			values = append(values, *filter.Genre)
+			clauses = append(clauses, fmt.Sprintf(`p.gid = $%d`, len(values)))
+		}
+		if filter.IsActive != nil {
+			values = append(values, *filter.IsActive)
+			clauses = append(clauses, fmt.Sprintf(`p.is_active = $%d`, len(values)))
+		}
+		if filter.IsPublic != nil {
+			values = append(values, *filter.IsPublic)
+			clauses = append(clauses, fmt.Sprintf(`p.is_public = $%d`, len(values)))
+		}
+	}
+
+	if len(clauses) > 0 {
+		qry += " WHERE " + strings.Join(clauses, " AND ")
+	}
+
+	qry += " ORDER BY g.display, p.display, p.date_created DESC"
+
+	rows, err := r.db.Query(ctx, qry, values...)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	raws, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[ProductRaw])
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	results := make([]*Product, 0, len(raws))
+	for _, raw := range raws {
+		results = append(results, raw.ToProduct())
+	}
+
+	return results, nil
+}
+
 // SALES__
 
 // ORDER__
@@ -624,17 +792,18 @@ func (r Repository) OrderSelect(ctx context.Context, ref string, forUpdate bool)
 	addr.id AS addr_ref, addr.lat AS addr_lat, addr.lng AS addr_lng, addr.name AS addr_name, addr.cmna AS addr_cmna, addr.route AS addr_route,
 	addr.street AS addr_street, addr.neighb AS addr_neighb, addr.locality AS addr_locality, addr.sublocal AS addr_sublocal, addr.address1 AS addr_address1, addr.address2 AS addr_address2,
 	-- SLOT --
-	slot.id AS slot_ref, slot.code AS slot_code, days.work_date AS slot_work_date -- 
+	slot.id AS slot_ref, slot.kind AS slot_kind, slot.note AS slot_note, slot.wday AS slot_wday, slot.is_open AS slot_is_open, slot.date_created AS slot_date_created, slot.date_updated AS slot_date_updated,
+	(extract(hour from slot.cutoff_min)::int * 60 + extract(minute from slot.cutoff_min)::int) AS slot_cutoff_min,
+	(extract(hour from slot.delivery_start)::int * 60 + extract(minute from slot.delivery_start)::int) AS slot_delivery_start,
+	(extract(hour from slot.delivery_until)::int * 60 + extract(minute from slot.delivery_until)::int) AS slot_delivery_until
 	-- FROM --
 	FROM orders AS o
 	-- JOIN CLIENT --
 	JOIN users AS u ON u.id = o.uid
 	-- JOIN SHIPPING --
 	JOIN users_addrs AS addr ON addr.id = o.shid
-	-- JOIN DELIVERY SLOT --
+	-- JOIN SLOT --
 	JOIN deliveries_slots AS slot ON slot.id = o.sloid
-	-- JOIN DELIVERY DAYS --  
-	JOIN deliveries_days AS days ON days.id = slot.wid 
 	-- WHERE --
 	WHERE o.id = $1
 	`
@@ -666,18 +835,25 @@ func (r Repository) OrderSelectAll(ctx context.Context, filter *OrderFilterData,
 
 	qry := `
 	SELECT
-	o.id, o.number, o.status, o.date_created, o.date_updated, o.delivery_date, o.payment_status, o.payment_method,
+	o.id, o.number, o.status, o.date_created, o.date_updated, o.payment_status, o.payment_method,
 	-- USER --
 	u.id AS user_ref, u.name AS user_name, u.phone AS user_phone,
 	-- ADDR --
 	addr.id AS addr_ref, addr.lat AS addr_lat, addr.lng AS addr_lng, addr.name AS addr_name, addr.cmna AS addr_cmna, addr.route AS addr_route,
-	addr.street AS addr_street, addr.neighb AS addr_neighb, addr.locality AS addr_locality, addr.sublocal AS addr_sublocal, addr.address1 AS addr_address1, addr.address2 AS addr_address2
+	addr.street AS addr_street, addr.neighb AS addr_neighb, addr.locality AS addr_locality, addr.sublocal AS addr_sublocal, addr.address1 AS addr_address1, addr.address2 AS addr_address2,
+	-- SLOT --
+	slot.id AS slot_ref, slot.kind AS slot_kind, slot.note AS slot_note, slot.wday AS slot_wday, slot.is_open AS slot_is_open, slot.date_created AS slot_date_created, slot.date_updated AS slot_date_updated,
+	(extract(hour from slot.cutoff_min)::int * 60 + extract(minute from slot.cutoff_min)::int) AS slot_cutoff_min,
+	(extract(hour from slot.delivery_start)::int * 60 + extract(minute from slot.delivery_start)::int) AS slot_delivery_start,
+	(extract(hour from slot.delivery_until)::int * 60 + extract(minute from slot.delivery_until)::int) AS slot_delivery_until
 	-- FROM --
 	FROM orders AS o
 	-- JOIN CLIENT --
 	JOIN users AS u ON u.id = o.uid
 	-- JOIN SHIPPING --
 	JOIN users_addrs AS addr ON addr.id = o.shid
+	-- JOIN SLOT --
+	JOIN deliveries_slots AS slot ON slot.id = o.sloid
 	`
 
 	// # BEGIN FILTER #
@@ -714,7 +890,7 @@ func (r Repository) OrderSelectAll(ctx context.Context, filter *OrderFilterData,
 			d, err := time.Parse("2006-01-02", q)
 			if err == nil {
 				values = append(values, d.Format("2006-01-02"))
-				clauses = append(clauses, fmt.Sprintf(`days.work_date = $%d`, len(values)))
+				clauses = append(clauses, fmt.Sprintf(`slot.wday = $%d`, len(values)))
 			}
 		}
 		if filter.PaymentStatus != nil {
@@ -865,7 +1041,7 @@ func (r Repository) OrderLineSelect(ctx context.Context, ref string, forUpdate b
 	}
 	defer rows.Close()
 
-	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[OrderLine])
+	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[OrderLineRaw])
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = WrapOrderLineNotFound(err)
@@ -873,7 +1049,7 @@ func (r Repository) OrderLineSelect(ctx context.Context, ref string, forUpdate b
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return result, nil
+	return result.ToOrderLine(), nil
 }
 
 func (r Repository) OrderLineSelectAll(ctx context.Context, oid string) ([]*OrderLine, error) {
@@ -901,45 +1077,133 @@ func (r Repository) OrderLineSelectAll(ctx context.Context, oid string) ([]*Orde
 	}
 	defer rows.Close()
 
-	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[OrderLine])
+	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[OrderLineRaw])
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return results, nil
+	orderLines := make([]*OrderLine, 0, len(results))
+	for i := range results {
+		orderLines = append(orderLines, results[i].ToOrderLine())
+	}
+
+	return orderLines, nil
 }
 
 // DELIVERY_DAY__
 
-//func (r Repository) DeliveryDaySelect(ctx context.Context, workDate time.Time, forUpdate bool) (*DeliveryDay, error) {
-//	const op = "App.Repository.DeliveryDaySelect"
-//
-//	qry := deliveryDaySelectColumns + ` WHERE work_date = $1`
-//	if forUpdate {
-//		qry += ` FOR UPDATE`
-//	}
-//
-//	rows, err := r.db.Query(ctx, qry, workDate.Format("2006-01-02"))
-//	if err != nil {
-//		return nil, fmt.Errorf("%s: %w", op, err)
-//	}
-//	defer rows.Close()
-//
-//	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[DeliveryDay])
-//	if err != nil {
-//		if errors.Is(err, pgx.ErrNoRows) {
-//			err = WrapDeliveryDayNotFound(err)
-//		}
-//		return nil, fmt.Errorf("%s: %w", op, err)
-//	}
-//
-//	return result, nil
-//}
+func (r Repository) DeliveryDaySelect(ctx context.Context, ref string, forUpdate bool) (*DeliverySlot, error) {
+	const op = "App.Repository.DeliveryDaySelect"
 
-func (r Repository) DeliveryDaySelectAll(ctx context.Context, filter *DeliveryDayFilterData, paging *DeliveryDayPagingData) ([]*DeliveryDay, error) {
+	qry := `
+	SELECT
+	id, kind, note, wday, is_open, capacity, reserved,
+	(extract(hour from cutoff_min)::int * 60 + extract(minute from cutoff_min)::int) AS cutoff_min, date_created, date_updated,
+	(extract(hour from delivery_start)::int * 60 + extract(minute from delivery_start)::int) AS delivery_start,
+	(extract(hour from delivery_until)::int * 60 + extract(minute from delivery_until)::int) AS delivery_until
+	FROM deliveries_slots
+	WHERE id = $1
+	`
+
+	if forUpdate {
+		qry += ` FOR UPDATE`
+	}
+
+	rows, err := r.db.Query(ctx, qry, ref)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[DeliverySlot])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			err = WrapDeliverySlotNotFound(err)
+		}
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (r Repository) DeliveryDaySelect2(ctx context.Context, wday string, forUpdate bool) (*DeliverySlot, error) {
+	const op = "App.Repository.DeliveryDaySelect2"
+
+	qry := `
+	SELECT
+	id, kind, note, wday, is_open, capacity, reserved,
+	(extract(hour from cutoff_min)::int * 60 + extract(minute from cutoff_min)::int) AS cutoff_min, date_created, date_updated,
+	(extract(hour from delivery_start)::int * 60 + extract(minute from delivery_start)::int) AS delivery_start,
+	(extract(hour from delivery_until)::int * 60 + extract(minute from delivery_until)::int) AS delivery_until
+	FROM deliveries_slots
+	WHERE wday = $1
+	`
+	if forUpdate {
+		qry += ` FOR UPDATE`
+	}
+
+	rows, err := r.db.Query(ctx, qry, wday)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[DeliverySlot])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			err = WrapDeliverySlotNotFound(err)
+		}
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
+}
+
+func (r Repository) DeliveryDayReserve(ctx context.Context, ref string) (int64, error) {
+	const op = "App.Repository.DeliveryDayReserve"
+
+	qry := `
+	UPDATE deliveries_slots
+	SET reserved = reserved + 1, date_updated = NOW()
+	WHERE id = $1 AND is_open = TRUE AND reserved < capacity
+	`
+
+	tag, err := r.db.Exec(ctx, qry, ref)
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return tag.RowsAffected(), nil
+}
+
+func (r Repository) DeliveryDayRelease(ctx context.Context, ref string) (int64, error) {
+	const op = "App.Repository.DeliveryDayRelease"
+
+	qry := `
+	UPDATE deliveries_slots
+	SET reserved = GREATEST(reserved - 1, 0), date_updated = NOW()
+	WHERE id = $1
+	`
+
+	tag, err := r.db.Exec(ctx, qry, ref)
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return tag.RowsAffected(), nil
+}
+
+func (r Repository) DeliveryDaySelectAll(ctx context.Context, filter *DeliveryDayFilterData, paging *DeliveryDayPagingData) ([]*DeliverySlot, error) {
 	const op = "App.Repository.DeliveryDaySelectAll"
 
-	qry := `SELECT id, kind, note, wday, is_open, capacity, reserved, cutoff_time, date_created, date_updated, delivery_start, delivery_until FROM deliveries_days2`
+	qry := `
+	SELECT
+	id, kind, note, wday, is_open, capacity, reserved,
+	(extract(hour from cutoff_min)::int * 60 + extract(minute from cutoff_min)::int) AS cutoff_min, date_created, date_updated,
+	(extract(hour from delivery_start)::int * 60 + extract(minute from delivery_start)::int) AS delivery_start,
+	(extract(hour from delivery_until)::int * 60 + extract(minute from delivery_until)::int) AS delivery_until
+	FROM deliveries_slots
+	`
 
 	var values []any
 	var clauses []string
@@ -979,7 +1243,7 @@ func (r Repository) DeliveryDaySelectAll(ctx context.Context, filter *DeliveryDa
 	}
 	defer rows.Close()
 
-	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[DeliveryDay])
+	results, err := pgx.CollectRows(rows, pgx.RowToAddrOfStructByNameLax[DeliverySlot])
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
@@ -1050,7 +1314,7 @@ func (r Repository) DeliveryDaySelectAll(ctx context.Context, filter *DeliveryDa
 //	result, err := pgx.CollectExactlyOneRow(rows, pgx.RowToAddrOfStructByNameLax[DeliveryDay])
 //	if err != nil {
 //		if errors.Is(err, pgx.ErrNoRows) {
-//			err = WrapDeliveryDayNotFound(err)
+//			err = WrapDeliverySlotNotFound(err)
 //		}
 //		return nil, fmt.Errorf("%s: %w", op, err)
 //	}

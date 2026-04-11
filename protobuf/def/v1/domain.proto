@@ -90,7 +90,7 @@ message Order {
   string ref = 1;
   User user = 2;
   UserAddr addr = 3;
-
+  DeliverySlot slot = 4;
   int32 number = 5;
   string status = 6; // es un enum
   int32 base_price = 7;
@@ -98,11 +98,8 @@ message Order {
   int32 total_price = 9;
   google.protobuf.Timestamp date_created = 10;
   google.protobuf.Timestamp date_updated = 11;
-
   string payment_status = 12; // es un enum...
   string payment_method = 13; // es un enum...
-  google.type.Date delivery_date = 14;
-  // DeliveryDay delivery_date = 4;
 }
 
 message OrderLine {
@@ -122,19 +119,19 @@ message OrderNote {
   google.protobuf.Timestamp date_created = 3;
 }
 
-message DeliveryDay {
+message DeliverySlot {
   string ref = 1;
   string kind = 2;
   optional string note = 3;
-  google.type.Date work_date = 4;
+  google.type.Date wday = 4;
   bool is_open = 5;
   int32 capacity = 6;
   int32 reserved = 7;
-  int64 cutoff_min = 8; // minutos desde medianoche
+  int32 cutoff_min = 8; // minutos desde medianoche
   google.protobuf.Timestamp date_created = 9;
   optional google.protobuf.Timestamp date_updated = 10;
-  int64 delivery_start = 11; // minutos desde medianoche
-  int64 delivery_until = 12; // minutos desde medianoche
+  int32 delivery_start = 11; // minutos desde medianoche
+  int32 delivery_until = 12; // minutos desde medianoche
 }
 
 // GOOGLE_MAPS__

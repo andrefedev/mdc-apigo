@@ -123,6 +123,12 @@ func grpcStatusError(err error) error {
 	if errors.Is(err, app.ErrDeliveryDayNotFound) {
 		return status.Error(codes.NotFound, "El día de entrega solicitado no existe")
 	}
+	if errors.Is(err, app.ErrDeliveryDayClosed) {
+		return status.Error(codes.FailedPrecondition, "El día de entrega no está disponible para reservar")
+	}
+	if errors.Is(err, app.ErrDeliveryDayCapacityFull) {
+		return status.Error(codes.ResourceExhausted, "El día de entrega ya no tiene cupos disponibles")
+	}
 	if errors.Is(err, app.ErrInvalidDeliveryDayDate) {
 		return status.Error(codes.InvalidArgument, "La fecha del día de entrega no es válida")
 	}
@@ -137,6 +143,12 @@ func grpcStatusError(err error) error {
 	}
 	if errors.Is(err, app.ErrInvalidDeliveryDayCap) {
 		return status.Error(codes.InvalidArgument, "La capacidad del día de entrega no es válida")
+	}
+
+	// CATLG__
+
+	if errors.Is(err, app.ErrProductNotFound) {
+		return status.Error(codes.NotFound, "El producto solicitado no existe")
 	}
 
 	// INPUT__
